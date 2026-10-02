@@ -1,0 +1,81 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/instrument-sans';
+
+@theme {
+    --font-sans:
+        'Instrument Sans Variable', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+
+    --color-primary: oklch(0.45 0.16 265);
+    --color-primary-hover: oklch(0.4 0.16 265);
+    --color-primary-soft: oklch(0.96 0.02 265);
+    --color-surface: #ffffff;
+    --color-canvas: oklch(0.975 0.003 260);
+    --color-line: oklch(0.92 0.006 260);
+    --color-ink: oklch(0.24 0.02 265);
+    --color-muted: oklch(0.55 0.02 265);
+    --color-danger: oklch(0.55 0.2 27);
+
+    --text-xs: 0.75rem;
+    --text-sm: 0.8125rem;
+}
+
+/* Compact calendar (react-day-picker v9): 28px cells, small caption and navigation. */
+.rdp-root.compact-calendar {
+    --rdp-accent-color: var(--color-primary);
+    --rdp-day-height: 28px;
+    --rdp-day-width: 28px;
+    --rdp-day_button-height: 26px;
+    --rdp-day_button-width: 26px;
+    --rdp-day_button-border-radius: 6px;
+    --rdp-selected-border: 0;
+    --rdp-nav_button-height: 1.5rem;
+    --rdp-nav_button-width: 1.5rem;
+    --rdp-nav-height: 1.75rem;
+    --rdp-weekday-padding: 0.25rem 0;
+    font-size: 0.75rem;
+}
+.compact-calendar .rdp-month_caption {
+    height: 1.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+.compact-calendar .rdp-caption_label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    padding: 0 0.25rem;
+}
+.compact-calendar .rdp-dropdowns {
+    gap: 0.125rem;
+}
+.compact-calendar .rdp-weekday {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--color-muted);
+}
+.compact-calendar .rdp-day {
+    font-size: 0.75rem;
+}
+.compact-calendar .rdp-chevron {
+    width: 12px;
+    height: 12px;
+}
+.compact-calendar .rdp-today:not(.rdp-selected) {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+@layer base {
+    html {
+        font-size: 15px;
+    }
+    body {
+        background: var(--color-canvas);
+        color: var(--color-ink);
+    }
+    button:not(:disabled),
+    [role='button']:not(:disabled) {
+        cursor: pointer;
+    }
+}
