@@ -62,7 +62,7 @@ function CodeForm({
             noValidate
             onSubmit={(e) => {
                 e.preventDefault();
-                form[method]<{ recovery_codes?: string[] }>(url, {
+                void form[method]<{ recovery_codes?: string[] }>(url, {
                     onSuccess: (response) => {
                         form.reset();
                         onDone(response);
@@ -203,7 +203,7 @@ function PasswordCard() {
                 className="flex flex-col gap-3 p-3"
                 onSubmit={(e) => {
                     e.preventDefault();
-                    form.put('/profile/password', { onSuccess: () => form.reset() });
+                    void form.put('/profile/password', { onSuccess: () => form.reset() });
                 }}
             >
                 <Field
@@ -295,7 +295,7 @@ export default function Profile() {
             setCodes(response.recovery_codes);
         }
 
-        reload();
+        void reload();
         void refresh();
     };
 

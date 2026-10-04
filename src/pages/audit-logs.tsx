@@ -14,7 +14,6 @@ import type { BadgeTone } from '@/components/ui/misc';
 import type { PageMeta } from '@/components/ui/pagination';
 import { Tip } from '@/components/ui/tooltip';
 import { http } from '@/lib/http';
-import type { Params } from '@/lib/http';
 import { useResource } from '@/lib/resource';
 import { useTitle } from '@/lib/title';
 import { exportCsv as downloadCsv } from '@/lib/download';
@@ -106,7 +105,7 @@ export default function AuditLogsIndex() {
     const [verification, setVerification] = useState<Verification | null>(null);
     const [filters, setFilters] = useState<Filters & { page: number }>({ search: '', module: null, outcome: null, from: null, to: null, per_page: 25, page: 1 });
     const [search, setSearch] = useState('');
-    const { data, loading, error, reload } = useResource<{ data: LogRow[]; meta: PageMeta & { per_page: number }; modules: string[] }>('/audit-logs', filters as unknown as Params);
+    const { data, loading, error, reload } = useResource<{ data: LogRow[]; meta: PageMeta & { per_page: number }; modules: string[] }>('/audit-logs', filters);
     const logs = { data: data?.data ?? [], ...(data?.meta ?? { current_page: 1, last_page: 1, from: 0, to: 0, total: 0 }) };
     const modules = data?.modules ?? [];
 
@@ -127,14 +126,14 @@ export default function AuditLogsIndex() {
     const hasFilters = Boolean(filters.search || filters.module || filters.outcome || filters.from || filters.to);
     const iso = (d: string) => (d ? d : null);
 
-    const exportCsv = () => void downloadCsv('/audit-logs/export', filters as unknown as Params);
+    const exportCsv = () => void downloadCsv('/audit-logs/export', filters);
 
     const verify = async () => {
         setVerifying(true);
 
         try {
             setVerification(await http.post<Verification>('/audit-logs/verify'));
-            reload();
+            void reload();
         } finally {
             setVerifying(false);
         }

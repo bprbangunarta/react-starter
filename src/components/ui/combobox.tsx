@@ -1,5 +1,5 @@
 import { Check, ChevronsUpDown, X } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { controlClass } from '@/components/ui/input';
@@ -41,6 +41,7 @@ export function Combobox({
     const [query, setQuery] = useState('');
     const [active, setActive] = useState(0);
     const list = useRef<HTMLUListElement>(null);
+    const listId = useId();
 
     const selected = options.find((o) => String(o.value) === String(value ?? ''));
     const filtered = useMemo(
@@ -94,6 +95,7 @@ export function Combobox({
                         type="button"
                         role="combobox"
                         aria-expanded={open}
+                        aria-controls={listId}
                         aria-invalid={invalid || undefined}
                         title={selected?.label}
                         className={cn(controlClass, 'flex items-center justify-between gap-1 text-left', clearable && selected && 'pr-12')}
@@ -140,7 +142,7 @@ export function Combobox({
                         className="mb-1 h-7 w-full rounded border border-line px-2 text-sm focus:border-primary focus:outline-none"
                     />
                 )}
-                <ul ref={list} role="listbox" className="max-h-56 overflow-auto overscroll-contain" onKeyDown={onKeyDown} tabIndex={-1}>
+                <ul ref={list} id={listId} role="listbox" className="max-h-56 overflow-auto overscroll-contain" onKeyDown={onKeyDown} tabIndex={-1}>
                     {filtered.length === 0 && (
                         <li className="px-2 py-2 text-center text-xs text-muted">
                             Tidak ada hasil
@@ -150,6 +152,8 @@ export function Combobox({
                         const isSelected = String(option.value) === String(value ?? '');
 
                         return (
+                            // Keyboard selection is handled on the list (Arrow/Enter); this handler is the pointer path.
+                            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
                             <li
                                 key={option.value}
                                 role="option"

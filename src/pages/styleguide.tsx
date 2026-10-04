@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Badge, Card, EmptyState, ErrorState, PageHeader, Skeleton } from '@/components/ui/misc';
 import type { BadgeTone } from '@/components/ui/misc';
 import { PasswordInput } from '@/components/ui/password-input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tip } from '@/components/ui/tooltip';
 import { rupiah } from '@/lib/format';
 import { useTitle } from '@/lib/title';
@@ -31,6 +32,12 @@ const TOKENS = [
     ['muted', 'bg-muted', 'Teks pendukung (label, hint, header tabel)'],
     ['danger', 'bg-danger', 'Galat, tombol hapus'],
 ];
+
+/** The static error pages (error-pages/*.html, made by `npm run error-pages`), keyed by status code. */
+const ERROR_PAGES = Object.entries(import.meta.glob<string>('../../error-pages/*.html', { query: '?raw', import: 'default', eager: true }))
+    .map(([file, html]) => ({ code: /(\d{3})\.html$/.exec(file)?.[1] ?? file, html }))
+    .sort((a, b) => a.code.localeCompare(b.code));
+const ERROR_LABELS: Record<string, string> = { '401': 'Perlu masuk', '403': 'Akses ditolak', '404': 'Tidak ditemukan', '419': 'Kedaluwarsa', '429': 'Terlalu banyak', '500': 'Galat server', '503': 'Pemeliharaan' };
 
 const TONES: BadgeTone[] = ['neutral', 'info', 'success', 'warning', 'danger'];
 
@@ -204,6 +211,23 @@ export default function Styleguide() {
                         <Button variant="outline" onClick={() => setModal(true)}>Buka dialog</Button>
                         <Button variant="outline" onClick={() => setConfirm(true)}>Buka konfirmasi</Button>
                     </div>
+                </Section>
+
+                <Section title="Halaman error dan pemeliharaan" description="HTML statis di error-pages/ untuk disajikan web server saat aplikasi tidak bisa menjawab. Di dalam aplikasi, 404 tampil lewat pages/not-found.tsx.">
+                    <Tabs defaultValue="503">
+                        <TabsList className="flex-wrap">
+                            {ERROR_PAGES.map((p) => (
+                                <TabsTrigger key={p.code} value={p.code}>
+                                    {p.code} {ERROR_LABELS[p.code]}
+                                </TabsTrigger>
+                            ))}
+                        </TabsList>
+                        {ERROR_PAGES.map((p) => (
+                            <TabsContent key={p.code} value={p.code} className="pt-3">
+                                <iframe title={`Halaman error ${p.code}`} sandbox="" srcDoc={p.html} className="h-[420px] w-full rounded-md border border-line bg-white" />
+                            </TabsContent>
+                        ))}
+                    </Tabs>
                 </Section>
 
                 <Section title="Email kode OTP" description="Pratinjau templatenya (email/login-code.ts). Versi Blade untuk Laravel ada di email/blade.">

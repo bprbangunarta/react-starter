@@ -1,11 +1,11 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { http, HttpError } from '@/lib/http';
 
 type FormData = Record<string, unknown>;
 
 type Options<R> = {
-    onSuccess?: (response: R) => void;
+    onSuccess?: (response: R) => void | Promise<void>;
     onError?: (errors: Record<string, string>) => void;
     onFinish?: () => void;
     preserveScroll?: boolean;
@@ -19,7 +19,7 @@ type Options<R> = {
  * the screens were written for, so the screens read like the original application.
  */
 export function useForm<T extends FormData>(initial: T) {
-    const defaults = useRef<T>(initial);
+    const [defaults, setDefaultsState] = useState<T>(initial);
     const [data, setDataState] = useState<T>(initial);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [processing, setProcessing] = useState(false);
@@ -39,7 +39,7 @@ export function useForm<T extends FormData>(initial: T) {
                 toast.success(response.message);
             }
 
-            options.onSuccess?.(response);
+            await options.onSuccess?.(response);
         } catch (e) {
             if (e instanceof HttpError && e.status === 422) {
                 const mapped = Object.fromEntries(Object.entries(e.errors).map(([k, v]) => [k, v[0]]));
@@ -60,15 +60,15 @@ export function useForm<T extends FormData>(initial: T) {
         setData,
         errors,
         processing,
-        isDirty: JSON.stringify(data) !== JSON.stringify(defaults.current),
+        isDirty: JSON.stringify(data) !== JSON.stringify(defaults),
         setError: (key: string, message: string) => setErrors((current) => ({ ...current, [key]: message })),
         clearErrors: () => setErrors({}),
         reset: (...keys: (keyof T)[]) => {
-            setDataState((current) => (keys.length === 0 ? defaults.current : { ...current, ...Object.fromEntries(keys.map((k) => [k, defaults.current[k]])) }));
+            setDataState((current) => (keys.length === 0 ? defaults : { ...current, ...Object.fromEntries(keys.map((k) => [k, defaults[k]])) }));
             setErrors({});
         },
         setDefaults: () => {
-            defaults.current = data;
+            setDefaultsState(data);
         },
         post: <R = unknown>(url: string, options?: Options<R>) => submit('post', url, options),
         put: <R = unknown>(url: string, options?: Options<R>) => submit('put', url, options),

@@ -83,7 +83,7 @@ export default function AppLayout() {
 
                 {mobileOpen && (
                     <div className="fixed inset-0 z-40 lg:hidden">
-                        <div className="absolute inset-0 bg-ink/40" onClick={() => setMobileOpen(false)} />
+                        <button type="button" tabIndex={-1} aria-label="Tutup menu" className="absolute inset-0 bg-ink/40" onClick={() => setMobileOpen(false)} />
                         <aside className="relative h-full w-64 bg-surface shadow-xl">
                             <div className="flex h-12 items-center justify-between border-b border-line px-4">
                                 <Brand />

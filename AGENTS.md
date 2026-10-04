@@ -19,7 +19,7 @@ Acuan lain: `/styleguide` (jalankan `npm run dev`, sidebar → Panduan; semua ko
 ```bash
 npm install
 npm run dev        # server pengembangan
-npm run check      # tsc --noEmit + pemeriksa standar kode (wajib lolos sebelum selesai)
+npm run check      # tsc + ESLint + pemeriksa standar kode (wajib lolos sebelum selesai)
 npm run build      # check + build produksi
 ```
 

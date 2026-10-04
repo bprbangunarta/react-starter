@@ -37,14 +37,14 @@ export default function Login() {
                         noValidate
                         onSubmit={(e) => {
                             e.preventDefault();
-                            form.post<Partial<Me> & { two_factor: boolean }>('/login', {
+                            void form.post<Partial<Me> & { two_factor: boolean }>('/login', {
                                 toast: false,
                                 onSuccess: async (response) => {
                                     if (response.two_factor) {
-                                        navigate('/two-factor-challenge');
+                                        void navigate('/two-factor-challenge');
                                     } else {
                                         await refresh();
-                                        navigate('/');
+                                        void navigate('/');
                                     }
                                 },
                                 onError: () => form.setData('password', ''),

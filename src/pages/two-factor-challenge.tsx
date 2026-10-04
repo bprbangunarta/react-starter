@@ -94,14 +94,14 @@ export default function TwoFactorChallenge() {
                                 try {
                                     await http.post<Me>('/two-factor-challenge', { code: form.data.code, recovery });
                                     await refresh();
-                                    navigate('/');
+                                    void navigate('/');
                                 } catch (err) {
                                     if (err instanceof HttpError && err.status === 422) {
                                         form.reset('code');
                                         form.setError('code', err.errors.code?.[0] ?? err.message);
                                     } else {
                                         toast.error(err instanceof Error ? err.message : 'Terjadi kesalahan.');
-                                        navigate('/login');
+                                        void navigate('/login');
                                     }
                                 }
                             })();

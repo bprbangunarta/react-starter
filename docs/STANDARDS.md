@@ -1,8 +1,9 @@
 # Standar kode dan tampilan
 
 Aturan wajib untuk semua kode di proyek ini, termasuk yang ditulis setelah backend tersambung. Aturan bertanda **[mesin]** diperiksa
-`npm run standards` (bagian dari `npm run check` dan `npm run build`); sisanya diperiksa saat tinjauan kode. `npm run check` juga
-menjalankan `tsc --noEmit` dengan `strict`, `noUnusedLocals`, dan `noUnusedParameters`.
+`npm run standards` (bagian dari `npm run check` dan `npm run build`); sisanya diperiksa saat tinjauan kode. `npm run check` menjalankan
+tiga lapis: `tsc --noEmit` (`strict`, `noUnusedLocals`, `noUnusedParameters`), **ESLint** (`npm run lint`: hooks, promise, aksesibilitas;
+konfigurasi di `eslint.config.js`), dan pemeriksa aturan rumah `npm run standards`.
 
 ## Isi
 
@@ -48,8 +49,11 @@ menjalankan `tsc --noEmit` dengan `strict`, `noUnusedLocals`, dan `noUnusedParam
 - **Galat render** ditangkap `components/error-boundary.tsx` (dipasang di `main.tsx`); jangan menelan galat dengan `catch {}` kosong.
 - **Teks pengguna** ditampilkan sebagai teks; `dangerouslySetInnerHTML` dilarang **[mesin]**.
 - Gunakan `React.memo`/`useMemo`/`useCallback` hanya bila ada masalah kinerja yang terukur, bukan sebagai kebiasaan.
-- Belum ada ESLint (`react-hooks/rules-of-hooks`, `exhaustive-deps`); aturan hooks di atas dipastikan lewat tinjauan kode. Bila proyek
-  tumbuh, tambahkan `eslint` + `eslint-plugin-react-hooks`.
+- **ESLint menegakkan** (`eslint.config.js`): `rules-of-hooks` dan `exhaustive-deps` (error), `no-floating-promises` (pakai `void` atau `await`),
+  `no-misused-promises`, `consistent-type-imports`, `no-explicit-any`, serta aturan `jsx-a11y` (label, peran ARIA, penanganan keyboard).
+  Dua aturan sengaja dimatikan di konfigurasi, dengan alasannya tertulis di sana: `set-state-in-effect` (pemuatan saat mount lewat
+  `useResource`/sesi adalah pola resmi) dan `no-autofocus` (login dan dialog memang memfokuskan isian pertama).
+- Mematikan aturan ESLint per baris (`eslint-disable-next-line`) hanya dengan komentar alasan di atasnya.
 <a id="tampilan"></a>
 ## 3. Tampilan (Compact UI)
 
@@ -142,7 +146,7 @@ Email (`email/login-code.ts`) dan halaman error (`error-pages/*.html`) tidak bis
 ## 7. Sebelum selesai
 
 ```bash
-npm run check      # tsc --noEmit + npm run standards
+npm run check      # tsc --noEmit + ESLint + npm run standards
 npm run build
 ```
 

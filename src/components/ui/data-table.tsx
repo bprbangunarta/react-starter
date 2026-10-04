@@ -116,7 +116,7 @@ export function DataTable<T>({
                                         c.hideBelow && HIDE[c.hideBelow],
                                     )}
                                 >
-                                    {String(c.header)}
+                                    {typeof c.header === 'string' ? c.header : c.key}
                                 </SortHead>
                             ) : (
                                 <th key={c.key} scope="col" className={th(c)}>

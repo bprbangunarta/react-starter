@@ -12,7 +12,7 @@ Butuh Node.js 20.19+ atau 22.12+ (syarat Vite 8).
 ```bash
 npm install
 npm run dev          # http://localhost:5173
-npm run check        # tsc --noEmit + pemeriksa standar kode
+npm run check        # tsc --noEmit + ESLint + pemeriksa standar kode
 npm run build        # check + vite build ke dist/
 npm run preview      # menjalankan hasil build
 ```
@@ -135,6 +135,8 @@ Pratinjaunya tampil di `/styleguide`. Untuk Laravel, versi Blade yang sama ada d
 salah, jeda kirim ulang) ada di [docs/STANDARDS.md](docs/STANDARDS.md) bagian 6.
 
 ## Halaman error statis
+
+Pratinjau ketujuhnya (termasuk 503 pemeliharaan) ada di `/styleguide`.
 
 `error-pages/` berisi HTML mandiri (tanpa aset) untuk 401, 403, 404, 419, 429, 500, dan 503, untuk disajikan server web atau
 framework saat aplikasi tidak bisa menjawab (pemeliharaan, galat server). Ubah nama aplikasinya dan buat ulang:

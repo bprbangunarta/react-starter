@@ -49,8 +49,8 @@ export function DatePicker({
                 <button
                     id={id}
                     type="button"
-                    aria-invalid={invalid || undefined}
-                    className={cn(controlClass, 'flex items-center justify-between text-left')}
+                    data-invalid={invalid || undefined}
+                    className={cn(controlClass, 'flex items-center justify-between text-left data-[invalid]:border-danger data-[invalid]:ring-danger/20')}
                 >
                     <span className={cn(!selected && 'text-muted/70')}>
                         {selected ? format(selected, 'dd MMM yyyy', { locale: idLocale }) : placeholder}
