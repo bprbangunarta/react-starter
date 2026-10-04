@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { DialogFooter, Modal } from '@/components/ui/dialog';
+import { DialogBody, DialogFooter, Modal } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import { PasswordInput } from '@/components/ui/password-input';
 import { HttpError, REAUTH_EVENT, http } from '@/lib/http';
@@ -66,7 +66,7 @@ export function ReauthDialog() {
                     void submit();
                 }}
             >
-                <div className="p-4">
+                <DialogBody>
                     <Field label="Kata sandi" error={error}>
                         <PasswordInput
                             id="reauth-password"
@@ -76,7 +76,7 @@ export function ReauthDialog() {
                             aria-invalid={!!error}
                         />
                     </Field>
-                </div>
+                </DialogBody>
                 <DialogFooter>
                     <Button variant="outline" onClick={close}>
                         Batal

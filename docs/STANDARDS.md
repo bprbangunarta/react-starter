@@ -82,7 +82,9 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
 
   Urutan footer: batal paling kiri, konfirmasi paling kanan. Satu tempat tidak boleh bercampur: bila satu footer atau satu toolbar sudah memakai ikon,
   semua tombolnya memakai ikon (kecuali tabel di atas).
-- **Tambah/ubah data:** modal kecil (`max-w-sm`) atau form satu halaman; `ConfirmDialog` sebelum menghapus.
+- **Dialog** punya tiga bagian, seperti kartu: **header** (judul; subjudul satu baris hanya untuk dialog form), **body** (`DialogBody`: isi formulir, atau **pesan konfirmasi**),
+  dan **footer** (`DialogFooter`, tombol teks saja). Pesan di `ConfirmDialog` ada di body, bukan di header; jangan menaruh teks panjang di `description` `Modal`.
+  Dialog yang memakai `Modal` wajib memakai `DialogBody` **[mesin]**. Tambah/ubah data: modal kecil (`max-w-sm`) atau form satu halaman; `ConfirmDialog` sebelum menghapus.
 - **Kartu (header, body, footer)** disusun seperti dialog: `CardHeader` (judul `text-sm font-semibold`, keterangan opsional, aksi/badge di kanan,
   garis bawah), `CardBody` (isi, `p-3`), dan `CardFooter` (garis atas) **hanya bila kartu punya tombol** kirim/batal. Kartu tanpa tombol tidak punya footer.
   Tombol di footer: batal paling kiri, konfirmasi paling kanan, **teks saja**; hint boleh di kiri. Jangan menaruh tombol Simpan di dalam body

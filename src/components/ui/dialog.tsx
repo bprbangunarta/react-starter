@@ -2,6 +2,7 @@ import { X } from 'lucide-react';
 import { Dialog as D, AlertDialog as AD } from 'radix-ui';
 import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const overlay = 'fixed inset-0 z-50 bg-ink/40 data-[state=open]:animate-in data-[state=open]:fade-in-0';
 const content =
@@ -67,10 +68,12 @@ export function ConfirmDialog({
             <AD.Portal>
                 <AD.Overlay className={overlay} />
                 <AD.Content className={content}>
-                    <div className="px-4 pt-4 pb-3">
+                    <div className="border-b border-line px-4 py-3">
                         <AD.Title className="text-sm font-semibold">{title}</AD.Title>
-                        <AD.Description className="mt-1 text-sm text-muted">{description}</AD.Description>
                     </div>
+                    <DialogBody>
+                        <AD.Description className="text-sm">{description}</AD.Description>
+                    </DialogBody>
                     <DialogFooter>
                         <AD.Cancel asChild>
                             <Button variant="outline">Batal</Button>
@@ -83,6 +86,15 @@ export function ConfirmDialog({
             </AD.Portal>
         </AD.Root>
     );
+}
+
+/**
+ * Every dialog has three parts: a header (title, and for form dialogs a short subtitle), a body (the content: form fields,
+ * or the message of a confirmation), and a footer with the buttons. `Modal` and `ConfirmDialog` draw the header; screens
+ * supply `DialogBody` and `DialogFooter`.
+ */
+export function DialogBody({ className, ...props }: React.ComponentProps<'div'>) {
+    return <div className={cn('p-4', className)} {...props} />;
 }
 
 /**

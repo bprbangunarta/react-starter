@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { DatePicker } from '@/components/ui/date-picker';
-import { DialogFooter, Modal } from '@/components/ui/dialog';
+import { DialogBody, DialogFooter, Modal } from '@/components/ui/dialog';
 import { FilterBar, SearchInput } from '@/components/ui/filter-bar';
 import { DataTable } from '@/components/ui/data-table';
 import type { Column } from '@/components/ui/data-table';
@@ -311,7 +311,7 @@ export default function AuditLogsIndex() {
             >
                 {selected && (
                     <>
-                        <div className="max-h-[70vh] overflow-y-auto p-4 text-sm">
+                        <DialogBody className="max-h-[70vh] overflow-y-auto text-sm">
                             <dl className="grid grid-cols-[7rem_1fr] gap-x-3 gap-y-1">
                                 {(
                                     [
@@ -359,7 +359,7 @@ export default function AuditLogsIndex() {
                                     {JSON.stringify(selected.context, null, 2)}
                                 </pre>
                             )}
-                        </div>
+                        </DialogBody>
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setSelected(null)}>
                                 Tutup

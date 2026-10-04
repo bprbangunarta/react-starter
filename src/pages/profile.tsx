@@ -8,7 +8,7 @@ import { EMPTY_PASSWORD, PasswordFields } from '@/components/password-fields';
 import type { PasswordData } from '@/components/password-fields';
 import { Button } from '@/components/ui/button';
 import { CodeInput } from '@/components/ui/code-input';
-import { DialogFooter, Modal } from '@/components/ui/dialog';
+import { DialogBody, DialogFooter, Modal } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import { Badge, Card, CardBody, CardFooter, CardHeader, PageHeader } from '@/components/ui/misc';
 import { useForm } from '@/lib/form';
@@ -63,7 +63,7 @@ function CodeForm({
                 });
             }}
         >
-            <div className="flex flex-col gap-3 p-4">
+            <DialogBody className="flex flex-col gap-3">
                 {children}
                 <Field label={recovery ? 'Kode atau kode pemulihan' : 'Kode verifikasi'} error={form.errors.code}>
                     <CodeInput
@@ -74,7 +74,7 @@ function CodeForm({
                         placeholder={recovery ? 'kode atau xxxxx-xxxxx' : '••••••'}
                     />
                 </Field>
-            </div>
+            </DialogBody>
             <DialogFooter>
                 <Button variant="outline" onClick={() => onDone({})}>
                     Batal
@@ -134,13 +134,13 @@ function RecoveryCodes({ codes, onClose }: { codes: string[] | null; onClose: ()
             title="Simpan kode pemulihan Anda"
             description="Tiap kode hanya berlaku sekali bila ponsel Anda hilang. Kode ini hanya ditampilkan sekarang."
         >
-            <div className="p-4">
+            <DialogBody>
                 <ul className="grid grid-cols-2 gap-1.5 rounded-md border border-line bg-canvas p-3 font-mono text-sm">
                     {codes?.map((code) => (
                         <li key={code}>{code}</li>
                     ))}
                 </ul>
-            </div>
+            </DialogBody>
             <DialogFooter>
                 <Button
                     variant="outline"

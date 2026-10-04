@@ -108,6 +108,16 @@ for (const file of files) {
     }
 }
 
+// Multi-line rule: a screen that opens a Modal supplies the dialog body with DialogBody (header, body, footer; see docs/STANDARDS.md).
+for (const file of files) {
+    const text = readFileSync(file, 'utf8');
+
+    if (/<Modal\b/.test(text) && !/\bDialogBody\b/.test(text) && !file.endsWith('components/ui/dialog.tsx') && !isTest(file)) {
+        failures++;
+        console.error(`${relative(process.cwd(), file)}  Dialog tanpa DialogBody: isi dialog dibungkus DialogBody (header, body, footer)`);
+    }
+}
+
 if (failures > 0) {
     console.error(`\n${failures} pelanggaran standar kode.`);
     process.exit(1);

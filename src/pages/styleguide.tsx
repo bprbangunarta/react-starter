@@ -13,7 +13,7 @@ import { DataTable } from '@/components/ui/data-table';
 import type { Column } from '@/components/ui/data-table';
 import { DatePicker } from '@/components/ui/date-picker';
 import { DropdownContent, DropdownItem, DropdownLabel, DropdownMenu, DropdownSeparator, DropdownTrigger } from '@/components/ui/dropdown';
-import { ConfirmDialog, DialogFooter, Modal } from '@/components/ui/dialog';
+import { ConfirmDialog, DialogBody, DialogFooter, Modal } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import { FileInput } from '@/components/ui/file-input';
 import { FilterBar, SearchInput } from '@/components/ui/filter-bar';
@@ -561,7 +561,10 @@ export default function Styleguide() {
                     </div>
                 </Section>
 
-                <Section title="Dialog" description="Footer: tombol batal paling kiri, tombol konfirmasi paling kanan.">
+                <Section
+                    title="Dialog"
+                    description="Header (judul), body (isi atau pesan konfirmasi), footer (tombol teks: batal paling kiri, konfirmasi paling kanan)."
+                >
                     <div className="flex gap-2">
                         <Button variant="outline" onClick={() => setModal(true)}>
                             Buka dialog
@@ -617,7 +620,7 @@ export default function Styleguide() {
                             save();
                         }}
                     >
-                        <div className="grid gap-3 p-4">
+                        <DialogBody className="grid gap-3">
                             <Field label="Nama" required error={nameError}>
                                 <Input autoFocus value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} aria-invalid={!!nameError} />
                             </Field>
@@ -636,7 +639,7 @@ export default function Styleguide() {
                                     onChange={(e) => setDraft({ ...draft, amount: e.target.value.replace(/\D/g, '') })}
                                 />
                             </Field>
-                        </div>
+                        </DialogBody>
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setDraft(null)}>
                                 Batal
@@ -659,11 +662,11 @@ export default function Styleguide() {
             />
 
             <Modal open={modal} onOpenChange={setModal} title="Contoh dialog" description="Dialog kecil untuk tambah atau ubah data.">
-                <div className="p-4">
+                <DialogBody>
                     <Field label="Nama" required>
                         <Input autoFocus />
                     </Field>
-                </div>
+                </DialogBody>
                 <DialogFooter>
                     <Button variant="outline" onClick={() => setModal(false)}>
                         Batal
