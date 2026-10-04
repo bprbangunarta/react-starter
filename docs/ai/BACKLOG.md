@@ -22,3 +22,6 @@ Hapus barisnya bila sudah dikerjakan dan pindahkan ringkasannya ke tabel "Prakti
 | Peran dan izin, manajemen pengguna | Sengaja dikeluarkan dari starter | Tambah sebagai fitur aplikasi turunan, bukan starter | R |
 | Kunci akses (passkey/WebAuthn) sebagai MFA | MFA yang ada (TOTP, OTP email) sudah memadai untuk starter | Butuh dukungan backend; tambah di halaman Profil | R |
 | Bawa perbaikan starter ke `mso-api/admin-ui` | `admin-ui` adalah turunan starter; ia belum punya tes, ESLint, Prettier, CI, kartu header/body/footer, tangga warna status, dan komponen isian baru | Urusan repo mso-api: salin komponen dan aturan, lalu jalankan `npm run check` di sana (halaman Pengguna/API Key/Referensi perlu disesuaikan) | S |
+| Muat ulang otomatis bila potongan kode lama hilang setelah deploy | Saat ini `ErrorBoundary` menampilkan "Muat ulang untuk mencoba lagi" (teruji: modul lazy gagal diambil) | Dengarkan `vite:preloadError` dan `location.reload()` sekali (jangan pakai `sessionStorage`; dilarang oleh pemeriksa) | S |
+| Naikkan versi mayor dependensi | ESLint 10 menunggu `eslint-plugin-jsx-a11y`; TypeScript 7 menunggu `typescript-eslint`; React Router 8 dan `@types/node` 26 belum dicoba | Naikkan satu per satu, jalankan `npm run check` dan CI | S |
+

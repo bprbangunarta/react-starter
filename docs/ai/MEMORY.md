@@ -40,7 +40,7 @@ pekerjaan tertunda di [BACKLOG](BACKLOG.md), kondisi terkini di [STATE](STATE.md
 
 - Vite 8 butuh Node 20.19+ atau 22.12+. `tsconfig.json` hanya memuat tipe `vite/client`: tes yang membaca berkas memakai `// @vitest-environment node` dan `/// <reference types="node" />`.
 - Vitest dengan `css: false` mengosongkan impor CSS (termasuk `?raw`): baca `index.css` lewat `node:fs`.
-- Di panel browser bawaan: `cmd+a` tidak memilih teks (isi kolom lewat `form_input`), ref bisa basi setelah render ulang (cari ulang), dan layar kedua kali dibuka butuh ±2 detik karena data tiruan dibuat dulu.
+- Di panel browser bawaan: `cmd+a` tidak memilih teks (isi kolom lewat `form_input`), ref bisa basi setelah render ulang (cari ulang), dan pembukaan pertama sebuah halaman butuh ±2 detik (server dev mengompilasi modul lazy; data tiruan juga dibuat sekali). Setelah `npm update` atau server dev baru menyala, muat ulang penuh halaman uji; modul lazy lama gagal diambil dan `ErrorBoundary` tampil.
 - zsh: tanda `--include=*.tsx` tanpa kutip membuat grep gagal; pakai `--include='*.tsx'`. `sed -i` di macOS butuh argumen cadangan (`-i.bak`).
 - `.prettierignore` mengecualikan `*.md`, `error-pages`, `public`, dan `email/blade`; jalankan Prettier pada dokumen secara eksplisit bila perlu.
 - Pembuatan `favicon.ico` oleh `npm run rebrand` butuh `rsvg-convert` dan ImageMagick (ImageMagick saja gagal merender teks SVG).
