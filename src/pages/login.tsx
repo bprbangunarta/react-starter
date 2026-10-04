@@ -38,10 +38,12 @@ export default function Login() {
                         noValidate
                         onSubmit={(e) => {
                             e.preventDefault();
-                            void form.post<Partial<Me> & { two_factor: boolean }>('/login', {
+                            void form.post<Partial<Me> & { two_factor: boolean; password_expired?: boolean }>('/login', {
                                 toast: false,
                                 onSuccess: async (response) => {
-                                    if (response.two_factor) {
+                                    if (response.password_expired) {
+                                        void navigate('/password-expired');
+                                    } else if (response.two_factor) {
                                         void navigate('/two-factor-challenge');
                                     } else {
                                         await refresh();
@@ -87,7 +89,7 @@ export default function Login() {
                     <p className="mt-3 flex items-start gap-1.5 text-xs text-muted">
                         <Info className="mt-0.5 size-3.5 shrink-0" />
                         <span>
-                            Data tiruan: masuk dengan <code className="rounded bg-canvas px-1">admin</code> / <code className="rounded bg-canvas px-1">password</code>.
+                            Data tiruan: masuk dengan <code className="rounded bg-canvas px-1">admin</code> / <code className="rounded bg-canvas px-1">password</code>. Coba juga <code className="rounded bg-canvas px-1">kadaluarsa</code> / <code className="rounded bg-canvas px-1">password</code> (kata sandinya sudah lewat 30 hari).
                         </span>
                     </p>
                 )}

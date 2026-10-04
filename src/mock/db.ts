@@ -5,6 +5,10 @@ export type MockUser = {
     username: string;
     email: string;
     password: string;
+    /** When the password was last set (ISO); the policy compares it with today. */
+    password_changed_at: string;
+    /** Earlier passwords that may not be reused. The mock keeps them as text; a real backend keeps hashes only. */
+    password_history: string[];
     mfa_method: 'totp' | 'email' | null;
     mfa_secret: string | null;
     recovery_codes: string[];
@@ -49,6 +53,8 @@ export type Session = {
     userId: number | null;
     /** Signed in with the password, waiting for the second factor. */
     pendingUserId: number | null;
+    /** Signed in with the password, but it is older than the policy allows: waiting for a new one. */
+    expiredUserId: number | null;
     attempts: number;
     emailCode: string | null;
     emailSentAt: number | null;
@@ -61,7 +67,7 @@ export type Db = {
     session: Session;
 };
 
-const KEY = 'starterkit.db.v1';
+const KEY = 'starterkit.db.v2';
 
 let cache: Db | null = null;
 

@@ -12,6 +12,10 @@ import type { Db, MockNotification, MockUser } from '@/mock/db';
 
 const EMAIL_COOLDOWN_S = 20;
 const MAX_ATTEMPTS = 5;
+/** Password policy: a password is valid for this many days, and the new one may not equal the last PASSWORD_HISTORY ones. */
+const PASSWORD_MAX_AGE_DAYS = 30;
+const PASSWORD_HISTORY = 5;
+const DAY_MS = 24 * 3600 * 1000;
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -27,14 +31,18 @@ async function database(): Promise<Db> {
         id, title, body, module: 'Sistem', level, url: null, read, at: new Date(now - hoursAgo * 3600 * 1000).toISOString(),
     });
     const db: Db = {
-        users: [{ id: 1, name: 'Administrator', username: 'admin', email: 'admin@example.com', password: 'password', mfa_method: null, mfa_secret: null, recovery_codes: [] }],
+        users: [
+            { id: 1, name: 'Administrator', username: 'admin', email: 'admin@example.com', password: 'password', password_changed_at: new Date(now - 5 * DAY_MS).toISOString(), password_history: [], mfa_method: null, mfa_secret: null, recovery_codes: [] },
+            // Demo of the expired-password flow: the password is 45 days old, so signing in asks for a new one.
+            { id: 2, name: 'Pengguna Kedaluwarsa', username: 'kadaluarsa', email: 'kadaluarsa@example.com', password: 'password', password_changed_at: new Date(now - 45 * DAY_MS).toISOString(), password_history: [], mfa_method: null, mfa_secret: null, recovery_codes: [] },
+        ],
         audit: [],
         notifications: [
             notification(1, 'Selamat datang', 'Ini data tiruan: semua perubahan hanya tersimpan di peramban ini.', 'info', 2),
             notification(2, 'Laporan bulanan siap', 'Laporan bulan lalu sudah tersedia.', 'success', 20),
             notification(3, 'Kapasitas penyimpanan 80%', 'Pertimbangkan membersihkan berkas lama.', 'warning', 50, true),
         ],
-        session: { userId: null, pendingUserId: null, attempts: 0, emailCode: null, emailSentAt: null },
+        session: { userId: null, pendingUserId: null, expiredUserId: null, attempts: 0, emailCode: null, emailSentAt: null },
     };
     await seed(db);
     saveDb(db);
@@ -50,6 +58,37 @@ function currentUser(db: Db): MockUser {
     }
 
     return user;
+}
+
+const passwordExpired = (user: MockUser): boolean => Date.now() - Date.parse(user.password_changed_at) > PASSWORD_MAX_AGE_DAYS * DAY_MS;
+
+/** The rules a new password must meet, as 422 messages under the field they belong to. */
+function checkNewPassword(user: MockUser, body: Body): string {
+    const password = str(body.password);
+
+    if (password.length < 8) {
+        invalid('password', 'Kata sandi baru minimal 8 karakter.');
+    }
+
+    if (password !== str(body.password_confirmation)) {
+        invalid('password_confirmation', 'Konfirmasi kata sandi tidak cocok.');
+    }
+
+    if (password === user.password) {
+        invalid('password', 'Kata sandi baru tidak boleh sama dengan kata sandi saat ini.');
+    }
+
+    if (user.password_history.includes(password)) {
+        invalid('password', `Kata sandi baru tidak boleh sama dengan ${PASSWORD_HISTORY} kata sandi sebelumnya.`);
+    }
+
+    return password;
+}
+
+function setPassword(user: MockUser, password: string): void {
+    user.password_history = [user.password, ...user.password_history].slice(0, PASSWORD_HISTORY);
+    user.password = password;
+    user.password_changed_at = new Date().toISOString();
 }
 
 function invalid(field: string, message: string): never {
@@ -92,6 +131,30 @@ function csv(rows: string[][]): string {
     return rows.map((r) => r.map(cell).join(',')).join('\n');
 }
 
+/** After the password step passed: ask for the second factor, or sign in. */
+async function finishPasswordStep(db: Db, user: MockUser): Promise<unknown> {
+    const s = db.session;
+
+    if (user.mfa_method) {
+        s.pendingUserId = user.id;
+        s.userId = null;
+
+        if (user.mfa_method === 'email') {
+            emailCode(db);
+        }
+
+        saveDb(db);
+
+        return { two_factor: true, message: user.mfa_method === 'email' ? `Kode verifikasi dikirim (demo: ${s.emailCode}).` : undefined };
+    }
+
+    s.userId = user.id;
+    await audit(db, user, { module: 'auth', event: 'auth.login', action: 'login', subject_type: 'User', subject_id: user.id, subject: user.username, url: '/login' });
+    saveDb(db);
+
+    return { two_factor: false, ...me(db, user) };
+}
+
 async function route(method: Method, url: string, body: Body, params: Params): Promise<unknown> {
     const db = await database();
     const s = db.session;
@@ -113,24 +176,17 @@ async function route(method: Method, url: string, body: Body, params: Params): P
 
         s.attempts = 0;
 
-        if (user.mfa_method) {
-            s.pendingUserId = user.id;
+        if (passwordExpired(user)) {
+            s.expiredUserId = user.id;
             s.userId = null;
-
-            if (user.mfa_method === 'email') {
-                emailCode(db);
-            }
-
+            s.pendingUserId = null;
+            await audit(db, user, { module: 'auth', event: 'auth.password_expired', action: 'password_expired', outcome: 'denied', subject_type: 'User', subject_id: user.id, subject: user.username, context: { max_age_days: PASSWORD_MAX_AGE_DAYS }, url: '/login' });
             saveDb(db);
 
-            return { two_factor: true, message: user.mfa_method === 'email' ? `Kode verifikasi dikirim (demo: ${s.emailCode}).` : undefined };
+            return { two_factor: false, password_expired: true };
         }
 
-        s.userId = user.id;
-        await audit(db, user, { module: 'auth', event: 'auth.login', action: 'login', subject_type: 'User', subject_id: user.id, subject: user.username, url: '/login' });
-        saveDb(db);
-
-        return { two_factor: false, ...me(db, user) };
+        return finishPasswordStep(db, user);
     }
 
     if (method === 'POST' && url === '/logout') {
@@ -142,9 +198,48 @@ async function route(method: Method, url: string, body: Body, params: Params): P
 
         s.userId = null;
         s.pendingUserId = null;
+        s.expiredUserId = null;
         saveDb(db);
 
         return {};
+    }
+
+    // --- renew an expired password at sign-in
+    if (url.startsWith('/password-expired')) {
+        const user = db.users.find((u) => u.id === s.expiredUserId);
+
+        if (!user) {
+            throw new HttpError(401, 'Sesi masuk Anda berakhir. Silakan masuk lagi.');
+        }
+
+        if (method === 'GET') {
+            return { name: user.name, username: user.username, max_age_days: PASSWORD_MAX_AGE_DAYS };
+        }
+
+        if (url === '/password-expired/cancel') {
+            s.expiredUserId = null;
+            saveDb(db);
+
+            return {};
+        }
+
+        const failed = db.audit.filter((e) => e.event === 'auth.password_expired_change_failed' && e.username === user.username && Date.now() - Date.parse(e.at) < 60_000).length;
+
+        if (failed >= MAX_ATTEMPTS) {
+            invalid('current_password', 'Terlalu banyak percobaan. Coba lagi dalam 1 menit.');
+        }
+
+        if (str(body.current_password) !== user.password) {
+            await audit(db, user, { module: 'auth', event: 'auth.password_expired_change_failed', action: 'password_expired_change_failed', outcome: 'failure', subject_type: 'User', subject_id: user.id, subject: user.username, method: 'POST', url });
+            saveDb(db);
+            invalid('current_password', 'Kata sandi saat ini salah.');
+        }
+
+        setPassword(user, checkNewPassword(user, body));
+        s.expiredUserId = null;
+        await audit(db, user, { module: 'auth', event: 'auth.password_expired_changed', action: 'password_expired_changed', subject_type: 'User', subject_id: user.id, subject: user.username, method: 'POST', url });
+
+        return finishPasswordStep(db, user);
     }
 
     // --- second factor at sign-in
@@ -255,17 +350,7 @@ async function route(method: Method, url: string, body: Body, params: Params): P
             invalid('current_password', 'Kata sandi saat ini salah.');
         }
 
-        const password = str(body.password);
-
-        if (password.length < 8) {
-            invalid('password', 'Kata sandi baru minimal 8 karakter.');
-        }
-
-        if (password !== str(body.password_confirmation)) {
-            invalid('password_confirmation', 'Konfirmasi kata sandi tidak cocok.');
-        }
-
-        user.password = password;
+        setPassword(user, checkNewPassword(user, body));
         await audit(db, user, { module: 'profile', event: 'profile.password_changed', action: 'password_changed', subject_type: 'User', subject_id: user.id, subject: user.username, method: 'PUT', url });
         saveDb(db);
 

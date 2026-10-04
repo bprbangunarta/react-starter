@@ -5,6 +5,7 @@ import AuditLogs from '@/pages/audit-logs';
 import Dashboard from '@/pages/dashboard';
 import Login from '@/pages/login';
 import NotFound from '@/pages/not-found';
+import PasswordExpired from '@/pages/password-expired';
 import Profile from '@/pages/profile';
 import Styleguide from '@/pages/styleguide';
 import TwoFactorChallenge from '@/pages/two-factor-challenge';
@@ -27,6 +28,7 @@ export default function App() {
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/two-factor-challenge" element={<TwoFactorChallenge />} />
+                    <Route path="/password-expired" element={<PasswordExpired />} />
                     <Route element={<RequireAuth />}>
                         <Route element={<AppLayout />}>
                             <Route index element={<Dashboard />} />

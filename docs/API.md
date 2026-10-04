@@ -19,9 +19,25 @@ Semua layar memanggil `http.get/post/put/delete(url, data)` di `src/lib/http.ts`
 | Metode | URL | Isi / hasil |
 |---|---|---|
 | GET | `/me` | `{ user: {id,name,username,email}, security: {enabled, method: 'totp'\|'email'\|null}, notifications: {unread, items[]} }`, 401 bila belum masuk |
-| POST | `/login` | `{ username, password, remember }` → `{ two_factor: false, ...me }` atau `{ two_factor: true }` (lanjut ke verifikasi). 422 `errors.username` bila salah |
+| POST | `/login` | `{ username, password, remember }` → `{ two_factor: false, ...me }`, atau `{ two_factor: true }` (lanjut ke verifikasi), atau `{ two_factor: false, password_expired: true }` (kata sandi benar tetapi sudah kedaluwarsa; lanjut ke perpanjangan, belum ada sesi). 422 `errors.username` bila salah |
 | POST | `/logout` | `{}` |
 | POST | `/reauth` | `{ password }` → `{ message }` (sesi dianggap "segar" beberapa menit). 422 `errors.password` bila salah |
+
+## Kata sandi kedaluwarsa saat masuk
+
+Kebijakan (di server, bawaan tiruan 30 hari): kata sandi berlaku `max_age_days` sejak terakhir diubah. Saat masuk dengan kata sandi benar tetapi
+sudah lewat batas, `POST /login` membalas `password_expired: true` dan **belum membuat sesi**; UI membuka layar perpanjangan.
+
+| Metode | URL | Isi / hasil |
+|---|---|---|
+| GET | `/password-expired` | `{ name, username, max_age_days }`; 401 bila tidak ada yang menunggu perpanjangan |
+| POST | `/password-expired` | `{ current_password, password, password_confirmation }` → seperti `/login` (`{ two_factor: true }` atau `me`). 422 per kolom (lihat aturan di bawah); 422 `current_password` bila salah atau terlalu sering salah |
+| POST | `/password-expired/cancel` | `{}` (kembali ke login) |
+
+Aturan kata sandi baru (juga berlaku untuk `PUT /profile/password`), semuanya 422 di kolomnya: minimal 8 karakter (`password`), konfirmasi sama
+(`password_confirmation`), **tidak sama dengan kata sandi saat ini** dan **tidak sama dengan N kata sandi sebelumnya** (bawaan tiruan 5; `password`).
+Backend asli membandingkan lewat hash (riwayat disimpan sebagai hash, tidak pernah teks) dan menyimpan `password_changed_at`.
+Kejadian audit: `auth.password_expired`, `auth.password_expired_changed`, `auth.password_expired_change_failed`.
 
 ## Verifikasi dua langkah saat masuk
 

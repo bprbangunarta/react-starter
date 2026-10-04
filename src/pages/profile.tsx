@@ -12,12 +12,13 @@ import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useSession } from '@/auth/session';
+import { EMPTY_PASSWORD, PasswordFields } from '@/components/password-fields';
+import type { PasswordData } from '@/components/password-fields';
 import { Button } from '@/components/ui/button';
 import { CodeInput } from '@/components/ui/code-input';
 import { DialogFooter, Modal } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import { Badge, Card, PageHeader } from '@/components/ui/misc';
-import { PasswordInput } from '@/components/ui/password-input';
 import { useForm } from '@/lib/form';
 import { http, HttpError } from '@/lib/http';
 import { useResource } from '@/lib/resource';
@@ -187,17 +188,11 @@ function RecoveryCodes({
 }
 
 function PasswordCard() {
-    const form = useForm({
-        current_password: '',
-        password: '',
-        password_confirmation: '',
-    });
+    const form = useForm<PasswordData>(EMPTY_PASSWORD);
 
     return (
         <Card>
-            <h2 className="border-b border-line px-3 py-2 text-sm font-semibold">
-                Kata sandi
-            </h2>
+            <h2 className="border-b border-line px-3 py-2 text-sm font-semibold">Kata sandi</h2>
             <form
                 noValidate
                 className="flex flex-col gap-3 p-3"
@@ -206,65 +201,10 @@ function PasswordCard() {
                     void form.put('/profile/password', { onSuccess: () => form.reset() });
                 }}
             >
-                <Field
-                    label="Kata sandi saat ini"
-                    required
-                    error={form.errors.current_password}
-                >
-                    <PasswordInput
-                        autoComplete="current-password"
-                        value={form.data.current_password}
-                        onChange={(e) =>
-                            form.setData('current_password', e.target.value)
-                        }
-                        aria-invalid={!!form.errors.current_password}
-                    />
-                </Field>
-                <div className="grid gap-3 sm:grid-cols-2">
-                    <Field
-                        label="Kata sandi baru"
-                        required
-                        error={form.errors.password}
-                        hint="Minimal 8 karakter"
-                    >
-                        <PasswordInput
-                            autoComplete="new-password"
-                            value={form.data.password}
-                            onChange={(e) =>
-                                form.setData('password', e.target.value)
-                            }
-                            aria-invalid={!!form.errors.password}
-                        />
-                    </Field>
-                    <Field
-                        label="Konfirmasi kata sandi baru"
-                        required
-                        error={form.errors.password_confirmation}
-                    >
-                        <PasswordInput
-                            autoComplete="new-password"
-                            value={form.data.password_confirmation}
-                            onChange={(e) =>
-                                form.setData(
-                                    'password_confirmation',
-                                    e.target.value,
-                                )
-                            }
-                            aria-invalid={!!form.errors.password_confirmation}
-                        />
-                    </Field>
-                </div>
+                <PasswordFields form={form} />
                 <div className="flex items-center justify-between gap-2">
-                    <p className="text-xs text-muted">
-                        Kata sandi baru berlaku untuk masuk berikutnya.
-                    </p>
-                    <Button
-                        type="submit"
-                        loading={form.processing}
-                        disabled={
-                            !form.data.current_password || !form.data.password
-                        }
-                    >
+                    <p className="text-xs text-muted">Kata sandi baru berlaku untuk masuk berikutnya.</p>
+                    <Button type="submit" loading={form.processing} disabled={!form.data.current_password || !form.data.password}>
                         <Save /> Ubah kata sandi
                     </Button>
                 </div>

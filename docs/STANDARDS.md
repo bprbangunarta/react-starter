@@ -151,6 +151,9 @@ Email (`email/login-code.ts`) dan halaman error (`error-pages/*.html`) tidak bis
 **Autentikasi dan MFA:**
 
 - Kata sandi minimal 8 karakter; percobaan salah dibatasi (kunci sementara).
+- **Masa berlaku kata sandi** (bawaan 30 hari, dapat diatur): bila lewat, masuk yang benar tidak membuat sesi tetapi mengarahkan ke `/password-expired`
+  untuk kata sandi baru. Kata sandi baru tidak boleh sama dengan yang sekarang atau beberapa sebelumnya (riwayat disimpan sebagai hash). Aturan
+  yang sama berlaku di Profil; kolomnya dipakai bersama lewat `components/password-fields.tsx`.
 - MFA opsional per pengguna: authenticator (TOTP) atau OTP email. OTP email berlaku 10 menit, maksimal 5 kali salah, ada jeda kirim ulang
   dan batas per jam, disimpan sebagai hash. 8 kode pemulihan sekali pakai.
 - Setiap kegagalan, pengiriman, dan penahanan tercatat di audit log (tanpa kodenya).

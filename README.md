@@ -17,8 +17,8 @@ npm run build        # check + vite build ke dist/
 npm run preview      # menjalankan hasil build
 ```
 
-Masuk dengan **`admin` / `password`**. Data tiruan (pengguna, audit log, notifikasi, sesi) disimpan di `localStorage` pada kunci
-`starterkit.db.v1`; hapus kunci itu (atau pakai jendela penyamaran) untuk mengulang dari awal. Bila peramban memakai alamat selain
+Masuk dengan **`admin` / `password`**. Untuk mencoba kata sandi kedaluwarsa, masuk dengan **`kadaluarsa` / `password`** (kata sandinya dibuat 45 hari lalu; batasnya 30 hari). Data tiruan (pengguna, audit log, notifikasi, sesi) disimpan di `localStorage` pada kunci
+`starterkit.db.v2`; hapus kunci itu (atau pakai jendela penyamaran) untuk mengulang dari awal. Bila peramban memakai alamat selain
 `localhost`, fitur kriptografi (`crypto.subtle`) butuh HTTPS.
 
 ## Yang sudah ada
@@ -29,6 +29,7 @@ Masuk dengan **`admin` / `password`**. Data tiruan (pengguna, audit log, notifik
 | **MFA** | Aplikasi authenticator (TOTP **sungguhan**: kunci dibuat acak, QR dipindai Google Authenticator, kode divalidasi dengan toleransi ±30 detik), OTP email (kodenya tampil di toast karena tidak ada email), 8 kode pemulihan sekali pakai, batas 5 kode salah, jeda kirim ulang, pengaturan dan pemutusan di Profil, pengingat bila belum aktif |
 | **Audit log** | Daftar terbaru dulu dengan pencarian, filter tanggal/modul/hasil, paginasi, detail sebelum/sesudah, **ekspor CSV**, dan **verifikasi integritas rantai hash** (SHA-256) yang sungguhan. Coba ubah satu entri di `localStorage` lalu tekan "Periksa integritas": rantai terputus dan entri yang diubah terdeteksi |
 | **Isian** | `CurrencyInput` (Rp, format ribuan), `MaskedInput` (telepon, NIK, NPWP), `ColorInput`, `Textarea`, `Checkbox`, `Switch`, `RadioGroup`, `FileInput`; contoh hidup di `/styleguide` |
+| **Kata sandi kedaluwarsa** | Setelah masuk dengan benar, bila kata sandi lebih tua dari 30 hari, layar `/password-expired` meminta kata sandi baru (3 kolom yang sama dengan Profil). Kata sandi baru tidak boleh sama dengan yang sekarang atau 5 sebelumnya; lalu lanjut ke verifikasi dua langkah atau langsung masuk |
 | **Profil** | Data akun, ganti kata sandi (validasi, batas percobaan, tercatat di audit log), pengaturan MFA |
 | **Kerangka** | Sidebar: Dashboard (placeholder) dan bagian Sistem (Panduan, Audit log), bel notifikasi (tandai dibaca), menu akun (Profil, Keluar) |
 | **Referensi** | Halaman `/styleguide` (semua komponen dan token), template email OTP, halaman error statis, aturan tampilan dan kode |
@@ -108,7 +109,7 @@ Secara manual:
   `app-layout.tsx`, `login.tsx`, `not-found.tsx` dengan `<img>`. Email dan halaman error memakai kotak huruf sebaris (ubah di `email/` dan
   `scripts/generate-error-pages.mjs`).
 - **Nama perusahaan di email:** parameter `company` pada `renderLoginCodeEmail`.
-- **Kunci demo** `starterkit.db.v1` di `src/mock/db.ts` boleh diganti; ia hilang bersama `src/mock/` saat backend tersambung.
+- **Kunci demo** `starterkit.db.v2` di `src/mock/db.ts` boleh diganti; ia hilang bersama `src/mock/` saat backend tersambung.
 
 <a id="indexing"></a>
 ## Akses mesin pencarian (anti-crawl)
@@ -201,6 +202,7 @@ tanpa `any`, semua akses server lewat `http`, semua tabel lewat `DataTable`, war
 
 - [ ] Endpoint sesi, MFA, profil, notifikasi, dan audit log sesuai [API.md](docs/API.md), termasuk bentuk galat 422.
 - [ ] Kata sandi di-hash; percobaan masuk dibatasi; sesi aman (cookie `HttpOnly`, `Secure`, `SameSite`).
+- [ ] Masa berlaku kata sandi (bawaan 30 hari, dapat diatur) dan riwayat kata sandi (hash, bukan teks) dengan `POST /login` membalas `password_expired: true`; lihat [API.md](docs/API.md).
 - [ ] TOTP: rahasia disimpan terenkripsi; kode divalidasi dengan toleransi ±1 langkah; kode OTP email disimpan sebagai hash.
 - [ ] Kode pemulihan di-hash dan sekali pakai.
 - [ ] Audit log **append-only** dengan rantai hash (disarankan HMAC dengan kunci rahasia di server); tidak ada jalur ubah/hapus;
@@ -217,7 +219,7 @@ tanpa `any`, semua akses server lewat `http`, semua tabel lewat `DataTable`, war
 |---|---|
 | Layar kosong sebentar saat pertama dibuka | Server tiruan membuat 160 entri audit log berantai hash sekali saja (sekitar satu detik) |
 | "crypto.subtle undefined" | Dibuka lewat `http://` selain `localhost`; pakai HTTPS atau `localhost` |
-| Ingin mengulang dari awal | Hapus kunci `starterkit.db.v1` di `localStorage` |
+| Ingin mengulang dari awal | Hapus kunci `starterkit.db.v2` di `localStorage` |
 | Kode authenticator ditolak | Jam perangkat harus akurat; kode berlaku 30 detik dengan toleransi ±1 langkah |
 | Kode OTP email tidak datang | Tidak ada email sungguhan; kodenya tampil di toast "demo: ......" |
 | `npm run build` gagal di `standards` | Baca baris yang dilaporkan; aturannya dijelaskan di docs/STANDARDS.md |
