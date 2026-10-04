@@ -47,7 +47,7 @@ export default function Login() {
                                         navigate('/');
                                     }
                                 },
-                                onError: () => form.reset('password'),
+                                onError: () => form.setData('password', ''),
                             });
                         }}
                     >

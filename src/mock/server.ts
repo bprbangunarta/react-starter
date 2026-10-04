@@ -229,6 +229,19 @@ async function route(method: Method, url: string, body: Body, params: Params): P
         };
     }
 
+    if (method === 'POST' && url === '/reauth') {
+        if (str(body.password) !== user.password) {
+            await audit(db, user, { module: 'auth', event: 'auth.reauth_failed', action: 'reauth_failed', outcome: 'failure', subject_type: 'User', subject_id: user.id, subject: user.username, method: 'POST', url });
+            saveDb(db);
+            invalid('password', 'Kata sandi salah.');
+        }
+
+        await audit(db, user, { module: 'auth', event: 'auth.reauth', action: 'reauth', subject_type: 'User', subject_id: user.id, subject: user.username, method: 'POST', url });
+        saveDb(db);
+
+        return { message: 'Kata sandi dikonfirmasi.' };
+    }
+
     if (method === 'PUT' && url === '/profile/password') {
         const rate = db.audit.filter((e) => e.event === 'profile.password_change_failed' && e.username === user.username && Date.now() - Date.parse(e.at) < 60_000).length;
 

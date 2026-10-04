@@ -1,4 +1,4 @@
-import { Check, Download, Inbox, Plus, Save, Search, Trash2 } from 'lucide-react';
+import { Check, Download, Inbox, Pencil, Plus, Save, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { toast } from 'sonner';
@@ -35,7 +35,9 @@ const TOKENS = [
 const TONES: BadgeTone[] = ['neutral', 'info', 'success', 'warning', 'danger'];
 
 type Row = { id: number; name: string; status: BadgeTone; amount: number };
-const ROWS: Row[] = [
+type Draft = { id: number | null; name: string; status: BadgeTone; amount: string };
+const EMPTY_DRAFT: Draft = { id: null, name: '', status: 'success', amount: '' };
+const INITIAL_ROWS: Row[] = [
     { id: 1, name: 'Proyek Alfa', status: 'success', amount: 12_500_000 },
     { id: 2, name: 'Proyek Beta', status: 'warning', amount: 3_200_000 },
     { id: 3, name: 'Proyek Gamma', status: 'danger', amount: 870_000 },
@@ -62,7 +64,36 @@ export default function Styleguide() {
     const [date, setDate] = useState('');
     const [code, setCode] = useState('');
     const [search, setSearch] = useState('');
+    const [status, setStatus] = useState<string | null>(null);
+    const [rows, setRows] = useState<Row[]>(INITIAL_ROWS);
+    const [draft, setDraft] = useState<Draft | null>(null);
+    const [nameError, setNameError] = useState<string | undefined>();
+    const [removing, setRemoving] = useState<Row | null>(null);
     const email = renderLoginCodeEmail({ appName: 'Starter Kit', code: '482915', minutes: 10, name: 'Rina Wulandari', sentAt: '1 Oktober 2026, 21:16 WIB' });
+
+    const visible = rows.filter((r) => r.name.toLowerCase().includes(search.trim().toLowerCase()) && (status === null || r.status === status));
+
+    const openDraft = (next: Draft) => {
+        setNameError(undefined);
+        setDraft(next);
+    };
+
+    const save = () => {
+        if (!draft) {
+            return;
+        }
+
+        if (draft.name.trim() === '') {
+            setNameError('Nama wajib diisi.');
+
+            return;
+        }
+
+        const next = { name: draft.name.trim(), status: draft.status, amount: Number(draft.amount) || 0 };
+        setRows((all) => (draft.id === null ? [...all, { id: Math.max(0, ...all.map((r) => r.id)) + 1, ...next }] : all.map((r) => (r.id === draft.id ? { ...r, ...next } : r))));
+        toast.success(draft.id === null ? 'Data ditambahkan' : 'Perubahan tersimpan');
+        setDraft(null);
+    };
 
     const columns: Column<Row>[] = [
         { key: 'name', header: 'Nama', className: 'font-medium', cell: (r) => r.name, sort: 'name' },
@@ -75,11 +106,18 @@ export default function Styleguide() {
             narrow: true,
             align: 'right',
             cell: (r) => (
-                <Tip label="Hapus">
-                    <Button variant="ghost" size="icon" aria-label={`Hapus ${r.name}`}>
-                        <Trash2 />
-                    </Button>
-                </Tip>
+                <div className="flex justify-end gap-1">
+                    <Tip label="Ubah">
+                        <Button variant="ghost" size="icon" aria-label={`Ubah ${r.name}`} onClick={() => openDraft({ id: r.id, name: r.name, status: r.status, amount: String(r.amount) })}>
+                            <Pencil />
+                        </Button>
+                    </Tip>
+                    <Tip label="Hapus">
+                        <Button variant="ghost" size="icon" aria-label={`Hapus ${r.name}`} onClick={() => setRemoving(r)}>
+                            <Trash2 />
+                        </Button>
+                    </Tip>
+                </div>
             ),
         },
     ];
@@ -144,13 +182,19 @@ export default function Styleguide() {
                 </Section>
 
                 <div>
-                    <h2 className="mb-2 text-sm font-semibold">Tabel (DataTable)</h2>
+                    <div className="mb-2 flex items-center justify-between gap-2">
+                        <div>
+                            <h2 className="text-sm font-semibold">Tabel (DataTable) dan contoh CRUD</h2>
+                            <p className="text-xs text-muted">Data statis di memori: Tambah, Ubah, dan Hapus membuka dialog lalu mengubah tabel. Muat ulang halaman untuk mengembalikan.</p>
+                        </div>
+                        <Button size="sm" onClick={() => openDraft(EMPTY_DRAFT)}><Plus />Tambah</Button>
+                    </div>
                     <DataTable
-                        rows={ROWS}
+                        rows={visible}
                         rowKey={(r) => r.id}
                         columns={columns}
-                        onRowClick={(r) => toast.info(`Baris ${r.name}`)}
-                        toolbar={<FilterBar search={<SearchInput value={search} onChange={setSearch} placeholder="Cari…" label="Cari contoh" />}><Combobox className="w-full sm:w-36" clearable searchable={false} placeholder="Status" options={TONES.map((t) => ({ value: t, label: t }))} value={null} onChange={() => undefined} /></FilterBar>}
+                        onRowClick={(r) => openDraft({ id: r.id, name: r.name, status: r.status, amount: String(r.amount) })}
+                        toolbar={<FilterBar search={<SearchInput value={search} onChange={setSearch} placeholder="Cari…" label="Cari contoh" />}><Combobox className="w-full sm:w-36" clearable searchable={false} placeholder="Status" options={TONES.map((t) => ({ value: t, label: t }))} value={status} onChange={setStatus} /></FilterBar>}
                         empty={{ icon: <Inbox />, title: 'Tidak ada data' }}
                     />
                 </div>
@@ -167,6 +211,39 @@ export default function Styleguide() {
                     <pre className="max-h-56 overflow-auto rounded-md bg-canvas p-3 text-xs whitespace-pre-wrap">{email.text}</pre>
                 </Section>
             </div>
+
+            <Modal open={draft !== null} onOpenChange={(next) => !next && setDraft(null)} title={draft?.id === null ? 'Tambah data' : 'Ubah data'} description="Isi lalu simpan. Galat validasi tampil di bawah kolom.">
+                {draft && (
+                    <form noValidate onSubmit={(e) => { e.preventDefault(); save(); }}>
+                        <div className="grid gap-3 p-4">
+                            <Field label="Nama" required error={nameError}>
+                                <Input autoFocus value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} aria-invalid={!!nameError} />
+                            </Field>
+                            <Field label="Status">
+                                <Combobox searchable={false} options={TONES.map((t) => ({ value: t, label: t }))} value={draft.status} onChange={(v) => setDraft({ ...draft, status: (v ?? 'neutral') as BadgeTone })} />
+                            </Field>
+                            <Field label="Nilai (Rp)">
+                                <Input inputMode="numeric" value={draft.amount} onChange={(e) => setDraft({ ...draft, amount: e.target.value.replace(/\D/g, '') })} />
+                            </Field>
+                        </div>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setDraft(null)}>Batal</Button>
+                            <Button type="submit"><Check />Simpan</Button>
+                        </DialogFooter>
+                    </form>
+                )}
+            </Modal>
+            <ConfirmDialog
+                open={removing !== null}
+                onOpenChange={(next) => !next && setRemoving(null)}
+                title="Hapus data?"
+                description={`"${removing?.name ?? ''}" akan dihapus dari contoh ini.`}
+                onConfirm={() => {
+                    setRows((all) => all.filter((r) => r.id !== removing?.id));
+                    setRemoving(null);
+                    toast.success('Dihapus');
+                }}
+            />
 
             <Modal open={modal} onOpenChange={setModal} title="Contoh dialog" description="Dialog kecil untuk tambah atau ubah data.">
                 <div className="p-4">

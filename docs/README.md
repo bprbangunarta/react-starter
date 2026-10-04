@@ -65,12 +65,14 @@ src/
   layouts/app-layout.tsx     sidebar, header, menu akun, pengingat MFA  (tambah menu di MENU)
   pages/                     login, two-factor-challenge, dashboard, profile, audit-logs, styleguide, not-found
   components/ui/             komponen dasar: button, input, field, combobox, data-table, dialog, dropdown, date-picker, ...
-  components/                bel notifikasi, penanda jaringan
+  components/                bel notifikasi, penanda jaringan, dialog konfirmasi kata sandi (reauth)
   hooks/use-network-status.ts
   mock/                      server tiruan (HAPUS saat backend asli siap)
 email/                       template email OTP (TypeScript, dan Blade untuk Laravel)
 error-pages/                 halaman error statis (401, 403, 404, 419, 429, 500, 503)
 scripts/                     pemeriksa standar kode, pembuat halaman error
+Dockerfile, nginx.conf,      pengemasan produksi: UI statis + proxy `/api/` ke backend (ubah `backend:7100` di nginx.conf)
+security-headers.conf
 AGENTS.md                    peta semua dokumen (baca ini dulu)
 docs/                        README.md (panduan ini), API.md (kontrak endpoint), CODE-STANDARDS.md (aturan wajib kode),
                              ui-rules.md (aturan tampilan), design-tokens.md (token dan CSS acuan)
@@ -90,6 +92,8 @@ backend asli:
    - validasi gagal = **422** `{ "message": "...", "errors": { "kolom": ["pesan"] } }` (pesan tampil di bawah kolom);
    - belum masuk = **401** (layar kembali ke login).
 3. Hapus folder `src/mock/` dan baris `import { handleMock }` di `src/lib/http.ts`.
+   Saat pengembangan, `vite.config.ts` meneruskan `/api/*` ke `API_URL` (bawaan `http://127.0.0.1:8000`, tanpa awalan `/api`); di
+   produksi `nginx.conf` melakukan hal yang sama.
 4. Ekspor CSV (`/audit-logs/export`) cukup mengalirkan `text/csv`; layar mengunduhnya lewat tautan biasa.
 
 Bila backend memakai token alih-alih cookie, ubah `send()` di `src/lib/http.ts` (satu tempat) untuk menambah header
@@ -118,7 +122,7 @@ Bila backend memakai token alih-alih cookie, ubah `send()` di `src/lib/http.ts` 
 
 - **`src/index.css`** adalah CSS acuan: token warna (`oklch`), ukuran teks, kalender kompak, dan gaya dasar. Salinan persis dari
   aplikasi asal.
-- **`/styleguide`** (sidebar → Panduan) menampilkan semua komponen, warna, ukuran, dialog, tabel, dan email OTP.
+- **`/styleguide`** (sidebar → Panduan) menampilkan semua komponen, warna, ukuran, dialog, tabel, dan email OTP. Tabelnya berupa contoh CRUD statis (Tambah, Ubah, Hapus lewat dialog form dan konfirmasi hapus) yang bisa disalin untuk halaman baru.
   Bandingkan layar baru dengannya.
 - **[docs/design-tokens.md](design-tokens.md)** merinci nilai token dan ukuran; **[docs/ui-rules.md](ui-rules.md)** memuat aturan
   Compact UI (ukuran, tabel, tombol, dialog, penjajaran, DatePicker, Combobox).
@@ -180,6 +184,7 @@ dari `npm run check` dan `npm run build`.
 - [ ] Setiap kejadian di [CODE-STANDARDS.md](CODE-STANDARDS.md) bagian 6 tercatat.
 - [ ] Email OTP memakai template di `email/` dan domain pengirim ber-SPF/DKIM/DMARC.
 - [ ] Header `X-Robots-Tag: noindex, nofollow` dan `robots.txt` (`Disallow: /`) bila aplikasi internal (sudah ada di `public/`).
+- [ ] Aksi sensitif (bila ada) membalas 403 `reauth_required` dan `POST /reauth` tersedia (lihat [API.md](API.md)).
 - [ ] Hapus `src/mock/` setelah semua endpoint tersambung.
 
 <a id="masalah"></a>

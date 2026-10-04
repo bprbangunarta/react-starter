@@ -5,6 +5,7 @@ import { Link, NavLink, Outlet, useNavigate } from 'react-router';
 import { useSession } from '@/auth/session';
 import { NetworkStatus } from '@/components/network-status';
 import { NotificationBell } from '@/components/notification-bell';
+import { ReauthDialog } from '@/components/reauth-dialog';
 import { Button } from '@/components/ui/button';
 import { DropdownContent, DropdownItem, DropdownLabel, DropdownMenu, DropdownSeparator, DropdownTrigger } from '@/components/ui/dropdown';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -145,6 +146,7 @@ export default function AppLayout() {
                 </div>
             </div>
             <NetworkStatus />
+            <ReauthDialog />
         </TooltipProvider>
     );
 }

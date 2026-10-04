@@ -11,6 +11,7 @@ Semua layar memanggil `http.get/post/put/delete(url, data)` di `src/lib/http.ts`
 - **Validasi gagal:** status **422**, `{ "message": "...", "errors": { "kolom": ["pesan pertama", ...] } }`. Pesan pertama tiap kolom
   tampil di bawah kolom itu.
 - **Gagal lain:** status 4xx/5xx, `{ "message": "..." }` (tampil sebagai toast merah). **401** = belum masuk (layar kembali ke login).
+- **Konfirmasi kata sandi:** untuk aksi sensitif backend boleh membalas **403** `{ "code": "reauth_required", "message": "..." }`; UI membuka dialog konfirmasi (`components/reauth-dialog.tsx`) yang memanggil `POST /reauth`, lalu pengguna mengulangi aksinya.
 - Teks untuk pengguna berbahasa Indonesia. Waktu dalam ISO 8601.
 
 ## Sesi
@@ -20,6 +21,7 @@ Semua layar memanggil `http.get/post/put/delete(url, data)` di `src/lib/http.ts`
 | GET | `/me` | `{ user: {id,name,username,email}, security: {enabled, method: 'totp'\|'email'\|null}, notifications: {unread, items[]} }`, 401 bila belum masuk |
 | POST | `/login` | `{ username, password, remember }` → `{ two_factor: false, ...me }` atau `{ two_factor: true }` (lanjut ke verifikasi). 422 `errors.username` bila salah |
 | POST | `/logout` | `{}` |
+| POST | `/reauth` | `{ password }` → `{ message }` (sesi dianggap "segar" beberapa menit). 422 `errors.password` bila salah |
 
 ## Verifikasi dua langkah saat masuk
 

@@ -97,8 +97,8 @@ export default function TwoFactorChallenge() {
                                     navigate('/');
                                 } catch (err) {
                                     if (err instanceof HttpError && err.status === 422) {
-                                        form.setError('code', err.errors.code?.[0] ?? err.message);
                                         form.reset('code');
+                                        form.setError('code', err.errors.code?.[0] ?? err.message);
                                     } else {
                                         toast.error(err instanceof Error ? err.message : 'Terjadi kesalahan.');
                                         navigate('/login');

@@ -13,6 +13,9 @@
 import { handleMock } from '@/mock/server';
 
 export const USE_MOCK = true;
+
+/** Fired when the server asks for a fresh password confirmation (403 `reauth_required`). */
+export const REAUTH_EVENT = 'app:reauth-required';
 export const API_BASE = '/api';
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -23,6 +26,7 @@ export class HttpError extends Error {
         public status: number,
         message: string,
         public errors: Record<string, string[]> = {},
+        public code?: string,
     ) {
         super(message);
     }
@@ -52,10 +56,14 @@ async function send<T>(method: Method, url: string, data?: unknown, params?: Par
         throw new HttpError(0, 'Server tidak dapat dihubungi. Periksa koneksi Anda lalu coba lagi.');
     }
 
-    const body = (await response.json().catch(() => ({}))) as { message?: string; errors?: Record<string, string[]> };
+    const body = (await response.json().catch(() => ({}))) as { message?: string; errors?: Record<string, string[]>; code?: string };
 
     if (!response.ok) {
-        throw new HttpError(response.status, body.message ?? 'Terjadi kesalahan.', body.errors ?? {});
+        if (response.status === 403 && body.code === 'reauth_required') {
+            window.dispatchEvent(new Event(REAUTH_EVENT));
+        }
+
+        throw new HttpError(response.status, body.message ?? 'Terjadi kesalahan.', body.errors ?? {}, body.code);
     }
 
     return body as T;

@@ -21,7 +21,7 @@ import { exportCsv as downloadCsv } from '@/lib/download';
 
 type Values = Record<string, unknown>;
 type LogRow = {
-    id: number;
+    id: number | string;
     at: string;
     user: string | null;
     username: string | null;
@@ -31,7 +31,7 @@ type LogRow = {
     outcome: 'success' | 'failure' | 'denied';
     subject: string | null;
     subject_type: string | null;
-    subject_id: number | null;
+    subject_id: number | string | null;
     old: Values | null;
     new: Values | null;
     context: Values | null;
@@ -53,7 +53,7 @@ type Filters = {
 type Verification = {
     ok: boolean;
     checked: number;
-    broken_at: number | null;
+    broken_at: number | string | null;
     reason: string | null;
 };
 const OUTCOMES = [
@@ -153,24 +153,28 @@ export default function AuditLogsIndex() {
                 ),
         },
         {
+            key: 'ip',
+            header: 'Host',
+            className: 'whitespace-nowrap',
+            hideBelow: 'md',
+            cell: (log) => log.ip ?? '–',
+        },
+        {
             key: 'user',
             header: 'Pengguna',
-            cell: (log) => (
-                <>
-                    <p className="font-medium">{log.user ?? 'Sistem'}</p>
-                    <p className="text-xs text-muted">{log.ip ?? ''}</p>
-                </>
-            ),
+            cell: (log) => log.user ?? 'Sistem',
+        },
+        {
+            key: 'module',
+            header: 'Modul',
+            className: 'whitespace-nowrap',
+            hideBelow: 'md',
+            cell: (log) => log.module,
         },
         {
             key: 'event',
             header: 'Kejadian',
-            cell: (log) => (
-                <>
-                    <p>{log.event}</p>
-                    <p className="text-xs text-muted">{log.module}</p>
-                </>
-            ),
+            cell: (log) => log.event,
         },
         {
             key: 'record',
