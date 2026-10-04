@@ -28,6 +28,7 @@ Masuk dengan **`admin` / `password`**. Data tiruan (pengguna, audit log, notifik
 | **Autentikasi** | Login (email atau username), keluar, penjaga halaman, sesi, halaman error layar penuh, penanda koneksi putus/pulih |
 | **MFA** | Aplikasi authenticator (TOTP **sungguhan**: kunci dibuat acak, QR dipindai Google Authenticator, kode divalidasi dengan toleransi ±30 detik), OTP email (kodenya tampil di toast karena tidak ada email), 8 kode pemulihan sekali pakai, batas 5 kode salah, jeda kirim ulang, pengaturan dan pemutusan di Profil, pengingat bila belum aktif |
 | **Audit log** | Daftar terbaru dulu dengan pencarian, filter tanggal/modul/hasil, paginasi, detail sebelum/sesudah, **ekspor CSV**, dan **verifikasi integritas rantai hash** (SHA-256) yang sungguhan. Coba ubah satu entri di `localStorage` lalu tekan "Periksa integritas": rantai terputus dan entri yang diubah terdeteksi |
+| **Isian** | `CurrencyInput` (Rp, format ribuan), `MaskedInput` (telepon, NIK, NPWP), `ColorInput`, `Textarea`, `Checkbox`, `Switch`, `RadioGroup`, `FileInput`; contoh hidup di `/styleguide` |
 | **Profil** | Data akun, ganti kata sandi (validasi, batas percobaan, tercatat di audit log), pengaturan MFA |
 | **Kerangka** | Sidebar: Dashboard (placeholder) dan bagian Sistem (Panduan, Audit log), bel notifikasi (tandai dibaca), menu akun (Profil, Keluar) |
 | **Referensi** | Halaman `/styleguide` (semua komponen dan token), template email OTP, halaman error statis, aturan tampilan dan kode |

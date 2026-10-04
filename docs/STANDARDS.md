@@ -76,6 +76,17 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
 - **Tambah/ubah data:** modal kecil (`max-w-sm`) atau form satu halaman; `ConfirmDialog` sebelum menghapus.
 - **Form:** grid 2–4 kolom dalam `Card` per seksi (judul `text-sm font-semibold`), `Field` dengan label `text-xs`, galat `text-xs text-danger`
   di bawah isian, tanda `*` merah untuk wajib.
+- **Jenis isian** (semua ada contohnya di `/styleguide`, bagian Isian):
+  - **Uang dan angka besar:** `CurrencyInput` (teks, hanya angka, format `1.000.000` otomatis, awalan `Rp`; `prefix={null}` untuk angka biasa).
+    Nilainya **number** (`1000000`); ke API dikirim angka itu, tidak pernah teks berformat. `type="number"` hanya untuk angka kecil tanpa format.
+  - **Format tetap** (telepon, NIK, NPWP, kode): `MaskedInput` dengan `mask` dari `lib/mask.ts` (`9` angka, `a` huruf, `*` huruf/angka, `h` hex;
+    lainnya literal). Nilainya data tanpa tanda baca (`081234567890`); ke API dikirim itu, bukan teks bermask. Tambah mask baru di `MASKS`.
+  - **Warna:** `ColorInput` (`#rrggbb`); **kode OTP:** `CodeInput`; **kata sandi:** `PasswordInput`; **tanggal:** `DatePicker`; **pilihan:** `Combobox`
+    (banyak opsi) atau `RadioGroup` (sampai sekitar 5 opsi yang perlu terlihat); **teks panjang:** `Textarea` (beri `maxLength` untuk penghitung).
+  - **Centang vs sakelar:** `Checkbox` untuk pilihan yang menunggu tombol Simpan; `Switch` untuk pengaturan yang berlaku seketika.
+  - **Berkas:** `FileInput` (klik atau seret; batasi `accept` dan `maxBytes`; ukuran dan tipe tetap divalidasi ulang di backend).
+  - Isian berformat tetap teks bagi pembaca layar: jangan ganti `inputMode`/`autoComplete` yang sudah ada, dan bungkus semuanya dengan `Field`
+    (`Field` menyambungkan label, hint, dan galat ke isian lewat `id`, `aria-describedby`, `aria-invalid`).
 - **Toolbar daftar:** `FilterBar` + `SearchInput`; pencarian sendirian di kiri, semua filter dan tombol Reset di kanan.
 - **Tabel:** semua tabel memakai `DataTable` (`<table>` mentah dilarang **[mesin]**). Komponen ini mengurus kartu, toolbar, urutan (`sort`), skeleton,
   kosong, galat + coba lagi, `onRowClick`, paginasi, dan gulir `relative overflow-x-auto`. Definisikan kolom sebagai `Column<Row>[]`:

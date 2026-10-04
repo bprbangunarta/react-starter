@@ -27,7 +27,7 @@ const rules = [
     {
         name: 'Warna ditulis langsung: pakai token tema di src/index.css',
         test: (line) => /#[0-9a-fA-F]{3,8}\b|\b(rgb|rgba|hsl|hsla|oklch)\(/.test(line) && !/^\s*(\/\/|\*|\/\*)/.test(line),
-        skip: (file) => file.includes('/mock/'),
+        skip: (file) => file.includes('/mock/') || file.endsWith('components/ui/color-input.tsx'),
     },
     {
         name: 'Baris judul + aksi memakai items-center, bukan items-start justify-between',
