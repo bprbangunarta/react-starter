@@ -69,16 +69,35 @@ export function FileInput({ id, value, onValueChange, accept, multiple, maxBytes
                 <span>
                     <span className="font-medium text-primary">Pilih berkas</span> atau seret ke sini
                 </span>
-                <input ref={input} id={id ?? generated} type="file" className="sr-only" accept={accept} multiple={multiple} disabled={disabled} onChange={(event) => take(event.target.files)} {...aria} />
+                <input
+                    ref={input}
+                    id={id ?? generated}
+                    type="file"
+                    className="sr-only"
+                    accept={accept}
+                    multiple={multiple}
+                    disabled={disabled}
+                    onChange={(event) => take(event.target.files)}
+                    {...aria}
+                />
             </label>
             {value.length > 0 && (
                 <ul className="flex flex-col gap-1">
                     {value.map((file, index) => (
-                        <li key={`${file.name}-${file.lastModified}-${index}`} className="flex items-center gap-2 rounded-md border border-line px-2 py-1 text-xs">
+                        <li
+                            key={`${file.name}-${file.lastModified}-${index}`}
+                            className="flex items-center gap-2 rounded-md border border-line px-2 py-1 text-xs"
+                        >
                             <FileText className="size-3.5 shrink-0 text-muted" />
                             <span className="min-w-0 flex-1 truncate">{file.name}</span>
                             <span className="shrink-0 text-muted tabular-nums">{size(file.size)}</span>
-                            <Button variant="ghost" size="icon" className="size-5" aria-label={`Hapus ${file.name}`} onClick={() => onValueChange(value.filter((_, i) => i !== index))}>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-5"
+                                aria-label={`Hapus ${file.name}`}
+                                onClick={() => onValueChange(value.filter((_, i) => i !== index))}
+                            >
                                 <X />
                             </Button>
                         </li>

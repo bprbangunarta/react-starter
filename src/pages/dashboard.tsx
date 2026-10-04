@@ -10,7 +10,11 @@ export default function Dashboard() {
         <>
             <PageHeader title="Dashboard" description="Ringkasan produk Anda akan tampil di sini" />
             <Card>
-                <EmptyState icon={<LayoutDashboard />} title="Placeholder" description="Halaman ini sengaja kosong. Tambahkan menu di layouts/app-layout.tsx dan halaman di src/pages." />
+                <EmptyState
+                    icon={<LayoutDashboard />}
+                    title="Placeholder"
+                    description="Halaman ini sengaja kosong. Tambahkan menu di layouts/app-layout.tsx dan halaman di src/pages."
+                />
             </Card>
         </>
     );

@@ -28,7 +28,10 @@ export function renderLoginCodeEmail(input: LoginCodeEmail): { subject: string; 
     const brand = input.brandColor ?? '#33479f';
     const greeting = input.name ? ` ${escape(input.name)}` : '';
     const digits = [...code]
-        .map((digit) => `<td align="center" style="width:46px;height:56px;background:#f3f5fb;border:1px solid #d5dbee;border-radius:8px;font-family:'SFMono-Regular',Consolas,'Courier New',monospace;font-size:28px;font-weight:700;color:#1f2430;">${escape(digit)}</td>`)
+        .map(
+            (digit) =>
+                `<td align="center" style="width:46px;height:56px;background:#f3f5fb;border:1px solid #d5dbee;border-radius:8px;font-family:'SFMono-Regular',Consolas,'Courier New',monospace;font-size:28px;font-weight:700;color:#1f2430;">${escape(digit)}</td>`,
+        )
         .join('');
 
     const html = `<!DOCTYPE html>

@@ -28,13 +28,42 @@ async function database(): Promise<Db> {
 
     const now = Date.now();
     const notification = (id: number, title: string, body: string, level: MockNotification['level'], hoursAgo: number, read = false): MockNotification => ({
-        id, title, body, module: 'Sistem', level, url: null, read, at: new Date(now - hoursAgo * 3600 * 1000).toISOString(),
+        id,
+        title,
+        body,
+        module: 'Sistem',
+        level,
+        url: null,
+        read,
+        at: new Date(now - hoursAgo * 3600 * 1000).toISOString(),
     });
     const db: Db = {
         users: [
-            { id: 1, name: 'Administrator', username: 'admin', email: 'admin@example.com', password: 'password', password_changed_at: new Date(now - 5 * DAY_MS).toISOString(), password_history: [], mfa_method: null, mfa_secret: null, recovery_codes: [] },
+            {
+                id: 1,
+                name: 'Administrator',
+                username: 'admin',
+                email: 'admin@example.com',
+                password: 'password',
+                password_changed_at: new Date(now - 5 * DAY_MS).toISOString(),
+                password_history: [],
+                mfa_method: null,
+                mfa_secret: null,
+                recovery_codes: [],
+            },
             // Demo of the expired-password flow: the password is 45 days old, so signing in asks for a new one.
-            { id: 2, name: 'Pengguna Kedaluwarsa', username: 'kadaluarsa', email: 'kadaluarsa@example.com', password: 'password', password_changed_at: new Date(now - 45 * DAY_MS).toISOString(), password_history: [], mfa_method: null, mfa_secret: null, recovery_codes: [] },
+            {
+                id: 2,
+                name: 'Pengguna Kedaluwarsa',
+                username: 'kadaluarsa',
+                email: 'kadaluarsa@example.com',
+                password: 'password',
+                password_changed_at: new Date(now - 45 * DAY_MS).toISOString(),
+                password_history: [],
+                mfa_method: null,
+                mfa_secret: null,
+                recovery_codes: [],
+            },
         ],
         audit: [],
         notifications: [
@@ -109,7 +138,10 @@ function me(db: Db, user: MockUser) {
         security: { enabled: true, method: user.mfa_method },
         notifications: {
             unread: db.notifications.filter((n) => !n.read).length,
-            items: [...db.notifications].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 10).map((n) => ({ ...n })),
+            items: [...db.notifications]
+                .sort((a, b) => b.at.localeCompare(a.at))
+                .slice(0, 10)
+                .map((n) => ({ ...n })),
         },
     };
 }
@@ -149,7 +181,15 @@ async function finishPasswordStep(db: Db, user: MockUser): Promise<unknown> {
     }
 
     s.userId = user.id;
-    await audit(db, user, { module: 'auth', event: 'auth.login', action: 'login', subject_type: 'User', subject_id: user.id, subject: user.username, url: '/login' });
+    await audit(db, user, {
+        module: 'auth',
+        event: 'auth.login',
+        action: 'login',
+        subject_type: 'User',
+        subject_id: user.id,
+        subject: user.username,
+        url: '/login',
+    });
     saveDb(db);
 
     return { two_factor: false, ...me(db, user) };
@@ -169,7 +209,15 @@ async function route(method: Method, url: string, body: Body, params: Params): P
         const user = db.users.find((u) => u.username === username || u.email === username);
 
         if (!user || user.password !== str(body.password)) {
-            await audit(db, null, { module: 'auth', event: 'auth.login_failed', action: 'login_failed', outcome: 'failure', subject: username, context: { reason: 'Data tidak cocok' }, url: '/login' });
+            await audit(db, null, {
+                module: 'auth',
+                event: 'auth.login_failed',
+                action: 'login_failed',
+                outcome: 'failure',
+                subject: username,
+                context: { reason: 'Data tidak cocok' },
+                url: '/login',
+            });
             saveDb(db);
             invalid('username', 'Nama pengguna atau kata sandi salah.');
         }
@@ -180,7 +228,17 @@ async function route(method: Method, url: string, body: Body, params: Params): P
             s.expiredUserId = user.id;
             s.userId = null;
             s.pendingUserId = null;
-            await audit(db, user, { module: 'auth', event: 'auth.password_expired', action: 'password_expired', outcome: 'denied', subject_type: 'User', subject_id: user.id, subject: user.username, context: { max_age_days: PASSWORD_MAX_AGE_DAYS }, url: '/login' });
+            await audit(db, user, {
+                module: 'auth',
+                event: 'auth.password_expired',
+                action: 'password_expired',
+                outcome: 'denied',
+                subject_type: 'User',
+                subject_id: user.id,
+                subject: user.username,
+                context: { max_age_days: PASSWORD_MAX_AGE_DAYS },
+                url: '/login',
+            });
             saveDb(db);
 
             return { two_factor: false, password_expired: true };
@@ -193,7 +251,15 @@ async function route(method: Method, url: string, body: Body, params: Params): P
         const user = db.users.find((u) => u.id === s.userId);
 
         if (user) {
-            await audit(db, user, { module: 'auth', event: 'auth.logout', action: 'logout', subject_type: 'User', subject_id: user.id, subject: user.username, url: '/logout' });
+            await audit(db, user, {
+                module: 'auth',
+                event: 'auth.logout',
+                action: 'logout',
+                subject_type: 'User',
+                subject_id: user.id,
+                subject: user.username,
+                url: '/logout',
+            });
         }
 
         s.userId = null;
@@ -223,21 +289,42 @@ async function route(method: Method, url: string, body: Body, params: Params): P
             return {};
         }
 
-        const failed = db.audit.filter((e) => e.event === 'auth.password_expired_change_failed' && e.username === user.username && Date.now() - Date.parse(e.at) < 60_000).length;
+        const failed = db.audit.filter(
+            (e) => e.event === 'auth.password_expired_change_failed' && e.username === user.username && Date.now() - Date.parse(e.at) < 60_000,
+        ).length;
 
         if (failed >= MAX_ATTEMPTS) {
             invalid('current_password', 'Terlalu banyak percobaan. Coba lagi dalam 1 menit.');
         }
 
         if (str(body.current_password) !== user.password) {
-            await audit(db, user, { module: 'auth', event: 'auth.password_expired_change_failed', action: 'password_expired_change_failed', outcome: 'failure', subject_type: 'User', subject_id: user.id, subject: user.username, method: 'POST', url });
+            await audit(db, user, {
+                module: 'auth',
+                event: 'auth.password_expired_change_failed',
+                action: 'password_expired_change_failed',
+                outcome: 'failure',
+                subject_type: 'User',
+                subject_id: user.id,
+                subject: user.username,
+                method: 'POST',
+                url,
+            });
             saveDb(db);
             invalid('current_password', 'Kata sandi saat ini salah.');
         }
 
         setPassword(user, checkNewPassword(user, body));
         s.expiredUserId = null;
-        await audit(db, user, { module: 'auth', event: 'auth.password_expired_changed', action: 'password_expired_changed', subject_type: 'User', subject_id: user.id, subject: user.username, method: 'POST', url });
+        await audit(db, user, {
+            module: 'auth',
+            event: 'auth.password_expired_changed',
+            action: 'password_expired_changed',
+            subject_type: 'User',
+            subject_id: user.id,
+            subject: user.username,
+            method: 'POST',
+            url,
+        });
 
         return finishPasswordStep(db, user);
     }
@@ -251,7 +338,13 @@ async function route(method: Method, url: string, body: Body, params: Params): P
         }
 
         if (method === 'GET') {
-            return { method: user.mfa_method, name: user.name, email: user.email, wait: user.mfa_method === 'email' ? secondsUntilResend(db) : 0, recovery_available: user.recovery_codes.length > 0 };
+            return {
+                method: user.mfa_method,
+                name: user.name,
+                email: user.email,
+                wait: user.mfa_method === 'email' ? secondsUntilResend(db) : 0,
+                recovery_available: user.recovery_codes.length > 0,
+            };
         }
 
         if (url === '/two-factor-challenge/cancel') {
@@ -292,7 +385,16 @@ async function route(method: Method, url: string, body: Body, params: Params): P
 
         if (!ok) {
             s.attempts++;
-            await audit(db, user, { module: 'auth', event: 'auth.mfa_failed', action: 'mfa_failed', outcome: 'failure', subject_type: 'User', subject_id: user.id, subject: user.username, url });
+            await audit(db, user, {
+                module: 'auth',
+                event: 'auth.mfa_failed',
+                action: 'mfa_failed',
+                outcome: 'failure',
+                subject_type: 'User',
+                subject_id: user.id,
+                subject: user.username,
+                url,
+            });
 
             if (s.attempts >= MAX_ATTEMPTS) {
                 s.pendingUserId = null;
@@ -307,8 +409,24 @@ async function route(method: Method, url: string, body: Body, params: Params): P
         s.userId = user.id;
         s.pendingUserId = null;
         s.emailCode = null;
-        await audit(db, user, { module: 'auth', event: usedRecovery ? 'auth.mfa_recovery_code_used' : 'auth.mfa_verified', action: usedRecovery ? 'mfa_recovery_code_used' : 'mfa_verified', subject_type: 'User', subject_id: user.id, subject: user.username, url });
-        await audit(db, user, { module: 'auth', event: 'auth.login', action: 'login', subject_type: 'User', subject_id: user.id, subject: user.username, url: '/login' });
+        await audit(db, user, {
+            module: 'auth',
+            event: usedRecovery ? 'auth.mfa_recovery_code_used' : 'auth.mfa_verified',
+            action: usedRecovery ? 'mfa_recovery_code_used' : 'mfa_verified',
+            subject_type: 'User',
+            subject_id: user.id,
+            subject: user.username,
+            url,
+        });
+        await audit(db, user, {
+            module: 'auth',
+            event: 'auth.login',
+            action: 'login',
+            subject_type: 'User',
+            subject_id: user.id,
+            subject: user.username,
+            url: '/login',
+        });
         saveDb(db);
 
         return me(db, user);
@@ -326,32 +444,72 @@ async function route(method: Method, url: string, body: Body, params: Params): P
 
     if (method === 'POST' && url === '/reauth') {
         if (str(body.password) !== user.password) {
-            await audit(db, user, { module: 'auth', event: 'auth.reauth_failed', action: 'reauth_failed', outcome: 'failure', subject_type: 'User', subject_id: user.id, subject: user.username, method: 'POST', url });
+            await audit(db, user, {
+                module: 'auth',
+                event: 'auth.reauth_failed',
+                action: 'reauth_failed',
+                outcome: 'failure',
+                subject_type: 'User',
+                subject_id: user.id,
+                subject: user.username,
+                method: 'POST',
+                url,
+            });
             saveDb(db);
             invalid('password', 'Kata sandi salah.');
         }
 
-        await audit(db, user, { module: 'auth', event: 'auth.reauth', action: 'reauth', subject_type: 'User', subject_id: user.id, subject: user.username, method: 'POST', url });
+        await audit(db, user, {
+            module: 'auth',
+            event: 'auth.reauth',
+            action: 'reauth',
+            subject_type: 'User',
+            subject_id: user.id,
+            subject: user.username,
+            method: 'POST',
+            url,
+        });
         saveDb(db);
 
         return { message: 'Kata sandi dikonfirmasi.' };
     }
 
     if (method === 'PUT' && url === '/profile/password') {
-        const rate = db.audit.filter((e) => e.event === 'profile.password_change_failed' && e.username === user.username && Date.now() - Date.parse(e.at) < 60_000).length;
+        const rate = db.audit.filter(
+            (e) => e.event === 'profile.password_change_failed' && e.username === user.username && Date.now() - Date.parse(e.at) < 60_000,
+        ).length;
 
         if (rate >= MAX_ATTEMPTS) {
             invalid('current_password', 'Terlalu banyak percobaan. Coba lagi dalam 1 menit.');
         }
 
         if (str(body.current_password) !== user.password) {
-            await audit(db, user, { module: 'profile', event: 'profile.password_change_failed', action: 'password_change_failed', outcome: 'failure', subject_type: 'User', subject_id: user.id, subject: user.username, method: 'PUT', url });
+            await audit(db, user, {
+                module: 'profile',
+                event: 'profile.password_change_failed',
+                action: 'password_change_failed',
+                outcome: 'failure',
+                subject_type: 'User',
+                subject_id: user.id,
+                subject: user.username,
+                method: 'PUT',
+                url,
+            });
             saveDb(db);
             invalid('current_password', 'Kata sandi saat ini salah.');
         }
 
         setPassword(user, checkNewPassword(user, body));
-        await audit(db, user, { module: 'profile', event: 'profile.password_changed', action: 'password_changed', subject_type: 'User', subject_id: user.id, subject: user.username, method: 'PUT', url });
+        await audit(db, user, {
+            module: 'profile',
+            event: 'profile.password_changed',
+            action: 'password_changed',
+            subject_type: 'User',
+            subject_id: user.id,
+            subject: user.username,
+            method: 'PUT',
+            url,
+        });
         saveDb(db);
 
         return { message: 'Kata sandi Anda berhasil diubah.' };
@@ -375,10 +533,22 @@ async function route(method: Method, url: string, body: Body, params: Params): P
 
         user.mfa_method = 'totp';
         user.recovery_codes = recoveryCodes();
-        await audit(db, user, { module: 'profile', event: 'profile.mfa_enabled', action: 'mfa_enabled', subject_type: 'User', subject_id: user.id, subject: user.username, context: { method: 'totp' }, url });
+        await audit(db, user, {
+            module: 'profile',
+            event: 'profile.mfa_enabled',
+            action: 'mfa_enabled',
+            subject_type: 'User',
+            subject_id: user.id,
+            subject: user.username,
+            context: { method: 'totp' },
+            url,
+        });
         saveDb(db);
 
-        return { message: 'Verifikasi dua langkah dengan aplikasi authenticator sudah aktif. Simpan kode pemulihan Anda.', recovery_codes: user.recovery_codes };
+        return {
+            message: 'Verifikasi dua langkah dengan aplikasi authenticator sudah aktif. Simpan kode pemulihan Anda.',
+            recovery_codes: user.recovery_codes,
+        };
     }
 
     if (method === 'POST' && url === '/profile/two-factor/email/send') {
@@ -401,7 +571,16 @@ async function route(method: Method, url: string, body: Body, params: Params): P
         user.mfa_secret = null;
         user.recovery_codes = recoveryCodes();
         s.emailCode = null;
-        await audit(db, user, { module: 'profile', event: 'profile.mfa_enabled', action: 'mfa_enabled', subject_type: 'User', subject_id: user.id, subject: user.username, context: { method: 'email' }, url });
+        await audit(db, user, {
+            module: 'profile',
+            event: 'profile.mfa_enabled',
+            action: 'mfa_enabled',
+            subject_type: 'User',
+            subject_id: user.id,
+            subject: user.username,
+            context: { method: 'email' },
+            url,
+        });
         saveDb(db);
 
         return { message: 'Verifikasi dua langkah lewat email sudah aktif.', recovery_codes: user.recovery_codes };
@@ -409,9 +588,10 @@ async function route(method: Method, url: string, body: Body, params: Params): P
 
     if (method === 'DELETE' && url === '/profile/two-factor') {
         const code = str(body.code).trim();
-        const ok = user.mfa_method === 'totp' && user.mfa_secret
-            ? await verifyTotp(user.mfa_secret, code) || user.recovery_codes.includes(code.toLowerCase())
-            : code === s.emailCode || user.recovery_codes.includes(code.toLowerCase());
+        const ok =
+            user.mfa_method === 'totp' && user.mfa_secret
+                ? (await verifyTotp(user.mfa_secret, code)) || user.recovery_codes.includes(code.toLowerCase())
+                : code === s.emailCode || user.recovery_codes.includes(code.toLowerCase());
 
         if (!ok) {
             invalid('code', 'Kode tidak valid.');
@@ -420,7 +600,16 @@ async function route(method: Method, url: string, body: Body, params: Params): P
         user.mfa_method = null;
         user.mfa_secret = null;
         user.recovery_codes = [];
-        await audit(db, user, { module: 'profile', event: 'profile.mfa_disabled', action: 'mfa_disabled', subject_type: 'User', subject_id: user.id, subject: user.username, method: 'DELETE', url });
+        await audit(db, user, {
+            module: 'profile',
+            event: 'profile.mfa_disabled',
+            action: 'mfa_disabled',
+            subject_type: 'User',
+            subject_id: user.id,
+            subject: user.username,
+            method: 'DELETE',
+            url,
+        });
         saveDb(db);
 
         return { message: 'Verifikasi dua langkah sudah dimatikan.' };
@@ -452,21 +641,34 @@ async function route(method: Method, url: string, body: Body, params: Params): P
         const term = str(params.search).toLowerCase();
         const from = str(params.from);
         const to = str(params.to);
-        const filtered = [...db.audit].reverse().filter((e) =>
-            (!params.module || e.module === params.module) &&
-            (!params.outcome || e.outcome === params.outcome) &&
-            (!from || e.at.slice(0, 10) >= from) &&
-            (!to || e.at.slice(0, 10) <= to) &&
-            (!term || [e.user, e.username, e.event, e.subject, e.ip].some((v) => v?.toLowerCase().includes(term))),
-        );
+        const filtered = [...db.audit]
+            .reverse()
+            .filter(
+                (e) =>
+                    (!params.module || e.module === params.module) &&
+                    (!params.outcome || e.outcome === params.outcome) &&
+                    (!from || e.at.slice(0, 10) >= from) &&
+                    (!to || e.at.slice(0, 10) <= to) &&
+                    (!term || [e.user, e.username, e.event, e.subject, e.ip].some((v) => v?.toLowerCase().includes(term))),
+            );
 
         if (url === '/audit-logs/export') {
-            await audit(db, user, { module: 'audit_logs', event: 'audit_logs.exported', action: 'exported', method: 'GET', url, context: { rows: filtered.length } });
+            await audit(db, user, {
+                module: 'audit_logs',
+                event: 'audit_logs.exported',
+                action: 'exported',
+                method: 'GET',
+                url,
+                context: { rows: filtered.length },
+            });
             saveDb(db);
 
             return {
                 filename: `audit-log-${new Date().toISOString().slice(0, 10)}.csv`,
-                csv: csv([['Waktu', 'Pengguna', 'Modul', 'Kejadian', 'Data', 'Hasil', 'IP', 'URL'], ...filtered.map((e) => [e.at, e.user ?? '', e.module, e.event, e.subject ?? '', e.outcome, e.ip, e.url])]),
+                csv: csv([
+                    ['Waktu', 'Pengguna', 'Modul', 'Kejadian', 'Data', 'Hasil', 'IP', 'URL'],
+                    ...filtered.map((e) => [e.at, e.user ?? '', e.module, e.event, e.subject ?? '', e.outcome, e.ip, e.url]),
+                ]),
             };
         }
 
@@ -476,14 +678,28 @@ async function route(method: Method, url: string, body: Body, params: Params): P
 
         return {
             data: filtered.slice((page - 1) * perPage, page * perPage),
-            meta: { current_page: Math.min(page, last), last_page: last, from: filtered.length === 0 ? 0 : (Math.min(page, last) - 1) * perPage + 1, to: Math.min(filtered.length, Math.min(page, last) * perPage), total: filtered.length, per_page: perPage },
+            meta: {
+                current_page: Math.min(page, last),
+                last_page: last,
+                from: filtered.length === 0 ? 0 : (Math.min(page, last) - 1) * perPage + 1,
+                to: Math.min(filtered.length, Math.min(page, last) * perPage),
+                total: filtered.length,
+                per_page: perPage,
+            },
             modules: [...new Set(db.audit.map((e) => e.module))].sort(),
         };
     }
 
     if (method === 'POST' && url === '/audit-logs/verify') {
         const result = await verify(db);
-        await audit(db, user, { module: 'audit_logs', event: 'audit_logs.verified', action: 'verified', outcome: result.ok ? 'success' : 'failure', url, context: { ...result } });
+        await audit(db, user, {
+            module: 'audit_logs',
+            event: 'audit_logs.verified',
+            action: 'verified',
+            outcome: result.ok ? 'success' : 'failure',
+            url,
+            context: { ...result },
+        });
         saveDb(db);
 
         return result;

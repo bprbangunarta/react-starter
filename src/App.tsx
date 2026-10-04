@@ -1,14 +1,17 @@
+import { lazy } from 'react';
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router';
 import { SessionProvider, useSession } from '@/auth/session';
 import AppLayout from '@/layouts/app-layout';
-import AuditLogs from '@/pages/audit-logs';
-import Dashboard from '@/pages/dashboard';
 import Login from '@/pages/login';
 import NotFound from '@/pages/not-found';
 import PasswordExpired from '@/pages/password-expired';
-import Profile from '@/pages/profile';
-import Styleguide from '@/pages/styleguide';
 import TwoFactorChallenge from '@/pages/two-factor-challenge';
+
+// Signed-in pages load on demand, so the sign-in screens stay small and heavy ones (QR code, style guide, email preview) are split off.
+const Dashboard = lazy(() => import('@/pages/dashboard'));
+const AuditLogs = lazy(() => import('@/pages/audit-logs'));
+const Profile = lazy(() => import('@/pages/profile'));
+const Styleguide = lazy(() => import('@/pages/styleguide'));
 
 /** Signed-in pages only: anyone else is sent to the sign-in page. */
 function RequireAuth() {

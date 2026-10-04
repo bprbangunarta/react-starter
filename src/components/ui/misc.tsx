@@ -4,9 +4,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 export function Card({ className, ...props }: React.ComponentProps<'div'>) {
-    return (
-        <div className={cn('rounded-lg border border-line bg-surface', className)} {...props} />
-    );
+    return <div className={cn('rounded-lg border border-line bg-surface', className)} {...props} />;
 }
 
 /**
@@ -38,17 +36,7 @@ export function Skeleton({ className }: { className?: string }) {
     return <div className={cn('animate-pulse rounded bg-line', className)} />;
 }
 
-export function EmptyState({
-    icon,
-    title,
-    description,
-    action,
-}: {
-    icon: ReactNode;
-    title: string;
-    description?: string;
-    action?: ReactNode;
-}) {
+export function EmptyState({ icon, title, description, action }: { icon: ReactNode; title: string; description?: string; action?: ReactNode }) {
     return (
         <div className="flex flex-col items-center gap-1 px-4 py-10 text-center [&>svg]:size-8 [&>svg]:text-muted/50">
             {icon}
@@ -108,7 +96,15 @@ export type BadgeTone = keyof typeof badgeTones;
 /** An inline message (result of an action, notice). Icon optional; `danger` is announced as an alert, the rest as status. */
 export function Alert({ tone = 'info', icon, className, children, ...props }: React.ComponentProps<'div'> & { tone?: BadgeTone; icon?: ReactNode }) {
     return (
-        <div role={tone === 'danger' ? 'alert' : 'status'} className={cn('flex items-start gap-2 rounded-md border px-3 py-2 text-sm [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0', alertTones[tone], className)} {...props}>
+        <div
+            role={tone === 'danger' ? 'alert' : 'status'}
+            className={cn(
+                'flex items-start gap-2 rounded-md border px-3 py-2 text-sm [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0',
+                alertTones[tone],
+                className,
+            )}
+            {...props}
+        >
             {icon}
             <div className="min-w-0 flex-1">{children}</div>
         </div>

@@ -1,8 +1,9 @@
 import path from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import { defineConfig, loadEnv } from 'vite';
+import { loadEnv } from 'vite';
 import type { Plugin } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 /**
  * Search-engine access. This is an internal admin app, so by default it is closed to crawlers: a `noindex` meta tag in the
@@ -41,7 +42,8 @@ export default defineConfig(({ mode }) => {
                 },
             },
         },
+        test: { environment: 'jsdom', setupFiles: ['./src/test/setup.ts'], css: false },
         plugins: [react(), tailwindcss(), indexing(allowIndexing)],
-        resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
+        resolve: { alias: { '@': path.resolve(import.meta.dirname, 'src') } },
     };
 });

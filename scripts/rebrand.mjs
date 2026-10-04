@@ -48,9 +48,17 @@ let initial = arg('--initial');
 
 if (name) {
     initial = (initial ?? name.trim().charAt(0)).toUpperCase();
-    write('src/lib/brand.ts', read('src/lib/brand.ts').replace(/APP_NAME = '.*'/, `APP_NAME = '${name.replace(/'/g, "\\'")}'`).replace(/APP_INITIAL = '.*'/, `APP_INITIAL = '${initial}'`));
+    write(
+        'src/lib/brand.ts',
+        read('src/lib/brand.ts')
+            .replace(/APP_NAME = '.*'/, `APP_NAME = '${name.replace(/'/g, "\\'")}'`)
+            .replace(/APP_INITIAL = '.*'/, `APP_INITIAL = '${initial}'`),
+    );
     write('index.html', read('index.html').replace(/<title>.*<\/title>/, `<title>${name}</title>`));
-    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const slug = name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
     write('package.json', read('package.json').replace(/"name": ".*"/, `"name": "${slug}"`));
     done(`nama aplikasi "${name}" (huruf logo ${initial}) di src/lib/brand.ts, index.html, package.json`);
 }
@@ -83,7 +91,10 @@ if (color) {
 const letter = initial ?? /APP_INITIAL = '(.*)'/.exec(read('src/lib/brand.ts'))?.[1] ?? 'S';
 const fill = color ?? /#[0-9a-fA-F]{6}/.exec(read('public/favicon.svg'))?.[0] ?? '#33479f';
 
-write('public/favicon.svg', `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">\n<rect width="64" height="64" rx="14" fill="${fill}"/>\n<text x="32" y="45" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="38" font-weight="700" text-anchor="middle" fill="#ffffff">${letter}</text>\n</svg>\n`);
+write(
+    'public/favicon.svg',
+    `<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">\n<rect width="64" height="64" rx="14" fill="${fill}"/>\n<text x="32" y="45" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="38" font-weight="700" text-anchor="middle" fill="#ffffff">${letter}</text>\n</svg>\n`,
+);
 done(`public/favicon.svg (${letter}, ${fill})`);
 
 const root = new URL('..', import.meta.url).pathname;
@@ -95,7 +106,9 @@ try {
     execFileSync('magick', [png, '-define', 'icon:auto-resize=48,32,16', 'public/favicon.ico'], { cwd: root, stdio: 'ignore' });
     done('public/favicon.ico dibuat ulang (rsvg-convert + ImageMagick)');
 } catch {
-    console.warn('! public/favicon.ico belum dibuat ulang (butuh rsvg-convert dan ImageMagick). Ubah favicon.svg menjadi favicon.ico secara manual, mis. lewat realfavicongenerator.net.');
+    console.warn(
+        '! public/favicon.ico belum dibuat ulang (butuh rsvg-convert dan ImageMagick). Ubah favicon.svg menjadi favicon.ico secara manual, mis. lewat realfavicongenerator.net.',
+    );
 }
 
 execFileSync('node', ['scripts/generate-error-pages.mjs'], { cwd: root, stdio: 'ignore' });

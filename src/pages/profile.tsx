@@ -1,10 +1,5 @@
 import { QRCodeSVG } from 'qrcode.react';
-import {
-    KeyRound,
-    Mail,
-    ShieldCheck,
-    Smartphone,
-} from 'lucide-react';
+import { KeyRound, Mail, ShieldCheck, Smartphone } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -70,22 +65,13 @@ function CodeForm({
         >
             <div className="flex flex-col gap-3 p-4">
                 {children}
-                <Field
-                    label={
-                        recovery
-                            ? 'Kode atau kode pemulihan'
-                            : 'Kode verifikasi'
-                    }
-                    error={form.errors.code}
-                >
+                <Field label={recovery ? 'Kode atau kode pemulihan' : 'Kode verifikasi'} error={form.errors.code}>
                     <CodeInput
                         recovery={recovery}
                         value={form.data.code}
                         onValueChange={(value) => form.setData('code', value)}
                         aria-invalid={!!form.errors.code}
-                        placeholder={
-                            recovery ? 'kode atau xxxxx-xxxxx' : '••••••'
-                        }
+                        placeholder={recovery ? 'kode atau xxxxx-xxxxx' : '••••••'}
                     />
                 </Field>
             </div>
@@ -93,12 +79,7 @@ function CodeForm({
                 <Button variant="outline" onClick={() => onDone({})}>
                     Batal
                 </Button>
-                <Button
-                    type="submit"
-                    loading={form.processing}
-                    variant={method === 'delete' ? 'danger' : 'primary'}
-                    disabled={form.data.code.length < 6}
-                >
+                <Button type="submit" loading={form.processing} variant={method === 'delete' ? 'danger' : 'primary'} disabled={form.data.code.length < 6}>
                     {submitLabel}
                 </Button>
             </DialogFooter>
@@ -145,13 +126,7 @@ function SendCode({ url, sent, onSent }: { url: string; sent: boolean; onSent: (
     );
 }
 
-function RecoveryCodes({
-    codes,
-    onClose,
-}: {
-    codes: string[] | null;
-    onClose: () => void;
-}) {
+function RecoveryCodes({ codes, onClose }: { codes: string[] | null; onClose: () => void }) {
     return (
         <Modal
             open={codes !== null}
@@ -170,9 +145,7 @@ function RecoveryCodes({
                 <Button
                     variant="outline"
                     onClick={() => {
-                        void navigator.clipboard.writeText(
-                            (codes ?? []).join('\n'),
-                        );
+                        void navigator.clipboard.writeText((codes ?? []).join('\n'));
                         toast.success('Kode pemulihan disalin.');
                     }}
                 >
@@ -263,7 +236,10 @@ export default function Profile() {
                     <PasswordCard />
                 </div>
                 <Card className="self-start">
-                    <CardHeader title="Verifikasi dua langkah" actions={enabled && <Badge tone={method ? 'success' : 'warning'}>{method ? 'Aktif' : 'Mati'}</Badge>} />
+                    <CardHeader
+                        title="Verifikasi dua langkah"
+                        actions={enabled && <Badge tone={method ? 'success' : 'warning'}>{method ? 'Aktif' : 'Mati'}</Badge>}
+                    />
                     {!enabled ? (
                         <p className="p-3 text-sm text-muted">Verifikasi dua langkah dimatikan oleh administrator.</p>
                     ) : (
@@ -273,7 +249,9 @@ export default function Profile() {
                                     <Smartphone className="mt-0.5 size-4 shrink-0 text-muted" />
                                     <div>
                                         <p className="text-sm font-medium">Aplikasi authenticator</p>
-                                        <p className="text-xs text-muted">Kode dari aplikasi seperti Google Authenticator atau Microsoft Authenticator. Disarankan.</p>
+                                        <p className="text-xs text-muted">
+                                            Kode dari aplikasi seperti Google Authenticator atau Microsoft Authenticator. Disarankan.
+                                        </p>
                                         {method === 'totp' && <p className="mt-1 text-xs text-muted">{twoFactor.recoveryRemaining} kode pemulihan tersisa</p>}
                                     </div>
                                 </div>
@@ -290,13 +268,22 @@ export default function Profile() {
                                     <Mail className="mt-0.5 size-4 shrink-0 text-muted" />
                                     <div>
                                         <p className="text-sm font-medium">Kode email</p>
-                                        <p className="text-xs text-muted">{twoFactor.emailAvailable ? `Kode dikirim ke ${account.email} setiap kali Anda masuk.` : 'Akun Anda tidak punya alamat email yang bisa menerima kode.'}</p>
+                                        <p className="text-xs text-muted">
+                                            {twoFactor.emailAvailable
+                                                ? `Kode dikirim ke ${account.email} setiap kali Anda masuk.`
+                                                : 'Akun Anda tidak punya alamat email yang bisa menerima kode.'}
+                                        </p>
                                     </div>
                                 </div>
                                 {method === 'email' ? (
                                     <Badge tone="success">Dipakai</Badge>
                                 ) : (
-                                    <Button size="sm" variant={method ? 'outline' : 'primary'} disabled={!twoFactor.emailAvailable} onClick={() => setEmailOpen(true)}>
+                                    <Button
+                                        size="sm"
+                                        variant={method ? 'outline' : 'primary'}
+                                        disabled={!twoFactor.emailAvailable}
+                                        onClick={() => setEmailOpen(true)}
+                                    >
                                         <KeyRound /> {method ? 'Ganti' : 'Atur'}
                                     </Button>
                                 )}
@@ -313,7 +300,12 @@ export default function Profile() {
                 </Card>
             </div>
 
-            <Modal open={setup !== null} onOpenChange={(open) => !open && setSetup(null)} title="Atur aplikasi authenticator" description="Pindai kode QR, lalu masukkan kode 6 digit yang tampil di aplikasi.">
+            <Modal
+                open={setup !== null}
+                onOpenChange={(open) => !open && setSetup(null)}
+                title="Atur aplikasi authenticator"
+                description="Pindai kode QR, lalu masukkan kode 6 digit yang tampil di aplikasi."
+            >
                 {setup && (
                     <CodeForm
                         url="/profile/two-factor/totp"
@@ -333,7 +325,12 @@ export default function Profile() {
                     </CodeForm>
                 )}
             </Modal>
-            <Modal open={emailOpen} onOpenChange={setEmailOpen} title="Atur kode email" description={`Kami akan mengirim kode ke ${account.email} untuk memastikan berfungsi.`}>
+            <Modal
+                open={emailOpen}
+                onOpenChange={setEmailOpen}
+                title="Atur kode email"
+                description={`Kami akan mengirim kode ke ${account.email} untuk memastikan berfungsi.`}
+            >
                 <CodeForm
                     url="/profile/two-factor/email"
                     submitLabel="Aktifkan"
@@ -346,7 +343,12 @@ export default function Profile() {
                     <SendCode url="/profile/two-factor/email/send" sent={emailSent} onSent={() => setEmailSent(true)} />
                 </CodeForm>
             </Modal>
-            <Modal open={disableOpen} onOpenChange={setDisableOpen} title="Matikan verifikasi dua langkah" description="Masukkan kode untuk memastikan ini Anda.">
+            <Modal
+                open={disableOpen}
+                onOpenChange={setDisableOpen}
+                title="Matikan verifikasi dua langkah"
+                description="Masukkan kode untuk memastikan ini Anda."
+            >
                 <CodeForm
                     url="/profile/two-factor"
                     method="delete"

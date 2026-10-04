@@ -2,27 +2,11 @@ import { Search } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Input } from '@/components/ui/input';
 
-export function SearchInput({
-    value,
-    onChange,
-    placeholder,
-    label,
-}: {
-    value: string;
-    onChange: (value: string) => void;
-    placeholder: string;
-    label: string;
-}) {
+export function SearchInput({ value, onChange, placeholder, label }: { value: string; onChange: (value: string) => void; placeholder: string; label: string }) {
     return (
         <div className="relative w-full sm:w-64">
             <Search className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted" />
-            <Input
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                placeholder={placeholder}
-                aria-label={label}
-                className="pl-8"
-            />
+            <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} aria-label={label} className="pl-8" />
         </div>
     );
 }

@@ -1,12 +1,13 @@
 import { ChevronDown, LayoutDashboard, LogOut, Menu, Palette, ScrollText, ShieldAlert, UserRound, X } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router';
 import { useSession } from '@/auth/session';
 import { NetworkStatus } from '@/components/network-status';
 import { NotificationBell } from '@/components/notification-bell';
 import { ReauthDialog } from '@/components/reauth-dialog';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/misc';
 import { DropdownContent, DropdownItem, DropdownLabel, DropdownMenu, DropdownSeparator, DropdownTrigger } from '@/components/ui/dropdown';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { APP_INITIAL, APP_NAME } from '@/lib/brand';
@@ -74,6 +75,12 @@ export default function AppLayout() {
 
     return (
         <TooltipProvider delayDuration={200}>
+            <a
+                href="#content"
+                className="sr-only z-50 rounded-md bg-surface px-3 py-2 text-sm font-medium text-primary shadow-md focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+            >
+                Lewati ke konten
+            </a>
             <div className="flex min-h-screen">
                 <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-line bg-surface lg:flex">
                     <div className="flex h-12 items-center border-b border-line px-4">
@@ -84,7 +91,13 @@ export default function AppLayout() {
 
                 {mobileOpen && (
                     <div className="fixed inset-0 z-40 lg:hidden">
-                        <button type="button" tabIndex={-1} aria-label="Tutup menu" className="absolute inset-0 bg-ink/40" onClick={() => setMobileOpen(false)} />
+                        <button
+                            type="button"
+                            tabIndex={-1}
+                            aria-label="Tutup menu"
+                            className="absolute inset-0 bg-ink/40"
+                            onClick={() => setMobileOpen(false)}
+                        />
                         <aside className="relative h-full w-64 bg-surface shadow-xl">
                             <div className="flex h-12 items-center justify-between border-b border-line px-4">
                                 <Brand />
@@ -108,7 +121,9 @@ export default function AppLayout() {
                             <DropdownMenu>
                                 <DropdownTrigger asChild>
                                     <button type="button" className="flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1 hover:bg-canvas">
-                                        <span className="flex size-6 items-center justify-center rounded-full bg-primary-soft text-xs font-semibold text-primary">{me.user.name.charAt(0).toUpperCase()}</span>
+                                        <span className="flex size-6 items-center justify-center rounded-full bg-primary-soft text-xs font-semibold text-primary">
+                                            {me.user.name.charAt(0).toUpperCase()}
+                                        </span>
                                         <span className="hidden text-sm font-medium sm:block">{me.user.name}</span>
                                         <ChevronDown className="size-3.5 text-muted" />
                                     </button>
@@ -120,12 +135,7 @@ export default function AppLayout() {
                                         Profil
                                     </DropdownItem>
                                     <DropdownSeparator />
-                                    <DropdownItem
-                                        icon={<LogOut />}
-                                        onSelect={() =>
-                                            void signOut().then(() => navigate('/login'))
-                                        }
-                                    >
+                                    <DropdownItem icon={<LogOut />} onSelect={() => void signOut().then(() => navigate('/login'))}>
                                         Keluar
                                     </DropdownItem>
                                 </DropdownContent>
@@ -133,7 +143,10 @@ export default function AppLayout() {
                         </div>
                     </header>
                     {me.security.enabled && me.security.method === null && (
-                        <div role="status" className="flex items-center gap-2 border-b border-warning-line bg-warning-soft px-3 py-1.5 text-xs text-warning-ink sm:px-5">
+                        <div
+                            role="status"
+                            className="flex items-center gap-2 border-b border-warning-line bg-warning-soft px-3 py-1.5 text-xs text-warning-ink sm:px-5"
+                        >
                             <ShieldAlert className="size-3.5 shrink-0" />
                             <span className="min-w-0 flex-1 truncate">Akun Anda belum dilindungi verifikasi dua langkah.</span>
                             <Link to="/profile" className="shrink-0 font-medium underline underline-offset-2 hover:no-underline">
@@ -141,8 +154,10 @@ export default function AppLayout() {
                             </Link>
                         </div>
                     )}
-                    <main className="flex-1 p-3 sm:p-5">
-                        <Outlet />
+                    <main id="content" tabIndex={-1} className="flex-1 p-3 outline-none sm:p-5">
+                        <Suspense fallback={<Skeleton className="h-24 w-full" />}>
+                            <Outlet />
+                        </Suspense>
                     </main>
                 </div>
             </div>

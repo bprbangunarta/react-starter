@@ -31,7 +31,11 @@ export function NotificationBell() {
                 <div className="flex items-center justify-between border-b border-line px-3 py-2">
                     <p className="text-sm font-semibold">Notifikasi</p>
                     {unread > 0 && (
-                        <button type="button" onClick={() => void markRead('/notifications/read-all')} className="flex cursor-pointer items-center gap-1 text-xs text-primary hover:underline">
+                        <button
+                            type="button"
+                            onClick={() => void markRead('/notifications/read-all')}
+                            className="flex cursor-pointer items-center gap-1 text-xs text-primary hover:underline"
+                        >
                             <CheckCheck className="size-3.5" /> Tandai semua dibaca
                         </button>
                     )}

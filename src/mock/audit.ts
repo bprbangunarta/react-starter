@@ -3,7 +3,23 @@ import type { AuditEntry, Db } from '@/mock/db';
 
 /** The fields an entry's hash covers, in a fixed order. The hash also covers the hash of the entry before it: a chain. */
 function payload(e: Omit<AuditEntry, 'hash'>): string {
-    return JSON.stringify([e.id, e.at, e.user, e.username, e.module, e.event, e.action, e.subject_type, e.subject_id, e.subject, e.outcome, e.old, e.new, e.context, e.previous_hash]);
+    return JSON.stringify([
+        e.id,
+        e.at,
+        e.user,
+        e.username,
+        e.module,
+        e.event,
+        e.action,
+        e.subject_type,
+        e.subject_id,
+        e.subject,
+        e.outcome,
+        e.old,
+        e.new,
+        e.context,
+        e.previous_hash,
+    ]);
 }
 
 export const GENESIS = '0'.repeat(64);
@@ -66,7 +82,12 @@ export async function verify(db: Db): Promise<{ ok: boolean; checked: number; br
         const { hash, ...rest } = entry;
 
         if (entry.previous_hash !== previous) {
-            return { ok: false, checked, broken_at: entry.id, reason: 'Tautan ke entri sebelumnya tidak cocok (ada entri sebelumnya yang dihapus atau diubah).' };
+            return {
+                ok: false,
+                checked,
+                broken_at: entry.id,
+                reason: 'Tautan ke entri sebelumnya tidak cocok (ada entri sebelumnya yang dihapus atau diubah).',
+            };
         }
 
         if ((await sha256(payload(rest))) !== hash) {
@@ -88,7 +109,7 @@ export async function seed(db: Db): Promise<void> {
 
         return n / 2147483648;
     };
-    const pick = <T,>(list: T[]): T => list[Math.floor(rand() * list.length)];
+    const pick = <T>(list: T[]): T => list[Math.floor(rand() * list.length)];
 
     const people = [
         { user: 'Administrator', username: 'admin' },
@@ -101,32 +122,103 @@ export async function seed(db: Db): Promise<void> {
     const entries: NewEntry[] = [];
 
     for (let i = 0; i < 160; i++) {
-        const at = new Date(now - (160 - i) * (30 * 24 * 3600 * 1000) / 160 + Math.floor(rand() * 3600 * 1000)).toISOString();
+        const at = new Date(now - ((160 - i) * (30 * 24 * 3600 * 1000)) / 160 + Math.floor(rand() * 3600 * 1000)).toISOString();
         const person = pick(people);
         const roll = rand();
 
         if (roll < 0.28) {
-            entries.push({ at, ...person, module: 'auth', event: 'auth.login', action: 'login', subject_type: 'User', subject: person.username, url: '/login' });
+            entries.push({
+                at,
+                ...person,
+                module: 'auth',
+                event: 'auth.login',
+                action: 'login',
+                subject_type: 'User',
+                subject: person.username,
+                url: '/login',
+            });
         } else if (roll < 0.36) {
-            entries.push({ at, ...person, module: 'auth', event: 'auth.logout', action: 'logout', subject_type: 'User', subject: person.username, url: '/logout' });
+            entries.push({
+                at,
+                ...person,
+                module: 'auth',
+                event: 'auth.logout',
+                action: 'logout',
+                subject_type: 'User',
+                subject: person.username,
+                url: '/logout',
+            });
         } else if (roll < 0.42) {
-            entries.push({ at, user: null, username: person.username, module: 'auth', event: 'auth.login_failed', action: 'login_failed', outcome: 'failure', subject: person.username, context: { reason: 'Kata sandi salah' }, url: '/login' });
+            entries.push({
+                at,
+                user: null,
+                username: person.username,
+                module: 'auth',
+                event: 'auth.login_failed',
+                action: 'login_failed',
+                outcome: 'failure',
+                subject: person.username,
+                context: { reason: 'Kata sandi salah' },
+                url: '/login',
+            });
         } else if (roll < 0.74) {
             const subject = pick(subjects);
             const id = Math.floor(rand() * 90) + 10;
             const updated = rand() < 0.7;
             entries.push({
-                at, ...person, module: 'records', event: updated ? 'records.updated' : 'records.created', action: updated ? 'updated' : 'created',
-                subject_type: 'Record', subject_id: id, subject, method: updated ? 'PUT' : 'POST', url: `/records/${id}`,
+                at,
+                ...person,
+                module: 'records',
+                event: updated ? 'records.updated' : 'records.created',
+                action: updated ? 'updated' : 'created',
+                subject_type: 'Record',
+                subject_id: id,
+                subject,
+                method: updated ? 'PUT' : 'POST',
+                url: `/records/${id}`,
                 old: updated ? { status: 'draft', owner: pick(people).user } : null,
                 new: { status: updated ? 'published' : 'draft', owner: pick(people).user },
             });
         } else if (roll < 0.84) {
-            entries.push({ at, ...person, module: 'settings', event: 'settings.updated', action: 'updated', subject_type: 'Setting', subject_id: 1, subject: 'Batas unggah', method: 'PUT', url: '/settings', old: { upload_limit_mb: 10 }, new: { upload_limit_mb: pick([10, 25, 50]) } });
+            entries.push({
+                at,
+                ...person,
+                module: 'settings',
+                event: 'settings.updated',
+                action: 'updated',
+                subject_type: 'Setting',
+                subject_id: 1,
+                subject: 'Batas unggah',
+                method: 'PUT',
+                url: '/settings',
+                old: { upload_limit_mb: 10 },
+                new: { upload_limit_mb: pick([10, 25, 50]) },
+            });
         } else if (roll < 0.92) {
-            entries.push({ at, ...person, module: 'profile', event: 'profile.password_changed', action: 'password_changed', subject_type: 'User', subject: person.username, method: 'PUT', url: '/profile/password' });
+            entries.push({
+                at,
+                ...person,
+                module: 'profile',
+                event: 'profile.password_changed',
+                action: 'password_changed',
+                subject_type: 'User',
+                subject: person.username,
+                method: 'PUT',
+                url: '/profile/password',
+            });
         } else {
-            entries.push({ at, ...person, module: 'access', event: 'access.denied', action: 'denied', outcome: 'denied', subject: `GET /admin/${pick(['users', 'roles', 'billing'])}`, method: 'GET', url: '/admin', context: { reason: 'Tidak punya akses' } });
+            entries.push({
+                at,
+                ...person,
+                module: 'access',
+                event: 'access.denied',
+                action: 'denied',
+                outcome: 'denied',
+                subject: `GET /admin/${pick(['users', 'roles', 'billing'])}`,
+                method: 'GET',
+                url: '/admin',
+                context: { reason: 'Tidak punya akses' },
+            });
         }
     }
 

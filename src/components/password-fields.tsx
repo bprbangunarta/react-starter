@@ -13,14 +13,22 @@ export function PasswordFields({ form }: { form: ReturnType<typeof useForm<Passw
     return (
         <>
             <Field label="Kata sandi saat ini" required error={form.errors.current_password}>
-                <PasswordInput autoComplete="current-password" value={form.data.current_password} onChange={(e) => form.setData('current_password', e.target.value)} />
+                <PasswordInput
+                    autoComplete="current-password"
+                    value={form.data.current_password}
+                    onChange={(e) => form.setData('current_password', e.target.value)}
+                />
             </Field>
             <div className="grid gap-3 sm:grid-cols-2">
                 <Field label="Kata sandi baru" required error={form.errors.password} hint="Minimal 8 karakter, tidak boleh sama dengan kata sandi sebelumnya">
                     <PasswordInput autoComplete="new-password" value={form.data.password} onChange={(e) => form.setData('password', e.target.value)} />
                 </Field>
                 <Field label="Konfirmasi kata sandi baru" required error={form.errors.password_confirmation}>
-                    <PasswordInput autoComplete="new-password" value={form.data.password_confirmation} onChange={(e) => form.setData('password_confirmation', e.target.value)} />
+                    <PasswordInput
+                        autoComplete="new-password"
+                        value={form.data.password_confirmation}
+                        onChange={(e) => form.setData('password_confirmation', e.target.value)}
+                    />
                 </Field>
             </div>
         </>

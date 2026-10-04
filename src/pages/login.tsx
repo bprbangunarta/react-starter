@@ -31,7 +31,9 @@ export default function Login() {
                 <div className="mb-4 flex flex-col items-center gap-1">
                     <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-base font-bold text-white">{APP_INITIAL}</span>
                     <h1 className="text-base font-semibold">{APP_NAME}</h1>
-                    <p className="text-center text-xs text-muted">Silakan masuk menggunakan akun Anda dengan email atau username dan kata sandi yang telah terdaftar.</p>
+                    <p className="text-center text-xs text-muted">
+                        Silakan masuk menggunakan akun Anda dengan email atau username dan kata sandi yang telah terdaftar.
+                    </p>
                 </div>
                 <Card className="p-4">
                     <form
@@ -87,7 +89,9 @@ export default function Login() {
                     <p className="mt-3 flex items-start gap-1.5 text-xs text-muted">
                         <Info className="mt-0.5 size-3.5 shrink-0" />
                         <span>
-                            Data tiruan: masuk dengan <code className="rounded bg-canvas px-1">admin</code> / <code className="rounded bg-canvas px-1">password</code>. Coba juga <code className="rounded bg-canvas px-1">kadaluarsa</code> / <code className="rounded bg-canvas px-1">password</code> (kata sandinya sudah lewat 30 hari).
+                            Data tiruan: masuk dengan <code className="rounded bg-canvas px-1">admin</code> /{' '}
+                            <code className="rounded bg-canvas px-1">password</code>. Coba juga <code className="rounded bg-canvas px-1">kadaluarsa</code> /{' '}
+                            <code className="rounded bg-canvas px-1">password</code> (kata sandinya sudah lewat 30 hari).
                         </span>
                     </p>
                 )}

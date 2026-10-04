@@ -4,7 +4,8 @@ import { useId } from 'react';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-const box = 'flex size-4 shrink-0 cursor-pointer items-center justify-center border border-line bg-surface focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-primary data-[state=checked]:bg-primary';
+const box =
+    'flex size-4 shrink-0 cursor-pointer items-center justify-center border border-line bg-surface focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-primary data-[state=checked]:bg-primary';
 
 function Label({ htmlFor, label, description }: { htmlFor: string; label: ReactNode; description?: string }) {
     return (

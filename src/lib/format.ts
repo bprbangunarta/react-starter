@@ -13,7 +13,5 @@ const rupiahFormat = new Intl.NumberFormat('id-ID', {
 
 /** Whole-rupiah amount, e.g. "Rp 1.500.000". */
 export function rupiah(value: number | string | null | undefined): string {
-    return value === null || value === undefined || value === ''
-        ? '–'
-        : rupiahFormat.format(Number(value));
+    return value === null || value === undefined || value === '' ? '–' : rupiahFormat.format(Number(value));
 }

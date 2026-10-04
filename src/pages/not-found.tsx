@@ -5,7 +5,15 @@ import { APP_INITIAL, APP_NAME } from '@/lib/brand';
 import { useTitle } from '@/lib/title';
 
 /** Full-screen error page: always offers a way out. */
-export default function NotFound({ status = 404, title = 'Halaman tidak ditemukan', description = 'Halaman yang Anda cari tidak ada atau sudah dipindahkan.' }: { status?: number; title?: string; description?: string }) {
+export default function NotFound({
+    status = 404,
+    title = 'Halaman tidak ditemukan',
+    description = 'Halaman yang Anda cari tidak ada atau sudah dipindahkan.',
+}: {
+    status?: number;
+    title?: string;
+    description?: string;
+}) {
     useTitle(`${status} ${title}`);
     const navigate = useNavigate();
 

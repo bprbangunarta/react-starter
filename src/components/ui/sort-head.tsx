@@ -21,7 +21,11 @@ export function SortHead({
     const Icon = !active ? ArrowUpDown : direction === 'asc' ? ArrowUp : ArrowDown;
 
     return (
-        <th scope="col" aria-sort={active ? (direction === 'asc' ? 'ascending' : 'descending') : 'none'} className={cn('px-3 py-2 text-left font-medium', className)}>
+        <th
+            scope="col"
+            aria-sort={active ? (direction === 'asc' ? 'ascending' : 'descending') : 'none'}
+            className={cn('px-3 py-2 text-left font-medium', className)}
+        >
             <button type="button" onClick={() => onSort(column)} className="inline-flex cursor-pointer items-center gap-1 hover:text-ink">
                 {children}
                 <Icon className={cn('size-3', !active && 'opacity-40')} />

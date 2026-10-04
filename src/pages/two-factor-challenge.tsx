@@ -108,14 +108,26 @@ export default function TwoFactorChallenge() {
                         }}
                     >
                         <Field label={recovery ? 'Kode pemulihan' : 'Kode verifikasi'} error={form.errors.code}>
-                            <CodeInput autoFocus recovery={recovery} value={form.data.code} onValueChange={(value) => form.setData('code', value)} aria-invalid={!!form.errors.code} placeholder={recovery ? 'xxxxx-xxxxx' : '••••••'} />
+                            <CodeInput
+                                autoFocus
+                                recovery={recovery}
+                                value={form.data.code}
+                                onValueChange={(value) => form.setData('code', value)}
+                                aria-invalid={!!form.errors.code}
+                                placeholder={recovery ? 'xxxxx-xxxxx' : '••••••'}
+                            />
                         </Field>
                         <Button type="submit" disabled={form.data.code.length < (recovery ? 11 : 6)}>
                             Verifikasi
                         </Button>
                         <div className="flex flex-col items-center gap-1.5 text-xs">
                             {method === 'email' && (
-                                <button type="button" disabled={wait > 0} onClick={() => void resend()} className="cursor-pointer text-primary hover:underline disabled:cursor-not-allowed disabled:text-muted disabled:no-underline">
+                                <button
+                                    type="button"
+                                    disabled={wait > 0}
+                                    onClick={() => void resend()}
+                                    className="cursor-pointer text-primary hover:underline disabled:cursor-not-allowed disabled:text-muted disabled:no-underline"
+                                >
                                     {wait > 0 ? `Kirim kode baru dalam ${wait} dtk` : 'Kirim kode baru'}
                                 </button>
                             )}
@@ -134,9 +146,7 @@ export default function TwoFactorChallenge() {
                             )}
                             <button
                                 type="button"
-                                onClick={() =>
-                                    void http.post('/two-factor-challenge/cancel').then(() => navigate('/login'))
-                                }
+                                onClick={() => void http.post('/two-factor-challenge/cancel').then(() => navigate('/login'))}
                                 className="flex cursor-pointer items-center gap-1 text-muted hover:text-ink"
                             >
                                 <ArrowLeft className="size-3" /> Kembali ke halaman masuk

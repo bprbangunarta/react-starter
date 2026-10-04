@@ -60,9 +60,7 @@ const OUTCOMES = [
     { value: 'failure', label: 'Gagal' },
     { value: 'denied', label: 'Ditolak' },
 ];
-const OUTCOME_LABEL = Object.fromEntries(
-    OUTCOMES.map((o) => [o.value, o.label]),
-) as Record<LogRow['outcome'], string>;
+const OUTCOME_LABEL = Object.fromEntries(OUTCOMES.map((o) => [o.value, o.label])) as Record<LogRow['outcome'], string>;
 const TONES: Record<LogRow['outcome'], BadgeTone> = {
     success: 'success',
     failure: 'danger',
@@ -70,17 +68,9 @@ const TONES: Record<LogRow['outcome'], BadgeTone> = {
 };
 const MIN_DATE = new Date(2020, 0, 1);
 
-const show = (value: unknown): string =>
-    value === null || value === undefined
-        ? '–'
-        : typeof value === 'string'
-          ? value
-          : JSON.stringify(value);
+const show = (value: unknown): string => (value === null || value === undefined ? '–' : typeof value === 'string' ? value : JSON.stringify(value));
 
-const changedFields = (log: LogRow): string[] =>
-    Array.from(
-        new Set([...Object.keys(log.old ?? {}), ...Object.keys(log.new ?? {})]),
-    );
+const changedFields = (log: LogRow): string[] => Array.from(new Set([...Object.keys(log.old ?? {}), ...Object.keys(log.new ?? {})]));
 
 const diffColumns = (log: LogRow): Column<string>[] => [
     { key: 'field', header: 'Kolom', className: 'font-medium', cell: (f) => f },
@@ -103,7 +93,15 @@ export default function AuditLogsIndex() {
     const [selected, setSelected] = useState<LogRow | null>(null);
     const [verifying, setVerifying] = useState(false);
     const [verification, setVerification] = useState<Verification | null>(null);
-    const [filters, setFilters] = useState<Filters & { page: number }>({ search: '', module: null, outcome: null, from: null, to: null, per_page: 25, page: 1 });
+    const [filters, setFilters] = useState<Filters & { page: number }>({
+        search: '',
+        module: null,
+        outcome: null,
+        from: null,
+        to: null,
+        per_page: 25,
+        page: 1,
+    });
     const [search, setSearch] = useState('');
     const { data, loading, error, reload } = useResource<{ data: LogRow[]; meta: PageMeta & { per_page: number }; modules: string[] }>('/audit-logs', filters);
     const logs = { data: data?.data ?? [], ...(data?.meta ?? { current_page: 1, last_page: 1, from: 0, to: 0, total: 0 }) };
@@ -144,12 +142,7 @@ export default function AuditLogsIndex() {
             key: 'time',
             header: 'Waktu',
             className: 'whitespace-nowrap',
-            cell: (log) =>
-                format(
-                    new Date(log.at.replace(' ', 'T')),
-                    'dd MMM yyyy HH:mm:ss',
-                    { locale: id },
-                ),
+            cell: (log) => format(new Date(log.at.replace(' ', 'T')), 'dd MMM yyyy HH:mm:ss', { locale: id }),
         },
         {
             key: 'ip',
@@ -184,11 +177,7 @@ export default function AuditLogsIndex() {
         {
             key: 'outcome',
             header: 'Hasil',
-            cell: (log) => (
-                <Badge tone={TONES[log.outcome]}>
-                    {OUTCOME_LABEL[log.outcome]}
-                </Badge>
-            ),
+            cell: (log) => <Badge tone={TONES[log.outcome]}>{OUTCOME_LABEL[log.outcome]}</Badge>,
         },
         {
             key: 'actions',
@@ -198,12 +187,7 @@ export default function AuditLogsIndex() {
             align: 'right',
             cell: (log) => (
                 <Tip label="Detail">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label={`Detail entri ${log.id}`}
-                        onClick={() => setSelected(log)}
-                    >
+                    <Button variant="ghost" size="icon" aria-label={`Detail entri ${log.id}`} onClick={() => setSelected(log)}>
                         <Eye />
                     </Button>
                 </Tip>
@@ -218,13 +202,8 @@ export default function AuditLogsIndex() {
                 description="Catatan anti-rusak tentang siapa melakukan apa, kapan, dan dari mana"
                 actions={
                     <div className="flex items-center gap-2">
-                        <Button
-                            variant="outline"
-                            onClick={verify}
-                            disabled={verifying}
-                        >
-                            <ShieldCheck />{' '}
-                            {verifying ? 'Memeriksa…' : 'Periksa integritas'}
+                        <Button variant="outline" onClick={verify} disabled={verifying}>
+                            <ShieldCheck /> {verifying ? 'Memeriksa…' : 'Periksa integritas'}
                         </Button>
                         <Button onClick={exportCsv}>
                             <Download /> Ekspor CSV
@@ -249,14 +228,7 @@ export default function AuditLogsIndex() {
                 onRetry={() => visit({})}
                 toolbar={
                     <FilterBar
-                        search={
-                            <SearchInput
-                                value={search}
-                                onChange={onSearch}
-                                placeholder="Cari pengguna, kejadian, data, IP…"
-                                label="Cari audit log"
-                            />
-                        }
+                        search={<SearchInput value={search} onChange={onSearch} placeholder="Cari pengguna, kejadian, data, IP…" label="Cari audit log" />}
                     >
                         <div className="w-full sm:w-36">
                             <DatePicker
@@ -280,7 +252,7 @@ export default function AuditLogsIndex() {
                             className="w-full sm:w-40"
                             clearable
                             placeholder="Modul"
-                                aria-label="Filter modul"
+                            aria-label="Filter modul"
                             options={modules.map((m) => ({
                                 value: m,
                                 label: m,
@@ -293,12 +265,10 @@ export default function AuditLogsIndex() {
                             clearable
                             searchable={false}
                             placeholder="Hasil"
-                                aria-label="Filter hasil"
+                            aria-label="Filter hasil"
                             options={OUTCOMES}
                             value={filters.outcome}
-                            onChange={(v) =>
-                                visit({ outcome: v as Filters['outcome'] })
-                            }
+                            onChange={(v) => visit({ outcome: v as Filters['outcome'] })}
                         />
                         {hasFilters && (
                             <Button
@@ -321,9 +291,7 @@ export default function AuditLogsIndex() {
                 columns={columns}
                 empty={{
                     icon: <ScrollText />,
-                    title: hasFilters
-                        ? 'Tidak ada entri yang cocok dengan filter'
-                        : 'Belum ada entri',
+                    title: hasFilters ? 'Tidak ada entri yang cocok dengan filter' : 'Belum ada entri',
                 }}
                 pagination={{
                     meta: logs,
@@ -348,47 +316,23 @@ export default function AuditLogsIndex() {
                                 {(
                                     [
                                         ['Waktu', selected.at],
-                                        [
-                                            'Pengguna',
-                                            [selected.user, selected.username]
-                                                .filter(Boolean)
-                                                .join(' · ') || 'Sistem',
-                                        ],
+                                        ['Pengguna', [selected.user, selected.username].filter(Boolean).join(' · ') || 'Sistem'],
                                         [
                                             'Data',
-                                            [
-                                                selected.subject_type,
-                                                selected.subject_id
-                                                    ? `#${selected.subject_id}`
-                                                    : null,
-                                                selected.subject,
-                                            ]
+                                            [selected.subject_type, selected.subject_id ? `#${selected.subject_id}` : null, selected.subject]
                                                 .filter(Boolean)
                                                 .join(' · ') || '–',
                                         ],
-                                        [
-                                            'Hasil',
-                                            OUTCOME_LABEL[selected.outcome],
-                                        ],
+                                        ['Hasil', OUTCOME_LABEL[selected.outcome]],
                                         ['Alamat IP', selected.ip ?? '–'],
-                                        [
-                                            'Permintaan',
-                                            [selected.method, selected.url]
-                                                .filter(Boolean)
-                                                .join(' ') || '–',
-                                        ],
-                                        [
-                                            'Peramban',
-                                            selected.user_agent ?? '–',
-                                        ],
+                                        ['Permintaan', [selected.method, selected.url].filter(Boolean).join(' ') || '–'],
+                                        ['Peramban', selected.user_agent ?? '–'],
                                         ['ID permintaan', selected.request_id],
                                         ['Hash', selected.hash],
                                     ] as [string, string][]
                                 ).map(([label, value]) => (
                                     <div key={label} className="contents">
-                                        <dt className="text-xs text-muted">
-                                            {label}
-                                        </dt>
+                                        <dt className="text-xs text-muted">{label}</dt>
                                         <dd className="break-all">{value}</dd>
                                     </div>
                                 ))}
@@ -417,10 +361,7 @@ export default function AuditLogsIndex() {
                             )}
                         </div>
                         <DialogFooter>
-                            <Button
-                                variant="outline"
-                                onClick={() => setSelected(null)}
-                            >
+                            <Button variant="outline" onClick={() => setSelected(null)}>
                                 Tutup
                             </Button>
                         </DialogFooter>

@@ -7,7 +7,11 @@ import type { Params } from '@/lib/http';
  */
 export async function exportCsv(url: string, params: Params = {}): Promise<void> {
     if (!USE_MOCK) {
-        const query = new URLSearchParams(Object.entries(params).filter(([, v]) => v !== null && v !== undefined && v !== '').map(([k, v]) => [k, String(v)]));
+        const query = new URLSearchParams(
+            Object.entries(params)
+                .filter(([, v]) => v !== null && v !== undefined && v !== '')
+                .map(([k, v]) => [k, String(v)]),
+        );
         window.location.assign(`${API_BASE}${url}?${query.toString()}`);
 
         return;

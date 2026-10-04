@@ -48,12 +48,7 @@ export function Combobox({
 
     const selected = options.find((o) => String(o.value) === String(value ?? ''));
     const filtered = useMemo(
-        () =>
-            options.filter((o) =>
-                `${o.label} ${o.description ?? ''}`
-                    .toLowerCase()
-                    .includes(query.trim().toLowerCase()),
-            ),
+        () => options.filter((o) => `${o.label} ${o.description ?? ''}`.toLowerCase().includes(query.trim().toLowerCase())),
         [options, query],
     );
 
@@ -88,7 +83,12 @@ export function Combobox({
             onOpenChange={(next) => {
                 setOpen(next);
                 setQuery('');
-                setActive(Math.max(0, options.findIndex((o) => String(o.value) === String(value ?? ''))));
+                setActive(
+                    Math.max(
+                        0,
+                        options.findIndex((o) => String(o.value) === String(value ?? '')),
+                    ),
+                );
             }}
         >
             <div className={cn('relative', className)}>
@@ -104,9 +104,7 @@ export function Combobox({
                         title={selected?.label}
                         className={cn(controlClass, 'flex items-center justify-between gap-1 text-left', clearable && selected && 'pr-12')}
                     >
-                        <span className={cn('truncate', !selected && 'text-muted/70')}>
-                            {selected?.label ?? placeholder}
-                        </span>
+                        <span className={cn('truncate', !selected && 'text-muted/70')}>{selected?.label ?? placeholder}</span>
                         <ChevronsUpDown className="size-3.5 shrink-0 text-muted" />
                     </button>
                 </PopoverTrigger>
@@ -147,11 +145,7 @@ export function Combobox({
                     />
                 )}
                 <ul ref={list} id={listId} role="listbox" className="max-h-56 overflow-auto overscroll-contain" onKeyDown={onKeyDown} tabIndex={-1}>
-                    {filtered.length === 0 && (
-                        <li className="px-2 py-2 text-center text-xs text-muted">
-                            Tidak ada hasil
-                        </li>
-                    )}
+                    {filtered.length === 0 && <li className="px-2 py-2 text-center text-xs text-muted">Tidak ada hasil</li>}
                     {filtered.map((option, index) => {
                         const isSelected = String(option.value) === String(value ?? '');
 
@@ -171,9 +165,7 @@ export function Combobox({
                             >
                                 <span className="min-w-0 break-words">
                                     {option.label}
-                                    {option.description && (
-                                        <span className="block text-xs text-muted">{option.description}</span>
-                                    )}
+                                    {option.description && <span className="block text-xs text-muted">{option.description}</span>}
                                 </span>
                                 {isSelected && <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />}
                             </li>

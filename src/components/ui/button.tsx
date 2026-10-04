@@ -10,8 +10,7 @@ export const buttonVariants = cva(
         variants: {
             variant: {
                 primary: 'bg-primary text-white hover:bg-primary-hover',
-                outline:
-                    'border border-line bg-surface text-ink hover:bg-canvas',
+                outline: 'border border-line bg-surface text-ink hover:bg-canvas',
                 ghost: 'text-muted hover:bg-canvas hover:text-ink',
                 danger: 'bg-danger text-white hover:bg-danger/90',
             },
@@ -25,26 +24,11 @@ export const buttonVariants = cva(
     },
 );
 
-type ButtonProps = React.ComponentProps<'button'> &
-    VariantProps<typeof buttonVariants> & { loading?: boolean };
+type ButtonProps = React.ComponentProps<'button'> & VariantProps<typeof buttonVariants> & { loading?: boolean };
 
-export function Button({
-    className,
-    variant,
-    size,
-    loading,
-    children,
-    disabled,
-    type = 'button',
-    ...props
-}: ButtonProps) {
+export function Button({ className, variant, size, loading, children, disabled, type = 'button', ...props }: ButtonProps) {
     return (
-        <button
-            type={type}
-            className={cn(buttonVariants({ variant, size }), className)}
-            disabled={disabled || loading}
-            {...props}
-        >
+        <button type={type} className={cn(buttonVariants({ variant, size }), className)} disabled={disabled || loading} {...props}>
             {loading && <Loader2 className="animate-spin" />}
             {children}
         </button>

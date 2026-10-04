@@ -53,7 +53,12 @@ export function ReauthDialog() {
     };
 
     return (
-        <Modal open={open} onOpenChange={(next) => !next && close()} title="Konfirmasi kata sandi" description="Aksi ini sensitif. Masukkan kata sandi Anda untuk melanjutkan.">
+        <Modal
+            open={open}
+            onOpenChange={(next) => !next && close()}
+            title="Konfirmasi kata sandi"
+            description="Aksi ini sensitif. Masukkan kata sandi Anda untuk melanjutkan."
+        >
             <form
                 noValidate
                 onSubmit={(e) => {
@@ -63,7 +68,13 @@ export function ReauthDialog() {
             >
                 <div className="p-4">
                     <Field label="Kata sandi" error={error}>
-                        <PasswordInput id="reauth-password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} aria-invalid={!!error} />
+                        <PasswordInput
+                            id="reauth-password"
+                            autoComplete="current-password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            aria-invalid={!!error}
+                        />
                     </Field>
                 </div>
                 <DialogFooter>

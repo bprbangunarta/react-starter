@@ -88,12 +88,7 @@ export function DataTable<T>({
     className,
 }: Props<T>) {
     const th = (c: Column<T>) =>
-        cn(
-            'px-3 py-2 font-medium',
-            c.align === 'right' ? 'text-right' : 'text-left',
-            c.hideBelow && HIDE[c.hideBelow],
-            c.narrow && 'w-10',
-        );
+        cn('px-3 py-2 font-medium', c.align === 'right' ? 'text-right' : 'text-left', c.hideBelow && HIDE[c.hideBelow], c.narrow && 'w-10');
 
     const body = error ? (
         <ErrorState message={error} onRetry={onRetry} />
@@ -110,41 +105,23 @@ export function DataTable<T>({
                                     sort={sort.sort}
                                     direction={sort.direction}
                                     onSort={sort.onSort}
-                                    className={cn(
-                                        c.align === 'right' &&
-                                            'text-right [&_button]:ml-auto',
-                                        c.hideBelow && HIDE[c.hideBelow],
-                                    )}
+                                    className={cn(c.align === 'right' && 'text-right [&_button]:ml-auto', c.hideBelow && HIDE[c.hideBelow])}
                                 >
                                     {typeof c.header === 'string' ? c.header : c.key}
                                 </SortHead>
                             ) : (
                                 <th key={c.key} scope="col" className={th(c)}>
-                                    {c.srOnly ? (
-                                        <span className="sr-only">
-                                            {c.header}
-                                        </span>
-                                    ) : (
-                                        c.header
-                                    )}
+                                    {c.srOnly ? <span className="sr-only">{c.header}</span> : c.header}
                                 </th>
                             ),
                         )}
                     </tr>
                 </thead>
-                <tbody
-                    className={cn(
-                        'divide-y divide-line',
-                        loading && rows.length > 0 && 'opacity-50',
-                    )}
-                >
+                <tbody className={cn('divide-y divide-line', loading && rows.length > 0 && 'opacity-50')}>
                     {loading && rows.length === 0
                         ? Array.from({ length: 5 }).map((_, i) => (
                               <tr key={i}>
-                                  <td
-                                      colSpan={columns.length}
-                                      className="px-3 py-2.5"
-                                  >
+                                  <td colSpan={columns.length} className="px-3 py-2.5">
                                       <Skeleton className="h-4 w-full" />
                                   </td>
                               </tr>
@@ -152,33 +129,15 @@ export function DataTable<T>({
                         : rows.map((row, index) => (
                               <tr
                                   key={rowKey(row)}
-                                  className={cn(
-                                      'hover:bg-canvas/60',
-                                      onRowClick && 'cursor-pointer',
-                                      rowClassName?.(row),
-                                  )}
-                                  onClick={
-                                      onRowClick
-                                          ? () => onRowClick(row)
-                                          : undefined
-                                  }
+                                  className={cn('hover:bg-canvas/60', onRowClick && 'cursor-pointer', rowClassName?.(row))}
+                                  onClick={onRowClick ? () => onRowClick(row) : undefined}
                               >
                                   {columns.map((c) => (
                                       <td
                                           key={c.key}
                                           // Row actions must not trigger the row click.
-                                          onClick={
-                                              c.srOnly
-                                                  ? (e) => e.stopPropagation()
-                                                  : undefined
-                                          }
-                                          className={cn(
-                                              'px-3 py-1.5',
-                                              c.align === 'right' &&
-                                                  'text-right',
-                                              c.hideBelow && HIDE[c.hideBelow],
-                                              c.className,
-                                          )}
+                                          onClick={c.srOnly ? (e) => e.stopPropagation() : undefined}
+                                          className={cn('px-3 py-1.5', c.align === 'right' && 'text-right', c.hideBelow && HIDE[c.hideBelow], c.className)}
                                       >
                                           {c.cell(row, index)}
                                       </td>
@@ -187,14 +146,7 @@ export function DataTable<T>({
                           ))}
                 </tbody>
             </table>
-            {!loading && rows.length === 0 && (
-                <EmptyState
-                    icon={empty.icon}
-                    title={empty.title}
-                    description={empty.description}
-                    action={empty.action}
-                />
-            )}
+            {!loading && rows.length === 0 && <EmptyState icon={empty.icon} title={empty.title} description={empty.description} action={empty.action} />}
         </div>
     );
 

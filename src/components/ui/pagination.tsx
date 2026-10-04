@@ -53,7 +53,13 @@ export function Pagination({
             </div>
             {meta.last_page > 1 && (
                 <nav className="flex items-center gap-1" aria-label="Halaman">
-                    <Button variant="outline" size="icon" aria-label="Halaman sebelumnya" disabled={meta.current_page === 1} onClick={() => onPage(meta.current_page - 1)}>
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        aria-label="Halaman sebelumnya"
+                        disabled={meta.current_page === 1}
+                        onClick={() => onPage(meta.current_page - 1)}
+                    >
                         <ChevronLeft />
                     </Button>
                     {pageWindow(meta.current_page, meta.last_page).map((p, i) =>
@@ -73,7 +79,13 @@ export function Pagination({
                             </Button>
                         ),
                     )}
-                    <Button variant="outline" size="icon" aria-label="Halaman berikutnya" disabled={meta.current_page === meta.last_page} onClick={() => onPage(meta.current_page + 1)}>
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        aria-label="Halaman berikutnya"
+                        disabled={meta.current_page === meta.last_page}
+                        onClick={() => onPage(meta.current_page + 1)}
+                    >
                         <ChevronRight />
                     </Button>
                 </nav>

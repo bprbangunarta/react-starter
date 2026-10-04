@@ -18,6 +18,9 @@ const files = [];
     }
 })(root);
 
+/** Test files and test setup may use literal colours and localStorage (test data, cleanup). */
+const isTest = (file) => /\.test\.tsx?$|\/src\/test\//.test(file);
+
 const rules = [
     {
         name: 'Tabel mentah dilarang: pakai components/ui/data-table.tsx (DataTable)',
@@ -27,7 +30,7 @@ const rules = [
     {
         name: 'Warna ditulis langsung: pakai token tema di src/index.css',
         test: (line) => /#[0-9a-fA-F]{3,8}\b|\b(rgb|rgba|hsl|hsla|oklch)\(/.test(line) && !/^\s*(\/\/|\*|\/\*)/.test(line),
-        skip: (file) => file.includes('/mock/') || file.endsWith('components/ui/color-input.tsx'),
+        skip: (file) => file.includes('/mock/') || file.endsWith('components/ui/color-input.tsx') || isTest(file),
     },
     {
         name: 'Baris judul + aksi memakai items-center, bukan items-start justify-between',
@@ -51,7 +54,7 @@ const rules = [
     {
         name: 'localStorage/sessionStorage dilarang: rahasia tidak boleh disimpan di peramban',
         test: (line) => /\b(localStorage|sessionStorage)\b/.test(line),
-        skip: (file) => file.includes('/mock/'),
+        skip: (file) => file.includes('/mock/') || isTest(file),
     },
     {
         name: 'Ekspor bawaan hanya untuk halaman, layout, dan App',
@@ -93,7 +96,9 @@ for (const file of files) {
     for (const match of text.matchAll(/<(DialogFooter|CardFooter)\b[^>]*>([\s\S]*?)<\/\1>/g)) {
         if (/<[A-Z][A-Za-z0-9]*\s*\/>/.test(match[2] ?? '')) {
             failures++;
-            console.error(`${relative(process.cwd(), file)}:${text.slice(0, match.index).split('\n').length}  Tombol di footer dialog/kartu hanya teks, tanpa ikon`);
+            console.error(
+                `${relative(process.cwd(), file)}:${text.slice(0, match.index).split('\n').length}  Tombol di footer dialog/kartu hanya teks, tanpa ikon`,
+            );
         }
     }
 }

@@ -29,9 +29,21 @@ export function ColorInput({ id, value, onValueChange, swatches = DEFAULT_SWATCH
                     disabled={disabled}
                     value={FULL.test(value) ? value : '#000000'}
                     onChange={(event) => onValueChange(event.target.value.toLowerCase())}
-                    className={cn('size-8 shrink-0 cursor-pointer rounded-md border border-line bg-surface p-0.5 disabled:opacity-50', !FULL.test(value) && 'opacity-40')}
+                    className={cn(
+                        'size-8 shrink-0 cursor-pointer rounded-md border border-line bg-surface p-0.5 disabled:opacity-50',
+                        !FULL.test(value) && 'opacity-40',
+                    )}
                 />
-                <MaskedInput id={id} mask="#hhhhhh" placeholder="#rrggbb" disabled={disabled} className="font-mono uppercase" value={value.replace('#', '')} onValueChange={(raw) => onValueChange(raw === '' ? '' : `#${raw.toLowerCase()}`)} {...aria} />
+                <MaskedInput
+                    id={id}
+                    mask="#hhhhhh"
+                    placeholder="#rrggbb"
+                    disabled={disabled}
+                    className="font-mono uppercase"
+                    value={value.replace('#', '')}
+                    onValueChange={(raw) => onValueChange(raw === '' ? '' : `#${raw.toLowerCase()}`)}
+                    {...aria}
+                />
             </div>
             {swatches && (
                 <div className="flex flex-wrap gap-1.5" role="group" aria-label="Warna siap pakai">
@@ -45,7 +57,10 @@ export function ColorInput({ id, value, onValueChange, swatches = DEFAULT_SWATCH
                             aria-pressed={value === color}
                             onClick={() => onValueChange(color)}
                             style={{ backgroundColor: color }}
-                            className={cn('size-5 cursor-pointer rounded border border-line focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:outline-none disabled:opacity-50', value === color && 'ring-2 ring-primary ring-offset-1')}
+                            className={cn(
+                                'size-5 cursor-pointer rounded border border-line focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:outline-none disabled:opacity-50',
+                                value === color && 'ring-2 ring-primary ring-offset-1',
+                            )}
                         />
                     ))}
                 </div>

@@ -122,7 +122,7 @@ Ganti warna utama dan merek lewat `npm run rebrand` (lihat README).
 | Token | Nilai | Dipakai untuk |
 |---|---|---|
 | `--font-sans` | Instrument Sans, lalu font sistem | seluruh teks |
-| `--color-primary` / `-hover` / `-soft` | `oklch(0.45 0.16 265)` / `oklch(0.4 0.16 265)` / `oklch(0.96 0.02 265)` | tombol utama, tautan, menu aktif, fokus / disorot / latar aktif dan badge info |
+| `--color-primary` / `-hover` / `-soft` | `oklch(0.45 0.16 265)` / `oklch(0.4 0.16 265)` / `oklch(0.96 0.02 265)` | tombol utama, tautan, menu aktif, fokus / disorot / latar lembut (menu aktif, area tarik berkas) |
 | `--color-surface` | `#ffffff` | kartu, sidebar, header, dialog, dropdown |
 | `--color-canvas` | `oklch(0.975 0.003 260)` | latar halaman, header tabel, hover |
 | `--color-line` | `oklch(0.92 0.006 260)` | semua garis dan batas |
