@@ -15,8 +15,8 @@ type Options<R> = {
 
 /**
  * A form bound to the API: `data`, `setData`, `errors` (first message per field), `processing`, `isDirty`, and
- * `post/put/delete(url)` which send the data as JSON and fill `errors` from a 422 response. Same shape as the form helper
- * the screens were written for, so the screens read like the original application.
+ * `post/put/delete(url)` which send the data as JSON and fill `errors` from a 422 response. Screens use it for every form, so
+ * validation errors and loading states behave the same everywhere.
  */
 export function useForm<T extends FormData>(initial: T) {
     const [defaults, setDefaultsState] = useState<T>(initial);

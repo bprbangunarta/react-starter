@@ -7,7 +7,7 @@
  */
 export type LoginCodeEmail = {
     appName: string;
-    /** Company line in the footer, e.g. "PT BPR Bangunarta". */
+    /** Company line in the footer, e.g. "PT Nama Perusahaan". */
     company?: string;
     code: string;
     /** How long the code is valid, in minutes. */

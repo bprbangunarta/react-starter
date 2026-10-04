@@ -1,6 +1,6 @@
 # Starter Kit
 
-Kerangka antarmuka **React + TypeScript + Vite + Tailwind** yang tampilannya sama persis dengan aplikasi SIPEBRI (Compact UI),
+Kerangka antarmuka **React + TypeScript + Vite + Tailwind** untuk dasbor admin internal dengan tampilan Compact UI (padat dan rapi),
 lengkap dengan **autentikasi, MFA, dan audit log**. Proyek ini **tanpa backend**: semua data berasal dari server tiruan di peramban,
 jadi setiap layar sudah bisa dicoba dan terasa seperti aslinya. Backend sungguhan (mis. dengan PostgreSQL) cukup menyediakan
 endpoint di [API.md](docs/API.md); tidak ada layar yang perlu ditulis ulang.
@@ -108,7 +108,7 @@ Secara manual:
 - **Logo/favicon sendiri:** timpa `public/favicon.svg`, `public/favicon.ico` (32×32 atau multi-ukuran), dan bila perlu ganti kotak huruf di
   `app-layout.tsx`, `login.tsx`, `not-found.tsx` dengan `<img>`. Email dan halaman error memakai kotak huruf sebaris (ubah di `email/` dan
   `scripts/generate-error-pages.mjs`).
-- **Nama perusahaan di email:** parameter `company` pada `renderLoginCodeEmail`.
+- **Nama perusahaan di email:** parameter `company` pada `renderLoginCodeEmail`; di versi Blade lewat `config('app.company')` (bawaan: nama aplikasi).
 - **Kunci demo** `starterkit.db.v2` di `src/mock/db.ts` boleh diganti; ia hilang bersama `src/mock/` saat backend tersambung.
 
 <a id="indexing"></a>
@@ -147,8 +147,7 @@ pembatasan jaringan (VPN/IP).
 
 ## Panduan tampilan, token, dan CSS acuan
 
-- **`src/index.css`** adalah CSS acuan: token warna (`oklch`), ukuran teks, kalender kompak, dan gaya dasar. Salinan persis dari
-  aplikasi asal.
+- **`src/index.css`** adalah CSS acuan: token warna (`oklch`), ukuran teks, kalender kompak, dan gaya dasar.
 - **`/styleguide`** (sidebar → Panduan) menampilkan semua komponen, warna, ukuran, dialog, tabel, dan email OTP. Tabelnya berupa contoh CRUD statis (Tambah, Ubah, Hapus lewat dialog form dan konfirmasi hapus) yang bisa disalin untuk halaman baru.
   Bandingkan layar baru dengannya.
 - **[docs/STANDARDS.md](docs/STANDARDS.md)** memuat aturan Compact UI dan tabel token (ukuran, tabel, tombol, dialog, DatePicker, Combobox).

@@ -78,7 +78,7 @@
                             <td style="padding:18px 28px;background:#f7f8fb;border-top:1px solid #e6e9f1;font-size:12px;line-height:1.6;color:#8a91a1;">
                                 Dikirim pada {{ $sentAt }}<br>
                                 Email otomatis dari {{ config('app.name') }}, mohon tidak dibalas.<br>
-                                &copy; {{ now()->year }} PT BPR Bangunarta
+                                &copy; {{ now()->year }} {{ config('app.company', config('app.name')) }}
                             </td>
                         </tr>
                     </table>

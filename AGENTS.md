@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Starter Kit: antarmuka React + TypeScript + Vite + Tailwind (Compact UI, sama dengan SIPEBRI) dengan autentikasi, MFA, dan audit log.
+Starter Kit: antarmuka React + TypeScript + Vite + Tailwind (tampilan Compact UI) dengan autentikasi, MFA, dan audit log.
 **Tanpa backend**: data dari server tiruan di `src/mock/`; backend asli menyediakan endpoint yang sama.
 
 ## Dokumen (baca sesuai pekerjaan)

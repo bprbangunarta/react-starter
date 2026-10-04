@@ -15,4 +15,4 @@ Bila bukan Anda yang mencoba masuk atau mengubah pengaturan keamanan, abaikan em
 
 --
 Email otomatis dari {{ config('app.name') }}, mohon tidak dibalas.
-PT BPR Bangunarta
+{{ config('app.company', config('app.name')) }}
