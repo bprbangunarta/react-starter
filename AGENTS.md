@@ -9,6 +9,9 @@ Starter Kit: antarmuka React + TypeScript + Vite + Tailwind (tampilan Compact UI
 |---|---|---|
 | [README.md](README.md) | menjalankan, isi, struktur, menyambung backend, rebranding, akses mesin pencarian, menambah halaman, email OTP, halaman error, daftar periksa backend, pemecahan masalah | pertama kali memakai proyek |
 | [docs/STANDARDS.md](docs/STANDARDS.md) | **aturan wajib**: kode, tampilan (Compact UI), token, data, audit log, MFA | menulis atau mengubah kode/tampilan |
+| [docs/ai/MEMORY.md](docs/ai/MEMORY.md) | keputusan pemilik, otorisasi git, gaya kerja, jebakan yang sudah diketahui | **awal setiap sesi** |
+| [docs/ai/STATE.md](docs/ai/STATE.md) | kondisi terkini: yang sudah ada, hasil verifikasi terakhir | **awal setiap sesi**; perbarui setelah tiap unit pekerjaan |
+| [docs/ai/BACKLOG.md](docs/ai/BACKLOG.md) | pekerjaan yang belum dikerjakan, alasan, usulan, prioritas | pemilik meminta merencanakan pekerjaan berikutnya |
 | [docs/API.md](docs/API.md) | kontrak endpoint, galat 422, rantai hash audit log | mengubah akses server atau menambah endpoint |
 
 Acuan lain: `/styleguide` (jalankan `npm run dev`, sidebar → Panduan; semua komponen dan contoh CRUD), `src/index.css` (token tema),

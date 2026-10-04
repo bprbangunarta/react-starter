@@ -69,7 +69,7 @@ security-headers.conf
 .env.example                 ALLOW_INDEXING (akses mesin pencarian)
 README.md                    panduan ini
 AGENTS.md                    peta dokumen dan ringkasan aturan (baca dulu bila mengubah kode)
-docs/                        STANDARDS.md (aturan wajib kode dan tampilan), API.md (kontrak endpoint)
+docs/                        STANDARDS.md (aturan wajib kode dan tampilan), API.md (kontrak endpoint), ai/ (MEMORY, STATE, BACKLOG: catatan kerja untuk agent dan pemilik)
 ```
 
 ## Cara kerja server tiruan dan melepasnya
@@ -131,9 +131,7 @@ Walau hanya frontend statis, dasar-dasar produksinya sudah ada. Yang **sengaja b
 | Ketahanan | `ErrorBoundary`, keadaan memuat/kosong/galat di tiap daftar, penanda koneksi putus, galat 422 per kolom | |
 | Operasional | Docker multi-tahap, `engines` dan `.nvmrc`, `.editorconfig`, 0 kerentanan `npm audit` saat ini | jalankan `npm audit` berkala |
 
-**Sengaja belum ada** (tambahkan bila perlu): tes ujung ke ujung (Playwright) karena belum ada backend nyata; i18n (aplikasi satu bahasa, Indonesia);
-PWA/offline; pemantauan galat (Sentry dan sejenisnya); logout otomatis saat tak aktif (idle timeout, sebaiknya bersama kebijakan sesi backend);
-mode gelap.
+Yang belum ada (beserta alasan dan prioritasnya) dicatat di [docs/ai/BACKLOG.md](docs/ai/BACKLOG.md).
 
 <a id="indexing"></a>
 ## Akses mesin pencarian (anti-crawl)
