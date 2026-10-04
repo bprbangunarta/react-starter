@@ -3,25 +3,11 @@
 Kerangka antarmuka **React + TypeScript + Vite + Tailwind** yang tampilannya sama persis dengan aplikasi SIPEBRI (Compact UI),
 lengkap dengan **autentikasi, MFA, dan audit log**. Proyek ini **tanpa backend**: semua data berasal dari server tiruan di peramban,
 jadi setiap layar sudah bisa dicoba dan terasa seperti aslinya. Backend sungguhan (mis. dengan PostgreSQL) cukup menyediakan
-endpoint di [API.md](API.md); tidak ada layar yang perlu ditulis ulang.
-
-## Daftar isi
-
-1. [Menjalankan](#menjalankan)
-2. [Yang sudah ada](#yang-sudah-ada)
-3. [Struktur proyek](#struktur-proyek)
-4. [Cara kerja server tiruan dan menyambung ke backend](#menyambung-ke-backend)
-5. [Menambah halaman, menu, tabel, dan formulir](#menambah-halaman)
-6. [Panduan tampilan, token, dan CSS acuan](#tampilan)
-7. [Template email kode OTP](#email-otp)
-8. [Halaman error statis](#halaman-error)
-9. [Aturan kode dan pemeriksaan otomatis](#aturan-kode)
-10. [Daftar periksa untuk tim backend](#backend)
-11. [Pemecahan masalah](#masalah)
+endpoint di [API.md](docs/API.md); tidak ada layar yang perlu ditulis ulang.
 
 ## Menjalankan
 
-Butuh Node.js 20 atau lebih baru.
+Butuh Node.js 20.19+ atau 22.12+ (syarat Vite 8).
 
 ```bash
 npm install
@@ -65,7 +51,7 @@ src/
   layouts/app-layout.tsx     sidebar, header, menu akun, pengingat MFA  (tambah menu di MENU)
   pages/                     login, two-factor-challenge, dashboard, profile, audit-logs, styleguide, not-found
   components/ui/             komponen dasar: button, input, field, combobox, data-table, dialog, dropdown, date-picker, ...
-  components/                bel notifikasi, penanda jaringan, dialog konfirmasi kata sandi (reauth)
+  components/                bel notifikasi, penanda jaringan, dialog konfirmasi kata sandi (reauth), error boundary
   hooks/use-network-status.ts
   mock/                      server tiruan (HAPUS saat backend asli siap)
 email/                       template email OTP (TypeScript, dan Blade untuk Laravel)
@@ -73,12 +59,11 @@ error-pages/                 halaman error statis (401, 403, 404, 419, 429, 500,
 scripts/                     pemeriksa standar kode, pembuat halaman error
 Dockerfile, nginx.conf,      pengemasan produksi: UI statis + proxy `/api/` ke backend (ubah `backend:7100` di nginx.conf)
 security-headers.conf
-AGENTS.md                    peta semua dokumen (baca ini dulu)
-docs/                        README.md (panduan ini), API.md (kontrak endpoint), CODE-STANDARDS.md (aturan wajib kode),
-                             ui-rules.md (aturan tampilan), design-tokens.md (token dan CSS acuan)
+README.md                    panduan ini
+AGENTS.md                    peta dokumen dan ringkasan aturan (baca dulu bila mengubah kode)
+docs/                        STANDARDS.md (aturan wajib kode dan tampilan), API.md (kontrak endpoint)
 ```
 
-<a id="menyambung-ke-backend"></a>
 ## Cara kerja server tiruan dan menyambung ke backend
 
 Semua layar memanggil `http.get/post/put/delete(url, data)` (`src/lib/http.ts`) dan **tidak tahu** siapa yang menjawab. Saat
@@ -87,7 +72,7 @@ backend asli:
 
 1. Di `src/lib/http.ts`: isi `API_BASE` dan ubah `USE_MOCK` menjadi `false`. Permintaan menjadi `fetch(API_BASE + url)` dengan
    cookie sesi (`credentials: 'include'`).
-2. Sediakan endpoint di [API.md](API.md) dengan bentuk respons yang sama. Yang paling penting:
+2. Sediakan endpoint di [API.md](docs/API.md) dengan bentuk respons yang sama. Yang paling penting:
    - sukses = 2xx dengan JSON (bila ada `message`, tampil sebagai toast);
    - validasi gagal = **422** `{ "message": "...", "errors": { "kolom": ["pesan"] } }` (pesan tampil di bawah kolom);
    - belum masuk = **401** (layar kembali ke login).
@@ -115,19 +100,16 @@ Bila backend memakai token alih-alih cookie, ubah `send()` di `src/lib/http.ts` 
    // form.errors.name berisi pesan dari 422; form.processing untuk tombol loading
    ```
 7. **Tiruan (opsional):** tambahkan rute di `src/mock/server.ts` supaya halaman baru bisa dicoba tanpa backend; catat endpoint-nya
-   di [API.md](API.md).
+   di [API.md](docs/API.md).
 
-<a id="tampilan"></a>
 ## Panduan tampilan, token, dan CSS acuan
 
 - **`src/index.css`** adalah CSS acuan: token warna (`oklch`), ukuran teks, kalender kompak, dan gaya dasar. Salinan persis dari
   aplikasi asal.
 - **`/styleguide`** (sidebar → Panduan) menampilkan semua komponen, warna, ukuran, dialog, tabel, dan email OTP. Tabelnya berupa contoh CRUD statis (Tambah, Ubah, Hapus lewat dialog form dan konfirmasi hapus) yang bisa disalin untuk halaman baru.
   Bandingkan layar baru dengannya.
-- **[docs/design-tokens.md](design-tokens.md)** merinci nilai token dan ukuran; **[docs/ui-rules.md](ui-rules.md)** memuat aturan
-  Compact UI (ukuran, tabel, tombol, dialog, penjajaran, DatePicker, Combobox).
+- **[docs/STANDARDS.md](docs/STANDARDS.md)** memuat aturan Compact UI dan tabel token (ukuran, tabel, tombol, dialog, DatePicker, Combobox).
 
-<a id="email-otp"></a>
 ## Template email kode OTP
 
 `email/login-code.ts` berisi `renderLoginCodeEmail()`: fungsi murni tanpa dependensi yang menghasilkan `{ subject, html, text }`.
@@ -150,9 +132,8 @@ const { subject, html, text } = renderLoginCodeEmail({
 
 Pratinjaunya tampil di `/styleguide`. Untuk Laravel, versi Blade yang sama ada di `email/blade/` (`login-code.blade.php`,
 `login-code-text.blade.php`, dan kelas `LoginCode.php.txt`). Aturan kode OTP (tersimpan sebagai hash, berlaku 10 menit, maksimal 5
-salah, jeda kirim ulang) ada di [CODE-STANDARDS.md](CODE-STANDARDS.md) bagian 7.
+salah, jeda kirim ulang) ada di [docs/STANDARDS.md](docs/STANDARDS.md) bagian 6.
 
-<a id="halaman-error"></a>
 ## Halaman error statis
 
 `error-pages/` berisi HTML mandiri (tanpa aset) untuk 401, 403, 404, 419, 429, 500, dan 503, untuk disajikan server web atau
@@ -164,30 +145,28 @@ npm run error-pages -- "Nama Aplikasi"
 
 Di dalam aplikasi, 404 ditampilkan oleh `src/pages/not-found.tsx` (layar penuh, tombol Kembali dan Ke beranda).
 
-<a id="aturan-kode"></a>
 ## Aturan kode dan pemeriksaan otomatis
 
-Baca [CODE-STANDARDS.md](CODE-STANDARDS.md). Ringkasnya: kode berbahasa Inggris dan teks layar berbahasa Indonesia, TypeScript ketat
-tanpa `any`, semua akses server lewat `http`, semua tabel lewat `DataTable`, warna hanya lewat token. `npm run standards` memeriksa
-hal-hal yang bisa dicek mesin (tabel mentah, warna tertulis langsung, `any`, `console.log`, penjajaran judul+aksi) dan menjadi bagian
-dari `npm run check` dan `npm run build`.
+Baca [docs/STANDARDS.md](docs/STANDARDS.md). Ringkasnya: kode berbahasa Inggris dan teks layar berbahasa Indonesia, TypeScript ketat
+tanpa `any`, semua akses server lewat `http`, semua tabel lewat `DataTable`, warna hanya lewat token, plus aturan React (hooks, efek, `key`).
+`npm run standards` memeriksa yang bisa dicek mesin (tabel mentah, warna tertulis langsung, `any`, `@ts-ignore`, `fetch` langsung,
+`dangerouslySetInnerHTML`, `localStorage`, ekspor bawaan, `key` berindeks, `console.log`, penjajaran judul+aksi) dan menjadi bagian dari
+`npm run check` dan `npm run build`.
 
-<a id="backend"></a>
 ## Daftar periksa untuk tim backend
 
-- [ ] Endpoint sesi, MFA, profil, notifikasi, dan audit log sesuai [API.md](API.md), termasuk bentuk galat 422.
+- [ ] Endpoint sesi, MFA, profil, notifikasi, dan audit log sesuai [API.md](docs/API.md), termasuk bentuk galat 422.
 - [ ] Kata sandi di-hash; percobaan masuk dibatasi; sesi aman (cookie `HttpOnly`, `Secure`, `SameSite`).
 - [ ] TOTP: rahasia disimpan terenkripsi; kode divalidasi dengan toleransi ±1 langkah; kode OTP email disimpan sebagai hash.
 - [ ] Kode pemulihan di-hash dan sekali pakai.
 - [ ] Audit log **append-only** dengan rantai hash (disarankan HMAC dengan kunci rahasia di server); tidak ada jalur ubah/hapus;
       verifikasi terjadwal; entri tidak memuat rahasia.
-- [ ] Setiap kejadian di [CODE-STANDARDS.md](CODE-STANDARDS.md) bagian 6 tercatat.
+- [ ] Setiap kejadian di [docs/STANDARDS.md](docs/STANDARDS.md) bagian 6 tercatat.
 - [ ] Email OTP memakai template di `email/` dan domain pengirim ber-SPF/DKIM/DMARC.
 - [ ] Header `X-Robots-Tag: noindex, nofollow` dan `robots.txt` (`Disallow: /`) bila aplikasi internal (sudah ada di `public/`).
-- [ ] Aksi sensitif (bila ada) membalas 403 `reauth_required` dan `POST /reauth` tersedia (lihat [API.md](API.md)).
+- [ ] Aksi sensitif (bila ada) membalas 403 `reauth_required` dan `POST /reauth` tersedia (lihat [API.md](docs/API.md)).
 - [ ] Hapus `src/mock/` setelah semua endpoint tersambung.
 
-<a id="masalah"></a>
 ## Pemecahan masalah
 
 | Gejala | Penyebab dan cara |
@@ -197,4 +176,4 @@ dari `npm run check` dan `npm run build`.
 | Ingin mengulang dari awal | Hapus kunci `starterkit.db.v1` di `localStorage` |
 | Kode authenticator ditolak | Jam perangkat harus akurat; kode berlaku 30 detik dengan toleransi ±1 langkah |
 | Kode OTP email tidak datang | Tidak ada email sungguhan; kodenya tampil di toast "demo: ......" |
-| `npm run build` gagal di `standards` | Baca baris yang dilaporkan; aturannya dijelaskan di CODE-STANDARDS.md |
+| `npm run build` gagal di `standards` | Baca baris yang dilaporkan; aturannya dijelaskan di docs/STANDARDS.md |

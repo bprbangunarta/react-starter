@@ -1,4 +1,4 @@
-// Mechanical checks of the code standards (see docs/CODE-STANDARDS.md). Exit code 1 when something is broken.
+// Mechanical checks of the code standards (see docs/STANDARDS.md). Exit code 1 when something is broken.
 //   npm run standards
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -36,6 +36,28 @@ const rules = [
     },
     { name: 'console.log/debugger tertinggal', test: (line) => /\bconsole\.log\(|\bdebugger\b/.test(line), skip: () => false },
     { name: 'Tipe any dilarang', test: (line) => /:\s*any\b|\bas any\b|<any>/.test(line), skip: () => false },
+    { name: '@ts-ignore/@ts-nocheck dilarang: perbaiki tipenya', test: (line) => /@ts-(ignore|nocheck)/.test(line), skip: () => false, inComments: true },
+    {
+        name: 'fetch langsung dilarang: pakai http di lib/http.ts',
+        test: (line) => /\bfetch\(/.test(line),
+        skip: (file) => file.endsWith('lib/http.ts') || file.endsWith('hooks/use-network-status.ts'),
+    },
+    { name: 'dangerouslySetInnerHTML dilarang: tampilkan teks biasa', test: (line) => /dangerouslySetInnerHTML/.test(line), skip: () => false },
+    {
+        name: 'localStorage/sessionStorage dilarang: rahasia tidak boleh disimpan di peramban',
+        test: (line) => /\b(localStorage|sessionStorage)\b/.test(line),
+        skip: (file) => file.includes('/mock/'),
+    },
+    {
+        name: 'Ekspor bawaan hanya untuk halaman, layout, dan App',
+        test: (line) => /^export default\b/.test(line),
+        skip: (file) => /\/(pages|layouts)\//.test(file) || file.endsWith('/App.tsx'),
+    },
+    {
+        name: 'key memakai indeks dilarang: pakai id yang stabil',
+        test: (line) => /key=\{(i|idx|index)\}/.test(line),
+        skip: (file) => file.endsWith('components/ui/data-table.tsx'),
+    },
 ];
 
 let failures = 0;
@@ -44,11 +66,13 @@ for (const file of files) {
     const lines = readFileSync(file, 'utf8').split('\n');
 
     lines.forEach((line, index) => {
-        if (/^\s*(\/\/|\*|\/\*)/.test(line)) {
-            return; // comments
-        }
+        const comment = /^\s*(\/\/|\*|\/\*)/.test(line);
 
         for (const rule of rules) {
+            if (comment && !rule.inComments) {
+                continue;
+            }
+
             if (!rule.skip(file) && rule.test(line)) {
                 failures++;
                 console.error(`${relative(process.cwd(), file)}:${index + 1}  ${rule.name}`);

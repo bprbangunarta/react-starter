@@ -66,7 +66,7 @@ pertama memakai hash nol. Contoh perhitungan ada di `src/mock/audit.ts` (di back
 | GET | `/audit-logs/export?...filter yang sama` | berkas `text/csv` (kolom: Waktu, Pengguna, Modul, Kejadian, Data, Hasil, IP, URL) |
 | POST | `/audit-logs/verify` | `{ ok, checked, broken_at, reason }`; hasilnya sendiri dicatat sebagai entri |
 
-`Entry`: `{ id, at, user, username, module, event, action, subject_type, subject_id, subject, outcome: 'success'|'failure'|'denied', ip,
+`Entry`: `{ id (angka atau string), at, user, username, module, event, action, subject_type, subject_id, subject, outcome: 'success'|'failure'|'denied', ip,
 method, url, user_agent, request_id, old, new, context, previous_hash, hash }`. `old`/`new` = nilai kolom sebelum dan sesudah
 (objek, boleh `null`).
 
