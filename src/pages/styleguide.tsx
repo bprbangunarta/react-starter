@@ -563,7 +563,7 @@ export default function Styleguide() {
 
                 <Section
                     title="Dialog"
-                    description="Header (judul), body (isi atau pesan konfirmasi), footer (tombol teks: batal paling kiri, konfirmasi paling kanan)."
+                    description="Header (judul), body (isi atau pesan konfirmasi), footer (tombol teks: batal paling kiri, konfirmasi paling kanan). Dialog berisi isian tidak menutup saat klik di luar (persistent); Esc dan tombol tutup tetap bisa; fokus kembali ke tombol pembuka."
                 >
                     <div className="flex gap-2">
                         <Button variant="outline" onClick={() => setModal(true)}>
@@ -607,6 +607,7 @@ export default function Styleguide() {
             </div>
 
             <Modal
+                persistent
                 open={draft !== null}
                 onOpenChange={(next) => !next && setDraft(null)}
                 title={draft?.id === null ? 'Tambah data' : 'Ubah data'}
@@ -661,7 +662,7 @@ export default function Styleguide() {
                 }}
             />
 
-            <Modal open={modal} onOpenChange={setModal} title="Contoh dialog" description="Dialog kecil untuk tambah atau ubah data.">
+            <Modal persistent open={modal} onOpenChange={setModal} title="Contoh dialog" description="Dialog kecil untuk tambah atau ubah data.">
                 <DialogBody>
                     <Field label="Nama" required>
                         <Input autoFocus />

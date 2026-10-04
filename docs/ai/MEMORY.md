@@ -39,6 +39,7 @@ pekerjaan tertunda di [BACKLOG](BACKLOG.md), kondisi terkini di [STATE](STATE.md
 ## Jebakan yang sudah diketahui
 
 - Vite 8 butuh Node 20.19+ atau 22.12+. `tsconfig.json` hanya memuat tipe `vite/client`: tes yang membaca berkas memakai `// @vitest-environment node` dan `/// <reference types="node" />`.
+- Dialog yang dibuka lewat state (tanpa `Dialog.Trigger` Radix) kehilangan pengembalian fokus: selalu pakai `useRestoreFocus` (sudah di `Modal`, `ConfirmDialog`, laci). Uji fokus di browser harus memakai `activeElement`, bukan event `focus` (jendela pane tidak fokus OS).
 - Vitest dengan `css: false` mengosongkan impor CSS (termasuk `?raw`): baca `index.css` lewat `node:fs`.
 - Di panel browser bawaan: `cmd+a` tidak memilih teks (isi kolom lewat `form_input`), ref bisa basi setelah render ulang (cari ulang), dan pembukaan pertama sebuah halaman butuh ±2 detik (server dev mengompilasi modul lazy; data tiruan juga dibuat sekali). Setelah `npm update` atau server dev baru menyala, muat ulang penuh halaman uji; modul lazy lama gagal diambil dan `ErrorBoundary` tampil.
 - zsh: tanda `--include=*.tsx` tanpa kutip membuat grep gagal; pakai `--include='*.tsx'`. `sed -i` di macOS butuh argumen cadangan (`-i.bak`).

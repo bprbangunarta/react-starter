@@ -102,6 +102,15 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
   - **Berkas:** `FileInput` (klik atau seret; batasi `accept` dan `maxBytes`; ukuran dan tipe tetap divalidasi ulang di backend).
   - Isian berformat tetap teks bagi pembaca layar: jangan ganti `inputMode`/`autoComplete` yang sudah ada, dan bungkus semuanya dengan `Field`
     (`Field` menyambungkan label, hint, dan galat ke isian lewat `id`, `aria-describedby`, `aria-invalid`).
+- **Lapisan mengambang** (dialog, laci, popover, dropdown, tooltip) hanya lewat komponen di `components/ui` (Radix); `fixed inset-0` buatan sendiri dilarang **[mesin]**
+  (laci menu ponsel juga dialog Radix). Perilaku yang wajib dan dijaga tes:
+  - dialog punya nama (judul) dan peran; `Esc` dan tombol tutup menutupnya; fokus pindah ke dalam saat dibuka dan **kembali ke tombol pembuka** saat ditutup (`useRestoreFocus`
+    di `Modal`, `ConfirmDialog`, dan laci, karena dibuka lewat state, bukan `Trigger` Radix);
+  - dialog berisi isian memakai `persistent` (klik di luar tidak menutup, supaya isian tidak hilang tak sengaja); dialog baca-saja boleh menutup lewat klik di luar;
+  - dialog lebih tinggi dari layar menggulir utuh (`max-h-[calc(100dvh-2rem)]`), jangan membuat gulir bersarang di `DialogBody`;
+  - popover (notifikasi, Combobox, DatePicker) punya `aria-label`; tooltip hanya untuk tombol ikon (nama tetap lewat `aria-label`);
+  - animasi hanya pudar (`overlay-fade`), dan mati bila pengguna meminta gerak berkurang;
+  - urutan lapisan: lihat tabel Token dan CSS (panel Combobox di dalam dialog tampil di atasnya).
 - **Toolbar daftar:** `FilterBar` + `SearchInput`; pencarian sendirian di kiri, semua filter dan tombol Reset di kanan.
 - **Tabel:** semua tabel memakai `DataTable` (`<table>` mentah dilarang **[mesin]**). Komponen ini mengurus kartu, toolbar, urutan (`sort`), skeleton,
   kosong, galat + coba lagi, `onRowClick`, paginasi, dan gulir `relative overflow-x-auto`. Definisikan kolom sebagai `Column<Row>[]`:

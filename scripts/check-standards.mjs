@@ -48,6 +48,11 @@ const rules = [
         test: (line) => /\btext-\[\d+(\.\d+)?(px|rem)\]/.test(line),
         skip: () => false,
     },
+    {
+        name: 'Lapisan layar penuh buatan sendiri dilarang: pakai Modal/ConfirmDialog (components/ui/dialog.tsx) atau Dialog Radix',
+        test: (line) => /\bfixed inset-0\b/.test(line),
+        skip: (file) => file.endsWith('components/ui/dialog.tsx'),
+    },
     { name: 'Tipe any dilarang', test: (line) => /:\s*any\b|\bas any\b|<any>/.test(line), skip: () => false },
     { name: '@ts-ignore/@ts-nocheck dilarang: perbaiki tipenya', test: (line) => /@ts-(ignore|nocheck)/.test(line), skip: () => false, inComments: true },
     {

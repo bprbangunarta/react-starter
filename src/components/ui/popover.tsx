@@ -11,7 +11,7 @@ export function PopoverContent({ className, ...props }: React.ComponentProps<typ
                 align="start"
                 sideOffset={4}
                 collisionPadding={8}
-                className={cn('z-70 rounded-md border border-line bg-surface shadow-lg focus:outline-none', className)}
+                className={cn('overlay-fade z-70 rounded-md border border-line bg-surface shadow-lg focus:outline-none', className)}
                 {...props}
             />
         </P.Portal>

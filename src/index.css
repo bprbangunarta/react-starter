@@ -41,6 +41,21 @@
     --text-sm: 0.8125rem;
 }
 
+/* Overlays (dialog, drawer, popover) fade in; nothing moves, and nothing animates for people who ask for reduced motion. */
+@keyframes overlay-in {
+    from {
+        opacity: 0;
+    }
+}
+.overlay-fade[data-state='open'] {
+    animation: overlay-in 120ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+    .overlay-fade[data-state='open'] {
+        animation: none;
+    }
+}
+
 /* Toasts (sonner richColors) take the status ladder above, so they match Badge and Alert. */
 html [data-sonner-toaster][data-sonner-theme] {
     --success-bg: var(--color-success-soft);

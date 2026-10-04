@@ -129,6 +129,7 @@ function SendCode({ url, sent, onSent }: { url: string; sent: boolean; onSent: (
 function RecoveryCodes({ codes, onClose }: { codes: string[] | null; onClose: () => void }) {
     return (
         <Modal
+            persistent
             open={codes !== null}
             onOpenChange={(open) => !open && onClose()}
             title="Simpan kode pemulihan Anda"
@@ -301,6 +302,7 @@ export default function Profile() {
             </div>
 
             <Modal
+                persistent
                 open={setup !== null}
                 onOpenChange={(open) => !open && setSetup(null)}
                 title="Atur aplikasi authenticator"
@@ -326,6 +328,7 @@ export default function Profile() {
                 )}
             </Modal>
             <Modal
+                persistent
                 open={emailOpen}
                 onOpenChange={setEmailOpen}
                 title="Atur kode email"
@@ -344,6 +347,7 @@ export default function Profile() {
                 </CodeForm>
             </Modal>
             <Modal
+                persistent
                 open={disableOpen}
                 onOpenChange={setDisableOpen}
                 title="Matikan verifikasi dua langkah"

@@ -60,7 +60,7 @@ export function DatePicker({
                     <CalendarDays className="size-3.5 text-muted" />
                 </button>
             </PopoverTrigger>
-            <PopoverContent className="w-fit p-1.5">
+            <PopoverContent aria-label={ariaLabel ?? placeholder} className="w-fit p-1.5">
                 <DayPicker
                     mode="single"
                     locale={idLocale}

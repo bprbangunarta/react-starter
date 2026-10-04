@@ -120,6 +120,7 @@ export function Combobox({
                 )}
             </div>
             <PopoverContent
+                aria-label={ariaLabel ?? placeholder}
                 className="w-max max-w-[min(36rem,calc(100vw-2rem))] min-w-(--radix-popover-trigger-width) p-1"
                 // Inside a dialog the page scroll lock swallows wheel/touch scrolling of portaled content; keep it for the list.
                 onWheel={(e) => e.stopPropagation()}

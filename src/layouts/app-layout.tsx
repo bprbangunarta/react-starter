@@ -1,12 +1,14 @@
 import { ChevronDown, LayoutDashboard, LogOut, Menu, Palette, ScrollText, ShieldAlert, UserRound, X } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { Suspense, useState } from 'react';
+import { Dialog } from 'radix-ui';
+import { Suspense, useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router';
 import { useSession } from '@/auth/session';
 import { NetworkStatus } from '@/components/network-status';
 import { NotificationBell } from '@/components/notification-bell';
 import { ReauthDialog } from '@/components/reauth-dialog';
 import { Button } from '@/components/ui/button';
+import { overlayClass, useRestoreFocus } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/misc';
 import { DropdownContent, DropdownItem, DropdownLabel, DropdownMenu, DropdownSeparator, DropdownTrigger } from '@/components/ui/dropdown';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -25,9 +27,9 @@ const MENU: { label?: string; items: { label: string; to: string; icon: LucideIc
     },
 ];
 
-function Brand() {
+function Brand({ onNavigate }: { onNavigate?: () => void }) {
     return (
-        <Link to="/" className="flex items-center gap-2 text-sm font-semibold">
+        <Link to="/" onClick={onNavigate} className="flex items-center gap-2 text-sm font-semibold">
             <span className="flex size-6 items-center justify-center rounded bg-primary text-xs font-bold text-white">{APP_INITIAL}</span>
             {APP_NAME}
         </Link>
@@ -68,6 +70,16 @@ export default function AppLayout() {
     const { me, signOut } = useSession();
     const navigate = useNavigate();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const restoreFocus = useRestoreFocus(mobileOpen);
+
+    // The drawer is for small screens: close it when the window grows past the desktop breakpoint, so its scroll lock does not linger.
+    useEffect(() => {
+        const desktop = window.matchMedia('(min-width: 1024px)');
+        const close = () => desktop.matches && setMobileOpen(false);
+        desktop.addEventListener('change', close);
+
+        return () => desktop.removeEventListener('change', close);
+    }, []);
 
     if (!me) {
         return null;
@@ -89,26 +101,27 @@ export default function AppLayout() {
                     <Sidebar onNavigate={() => undefined} />
                 </aside>
 
-                {mobileOpen && (
-                    <div className="fixed inset-0 z-40 lg:hidden">
-                        <button
-                            type="button"
-                            tabIndex={-1}
-                            aria-label="Tutup menu"
-                            className="absolute inset-0 bg-ink/40"
-                            onClick={() => setMobileOpen(false)}
-                        />
-                        <aside className="relative h-full w-64 bg-surface shadow-xl">
+                <Dialog.Root open={mobileOpen} onOpenChange={setMobileOpen}>
+                    <Dialog.Portal>
+                        <Dialog.Overlay className={cn(overlayClass, 'z-40 lg:hidden')} />
+                        <Dialog.Content
+                            aria-describedby={undefined}
+                            {...restoreFocus}
+                            className="overlay-fade fixed inset-y-0 left-0 z-40 w-64 bg-surface shadow-xl focus:outline-none lg:hidden"
+                        >
                             <div className="flex h-12 items-center justify-between border-b border-line px-4">
-                                <Brand />
-                                <Button variant="ghost" size="icon" aria-label="Tutup menu" onClick={() => setMobileOpen(false)}>
-                                    <X />
-                                </Button>
+                                <Dialog.Title className="sr-only">Menu navigasi</Dialog.Title>
+                                <Brand onNavigate={() => setMobileOpen(false)} />
+                                <Dialog.Close asChild>
+                                    <Button variant="ghost" size="icon" aria-label="Tutup menu">
+                                        <X />
+                                    </Button>
+                                </Dialog.Close>
                             </div>
                             <Sidebar onNavigate={() => setMobileOpen(false)} />
-                        </aside>
-                    </div>
-                )}
+                        </Dialog.Content>
+                    </Dialog.Portal>
+                </Dialog.Root>
 
                 <div className="flex min-w-0 flex-1 flex-col">
                     <header className="sticky top-0 z-30 flex h-12 items-center justify-between border-b border-line bg-surface px-3 sm:px-5">

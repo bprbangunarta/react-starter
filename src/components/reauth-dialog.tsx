@@ -54,6 +54,7 @@ export function ReauthDialog() {
 
     return (
         <Modal
+            persistent
             open={open}
             onOpenChange={(next) => !next && close()}
             title="Konfirmasi kata sandi"
