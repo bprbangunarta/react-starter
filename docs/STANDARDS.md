@@ -74,6 +74,10 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
   - aksi baris tabel = **ikon saja** (`size="icon"`) dengan `aria-label` dan `Tip`, atau item dropdown berikon;
   - aksi kecil sebaris dalam form (Cari, Periksa) dan tautan di keadaan kosong boleh teks saja.
 - **Tambah/ubah data:** modal kecil (`max-w-sm`) atau form satu halaman; `ConfirmDialog` sebelum menghapus.
+- **Kartu (header, body, footer)** disusun seperti dialog: `CardHeader` (judul `text-sm font-semibold`, keterangan opsional, aksi/badge di kanan,
+  garis bawah), `CardBody` (isi, `p-3`), dan `CardFooter` (garis atas) **hanya bila kartu punya tombol** kirim/batal. Kartu tanpa tombol tidak punya footer.
+  Tombol di footer: batal paling kiri, konfirmasi paling kanan, **teks saja**; hint boleh di kiri. Jangan menaruh tombol Simpan di dalam body
+  atau membuat judul kartu dengan `<h2>` buatan sendiri. Contoh: kartu Kata sandi di Profil dan bagian "Kartu" di `/styleguide`.
 - **Form:** grid 2–4 kolom dalam `Card` per seksi (judul `text-sm font-semibold`), `Field` dengan label `text-xs`, galat `text-xs text-danger`
   di bawah isian, tanda `*` merah untuk wajib.
 - **Jenis isian** (semua ada contohnya di `/styleguide`, bagian Isian):

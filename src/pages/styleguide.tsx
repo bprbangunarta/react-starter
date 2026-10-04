@@ -18,7 +18,7 @@ import { FileInput } from '@/components/ui/file-input';
 import { FilterBar, SearchInput } from '@/components/ui/filter-bar';
 import { Input } from '@/components/ui/input';
 import { MaskedInput } from '@/components/ui/masked-input';
-import { Alert, Badge, Card, EmptyState, ErrorState, PageHeader, Skeleton } from '@/components/ui/misc';
+import { Alert, Badge, Card, CardBody, CardFooter, CardHeader, EmptyState, ErrorState, PageHeader, Skeleton } from '@/components/ui/misc';
 import type { BadgeTone } from '@/components/ui/misc';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Textarea } from '@/components/ui/textarea';
@@ -69,11 +69,8 @@ const INITIAL_ROWS: Row[] = [
 function Section({ title, description, children }: { title: string; description?: string; children: ReactNode }) {
     return (
         <Card>
-            <div className="border-b border-line px-3 py-2">
-                <h2 className="text-sm font-semibold">{title}</h2>
-                {description && <p className="text-xs text-muted">{description}</p>}
-            </div>
-            <div className="flex flex-col gap-3 p-3">{children}</div>
+            <CardHeader title={title} description={description} />
+            <CardBody className="flex flex-col gap-3">{children}</CardBody>
         </Card>
     );
 }
@@ -292,6 +289,27 @@ export default function Styleguide() {
                         empty={{ icon: <Inbox />, title: 'Tidak ada data' }}
                     />
                 </div>
+
+                <Section title="Kartu: header, body, footer" description="Disusun seperti dialog. Footer (garis atas) hanya ada bila kartu punya tombol; tombol batal di kiri, konfirmasi di kanan, hanya teks. Kartu tanpa tombol tidak punya footer.">
+                    <div className="grid gap-3 md:grid-cols-2">
+                        <Card>
+                            <CardHeader title="Kartu form" description="Ada tombol, jadi ada footer" />
+                            <CardBody className="flex flex-col gap-3">
+                                <Field label="Nama" required><Input placeholder="Ketik sesuatu" /></Field>
+                            </CardBody>
+                            <CardFooter>
+                                <p className="text-xs text-muted">Hint boleh di kiri footer.</p>
+                                <Button onClick={() => toast.success('Tersimpan')}>Simpan</Button>
+                            </CardFooter>
+                        </Card>
+                        <Card>
+                            <CardHeader title="Kartu informasi" description="Tanpa tombol, jadi tanpa footer" actions={<Badge tone="success">Aktif</Badge>} />
+                            <CardBody>
+                                <p className="text-sm">Isi kartu. Aksi di header (badge atau tombol ikon + label) boleh ada tanpa footer.</p>
+                            </CardBody>
+                        </Card>
+                    </div>
+                </Section>
 
                 <Section title="Dialog" description="Footer: tombol batal paling kiri, tombol konfirmasi paling kanan.">
                     <div className="flex gap-2">

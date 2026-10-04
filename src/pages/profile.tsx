@@ -3,9 +3,7 @@ import {
     Copy,
     KeyRound,
     Mail,
-    Save,
     ShieldCheck,
-    ShieldOff,
     Smartphone,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -18,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { CodeInput } from '@/components/ui/code-input';
 import { DialogFooter, Modal } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
-import { Badge, Card, PageHeader } from '@/components/ui/misc';
+import { Badge, Card, CardBody, CardFooter, CardHeader, PageHeader } from '@/components/ui/misc';
 import { useForm } from '@/lib/form';
 import { http, HttpError } from '@/lib/http';
 import { useResource } from '@/lib/resource';
@@ -192,22 +190,23 @@ function PasswordCard() {
 
     return (
         <Card>
-            <h2 className="border-b border-line px-3 py-2 text-sm font-semibold">Kata sandi</h2>
+            <CardHeader title="Kata sandi" />
             <form
                 noValidate
-                className="flex flex-col gap-3 p-3"
                 onSubmit={(e) => {
                     e.preventDefault();
                     void form.put('/profile/password', { onSuccess: () => form.reset() });
                 }}
             >
-                <PasswordFields form={form} />
-                <div className="flex items-center justify-between gap-2">
+                <CardBody className="flex flex-col gap-3">
+                    <PasswordFields form={form} />
+                </CardBody>
+                <CardFooter>
                     <p className="text-xs text-muted">Kata sandi baru berlaku untuk masuk berikutnya.</p>
                     <Button type="submit" loading={form.processing} disabled={!form.data.current_password || !form.data.password}>
-                        <Save /> Ubah kata sandi
+                        Ubah kata sandi
                     </Button>
-                </div>
+                </CardFooter>
             </form>
         </Card>
     );
@@ -253,20 +252,19 @@ export default function Profile() {
             <div className="grid gap-3 lg:grid-cols-2">
                 <div className="flex flex-col gap-3">
                     <Card>
-                        <h2 className="border-b border-line px-3 py-2 text-sm font-semibold">Akun</h2>
-                        <dl className="grid gap-3 p-3 sm:grid-cols-2">
-                            <Detail label="Nama">{account.name}</Detail>
-                            <Detail label="Nama pengguna">{account.username}</Detail>
-                            <Detail label="Email">{account.email}</Detail>
-                        </dl>
+                        <CardHeader title="Akun" />
+                        <CardBody>
+                            <dl className="grid gap-3 sm:grid-cols-2">
+                                <Detail label="Nama">{account.name}</Detail>
+                                <Detail label="Nama pengguna">{account.username}</Detail>
+                                <Detail label="Email">{account.email}</Detail>
+                            </dl>
+                        </CardBody>
                     </Card>
                     <PasswordCard />
                 </div>
                 <Card className="self-start">
-                    <div className="flex items-center justify-between border-b border-line px-3 py-2">
-                        <h2 className="text-sm font-semibold">Verifikasi dua langkah</h2>
-                        {enabled && <Badge tone={method ? 'success' : 'warning'}>{method ? 'Aktif' : 'Mati'}</Badge>}
-                    </div>
+                    <CardHeader title="Verifikasi dua langkah" actions={enabled && <Badge tone={method ? 'success' : 'warning'}>{method ? 'Aktif' : 'Mati'}</Badge>} />
                     {!enabled ? (
                         <p className="p-3 text-sm text-muted">Verifikasi dua langkah dimatikan oleh administrator.</p>
                     ) : (
@@ -304,14 +302,14 @@ export default function Profile() {
                                     </Button>
                                 )}
                             </div>
-                            {method && (
-                                <div className="flex justify-end p-3">
-                                    <Button size="sm" variant="outline" onClick={() => setDisableOpen(true)}>
-                                        <ShieldOff /> Matikan
-                                    </Button>
-                                </div>
-                            )}
                         </div>
+                    )}
+                    {enabled && method && (
+                        <CardFooter className="justify-end">
+                            <Button size="sm" variant="outline" onClick={() => setDisableOpen(true)}>
+                                Matikan
+                            </Button>
+                        </CardFooter>
                     )}
                 </Card>
             </div>

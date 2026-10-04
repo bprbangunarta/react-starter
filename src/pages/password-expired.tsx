@@ -1,4 +1,4 @@
-import { ArrowLeft, KeyRound } from 'lucide-react';
+import { KeyRound } from 'lucide-react';
 import { Navigate, useNavigate } from 'react-router';
 import { useSession } from '@/auth/session';
 import type { Me } from '@/auth/session';
@@ -6,7 +6,7 @@ import { NetworkStatus } from '@/components/network-status';
 import { EMPTY_PASSWORD, PasswordFields } from '@/components/password-fields';
 import type { PasswordData } from '@/components/password-fields';
 import { Button } from '@/components/ui/button';
-import { Alert, Card } from '@/components/ui/misc';
+import { Alert, Card, CardBody, CardFooter, CardHeader } from '@/components/ui/misc';
 import { APP_INITIAL, APP_NAME } from '@/lib/brand';
 import { useForm } from '@/lib/form';
 import { http } from '@/lib/http';
@@ -52,16 +52,9 @@ export default function PasswordExpired() {
                     <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-base font-bold text-white">{APP_INITIAL}</span>
                     <h1 className="text-base font-semibold">{APP_NAME}</h1>
                 </div>
-                <Card className="p-4">
-                    <div className="mb-3">
-                        <h2 className="text-sm font-semibold">Kata sandi sudah kedaluwarsa</h2>
-                        <p className="text-xs text-muted">Halo, {data.name}. Buat kata sandi baru untuk melanjutkan.</p>
-                    </div>
-                    <Alert tone="warning" icon={<KeyRound />} className="mb-3 text-xs">
-                        Kata sandi diganti setiap {data.max_age_days} hari. Kata sandi lama Anda sudah melewati batas itu.
-                    </Alert>
+                <Card>
+                    <CardHeader title="Kata sandi sudah kedaluwarsa" description={`Halo, ${data.name}. Buat kata sandi baru untuk melanjutkan.`} />
                     <form
-                        className="flex flex-col gap-3"
                         noValidate
                         onSubmit={(e) => {
                             e.preventDefault();
@@ -77,15 +70,20 @@ export default function PasswordExpired() {
                             });
                         }}
                     >
-                        <PasswordFields form={form} />
-                        <div className="flex items-center justify-between gap-2">
+                        <CardBody className="flex flex-col gap-3">
+                            <Alert tone="warning" icon={<KeyRound />} className="text-xs">
+                                Kata sandi diganti setiap {data.max_age_days} hari. Kata sandi lama Anda sudah melewati batas itu.
+                            </Alert>
+                            <PasswordFields form={form} />
+                        </CardBody>
+                        <CardFooter>
                             <Button variant="outline" onClick={() => void cancel()}>
-                                <ArrowLeft /> Kembali
+                                Kembali
                             </Button>
                             <Button type="submit" loading={form.processing} disabled={!form.data.current_password || !form.data.password}>
                                 Simpan dan lanjutkan
                             </Button>
-                        </div>
+                        </CardFooter>
                     </form>
                 </Card>
             </div>

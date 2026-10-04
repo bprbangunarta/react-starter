@@ -9,6 +9,31 @@ export function Card({ className, ...props }: React.ComponentProps<'div'>) {
     );
 }
 
+/**
+ * A card is built like a dialog: `CardHeader` (title, optional description and actions, bottom line), `CardBody` (content),
+ * and `CardFooter` (top line) only when the card has buttons to submit or cancel. A card without buttons has no footer.
+ */
+export function CardHeader({ title, description, actions }: { title: string; description?: string; actions?: ReactNode }) {
+    return (
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-3 py-2">
+            <div className="min-w-0">
+                <h2 className="text-sm font-semibold">{title}</h2>
+                {description && <p className="text-xs text-muted">{description}</p>}
+            </div>
+            {actions && <div className="flex items-center gap-2">{actions}</div>}
+        </div>
+    );
+}
+
+export function CardBody({ className, ...props }: React.ComponentProps<'div'>) {
+    return <div className={cn('p-3', className)} {...props} />;
+}
+
+/** Buttons of a card form: the dismissing one first (left), the confirming one last (right); a hint may take the left. Text only on form buttons, like DialogFooter. */
+export function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {
+    return <div className={cn('flex items-center justify-between gap-2 border-t border-line px-3 py-2', className)} {...props} />;
+}
+
 export function Skeleton({ className }: { className?: string }) {
     return <div className={cn('animate-pulse rounded bg-line', className)} />;
 }
