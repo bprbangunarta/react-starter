@@ -86,6 +86,18 @@ for (const file of files) {
     });
 }
 
+// Multi-line rule: buttons inside DialogFooter/CardFooter are text only (see docs/STANDARDS.md, "Tombol").
+for (const file of files) {
+    const text = readFileSync(file, 'utf8');
+
+    for (const match of text.matchAll(/<(DialogFooter|CardFooter)\b[^>]*>([\s\S]*?)<\/\1>/g)) {
+        if (/<[A-Z][A-Za-z0-9]*\s*\/>/.test(match[2] ?? '')) {
+            failures++;
+            console.error(`${relative(process.cwd(), file)}:${text.slice(0, match.index).split('\n').length}  Tombol di footer dialog/kartu hanya teks, tanpa ikon`);
+        }
+    }
+}
+
 if (failures > 0) {
     console.error(`\n${failures} pelanggaran standar kode.`);
     process.exit(1);

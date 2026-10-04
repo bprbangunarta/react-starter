@@ -1,4 +1,4 @@
-import { Check, Download, Inbox, Pencil, Plus, Save, Search, Trash2 } from 'lucide-react';
+import { Download, Inbox, Pencil, Plus, Save, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { toast } from 'sonner';
@@ -255,9 +255,9 @@ export default function Styleguide() {
                             <div key={s.tone} className="grid items-center gap-2 md:grid-cols-[9rem_8rem_auto_1fr_auto]">
                                 <p className="text-xs font-medium">{s.label}</p>
                                 <div className="flex gap-1">{s.swatches.map((c) => <span key={c} title={c} className={`size-6 rounded border border-line ${c}`} />)}</div>
-                                <Badge tone={s.tone}>{s.tone}</Badge>
+                                <Badge tone={s.tone} className="justify-self-start">{s.tone}</Badge>
                                 <Alert tone={s.tone} className="py-1.5 text-xs">Contoh pesan {s.label.toLowerCase()} di dalam halaman.</Alert>
-                                <Button variant="outline" size="sm" onClick={s.notify}>Coba toast</Button>
+                                <Button variant="outline" size="sm" className="justify-self-start" onClick={s.notify}>Coba toast</Button>
                             </div>
                         ))}
                     </div>
@@ -357,7 +357,7 @@ export default function Styleguide() {
                         </div>
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setDraft(null)}>Batal</Button>
-                            <Button type="submit"><Check />Simpan</Button>
+                            <Button type="submit">Simpan</Button>
                         </DialogFooter>
                     </form>
                 )}
@@ -380,7 +380,7 @@ export default function Styleguide() {
                 </div>
                 <DialogFooter>
                     <Button variant="outline" onClick={() => setModal(false)}>Batal</Button>
-                    <Button onClick={() => { setModal(false); toast.success('Tersimpan'); }}><Check />Simpan</Button>
+                    <Button onClick={() => { setModal(false); toast.success('Tersimpan'); }}>Simpan</Button>
                 </DialogFooter>
             </Modal>
             <ConfirmDialog open={confirm} onOpenChange={setConfirm} title="Hapus data?" description="Ini akan menghapus data secara permanen." onConfirm={() => { setConfirm(false); toast.success('Dihapus'); }} />

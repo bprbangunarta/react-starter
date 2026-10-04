@@ -4,6 +4,7 @@ import { useSession } from '@/auth/session';
 import type { Me } from '@/auth/session';
 import { NetworkStatus } from '@/components/network-status';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/choice';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/misc';
@@ -76,10 +77,7 @@ export default function Login() {
                                 placeholder="************************"
                             />
                         </Field>
-                        <label className="flex items-center gap-2 text-xs text-muted">
-                            <input type="checkbox" className="accent-primary" checked={form.data.remember} onChange={(e) => form.setData('remember', e.target.checked)} />
-                            Ingat saya
-                        </label>
+                        <Checkbox checked={form.data.remember} onCheckedChange={(checked) => form.setData('remember', checked === true)} label="Ingat saya" />
                         <Button type="submit" loading={form.processing} className="w-full" disabled={form.data.username === '' || form.data.password === ''}>
                             Masuk
                         </Button>

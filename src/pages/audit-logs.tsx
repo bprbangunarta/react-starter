@@ -263,6 +263,7 @@ export default function AuditLogsIndex() {
                                 value={filters.from ?? ''}
                                 min={MIN_DATE}
                                 placeholder="Dari"
+                                aria-label="Tanggal dari"
                                 onChange={(v) => visit({ from: iso(v) })}
                             />
                         </div>
@@ -271,6 +272,7 @@ export default function AuditLogsIndex() {
                                 value={filters.to ?? ''}
                                 min={MIN_DATE}
                                 placeholder="Sampai"
+                                aria-label="Tanggal sampai"
                                 onChange={(v) => visit({ to: iso(v) })}
                             />
                         </div>
@@ -278,6 +280,7 @@ export default function AuditLogsIndex() {
                             className="w-full sm:w-40"
                             clearable
                             placeholder="Modul"
+                                aria-label="Filter modul"
                             options={modules.map((m) => ({
                                 value: m,
                                 label: m,
@@ -290,6 +293,7 @@ export default function AuditLogsIndex() {
                             clearable
                             searchable={false}
                             placeholder="Hasil"
+                                aria-label="Filter hasil"
                             options={OUTCOMES}
                             value={filters.outcome}
                             onChange={(v) =>

@@ -1,6 +1,5 @@
 import { QRCodeSVG } from 'qrcode.react';
 import {
-    Copy,
     KeyRound,
     Mail,
     ShieldCheck,
@@ -177,7 +176,7 @@ function RecoveryCodes({
                         toast.success('Kode pemulihan disalin.');
                     }}
                 >
-                    <Copy /> Salin
+                    Salin
                 </Button>
                 <Button onClick={onClose}>Sudah saya simpan</Button>
             </DialogFooter>

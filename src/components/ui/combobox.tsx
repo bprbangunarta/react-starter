@@ -16,6 +16,8 @@ type Props = {
     value: string | number | null | undefined;
     onChange: (value: string | null) => void;
     placeholder?: string;
+    /** Accessible name when there is no visible `Field` label (e.g. a toolbar filter). */
+    'aria-label'?: string;
     searchable?: boolean;
     clearable?: boolean;
     invalid?: boolean;
@@ -31,6 +33,7 @@ export function Combobox({
     value,
     onChange,
     placeholder = 'Pilih…',
+    'aria-label': ariaLabel,
     searchable = true,
     clearable = false,
     invalid,
@@ -96,6 +99,7 @@ export function Combobox({
                         role="combobox"
                         aria-expanded={open}
                         aria-controls={listId}
+                        aria-label={ariaLabel}
                         aria-invalid={invalid || undefined}
                         title={selected?.label}
                         className={cn(controlClass, 'flex items-center justify-between gap-1 text-left', clearable && selected && 'pr-12')}

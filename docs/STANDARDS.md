@@ -68,11 +68,18 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
   `min-w-0`. `items-start justify-between` hanya untuk opsi `Combobox` **[mesin]**.
 - **Header halaman:** keterangan pendek, tidak mengulang data yang sudah tampil di isi halaman.
 - **Daftar:** selalu punya keadaan memuat (Skeleton), kosong, dan galat; setiap aksi memberi toast (sonner) sukses/gagal.
-- **Tombol:**
-  - aksi halaman/toolbar/header kartu (Tambah, Kembali, Reset, Simpan, Ekspor) = **ikon + label**;
-  - footer dialog/form (Batal, Simpan, Hapus, Konfirmasi) = **teks saja**, lewat `DialogFooter`: batal paling kiri, konfirmasi paling kanan;
-  - aksi baris tabel = **ikon saja** (`size="icon"`) dengan `aria-label` dan `Tip`, atau item dropdown berikon;
-  - aksi kecil sebaris dalam form (Cari, Periksa) dan tautan di keadaan kosong boleh teks saja.
+- **Tombol** (ikon atau tidak ditentukan oleh **tempatnya**, bukan selera):
+
+  | Tempat | Bentuk | Contoh |
+  |---|---|---|
+  | header halaman, toolbar, header kartu, dan baris pengaturan di body kartu | **ikon + label** (ikon kiri) | Tambah, Ekspor CSV, Atur ulang, Atur/Ganti (MFA), Kirim kode |
+  | footer dialog dan footer kartu (`DialogFooter`, `CardFooter`) | **teks saja** | Batal, Simpan, Hapus, Konfirmasi, Matikan **[mesin]** |
+  | tombol kirim pada kartu auth tanpa header (login, verifikasi) | **teks saja**, selebar kartu | Masuk, Verifikasi |
+  | aksi baris tabel, tombol tutup, paginasi panah | **ikon saja** (`size="icon"`) + `aria-label` + `Tip` | Ubah, Hapus, Tutup |
+  | tautan di keadaan kosong/galat, nomor halaman | teks saja | Coba lagi |
+
+  Urutan footer: batal paling kiri, konfirmasi paling kanan. Satu tempat tidak boleh bercampur: bila satu footer atau satu toolbar sudah memakai ikon,
+  semua tombolnya memakai ikon (kecuali tabel di atas).
 - **Tambah/ubah data:** modal kecil (`max-w-sm`) atau form satu halaman; `ConfirmDialog` sebelum menghapus.
 - **Kartu (header, body, footer)** disusun seperti dialog: `CardHeader` (judul `text-sm font-semibold`, keterangan opsional, aksi/badge di kanan,
   garis bawah), `CardBody` (isi, `p-3`), dan `CardFooter` (garis atas) **hanya bila kartu punya tombol** kirim/batal. Kartu tanpa tombol tidak punya footer.

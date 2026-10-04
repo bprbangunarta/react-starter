@@ -29,7 +29,7 @@ export function ColorInput({ id, value, onValueChange, swatches = DEFAULT_SWATCH
                     disabled={disabled}
                     value={FULL.test(value) ? value : '#000000'}
                     onChange={(event) => onValueChange(event.target.value.toLowerCase())}
-                    className="size-8 shrink-0 cursor-pointer rounded-md border border-line bg-surface p-0.5 disabled:opacity-50"
+                    className={cn('size-8 shrink-0 cursor-pointer rounded-md border border-line bg-surface p-0.5 disabled:opacity-50', !FULL.test(value) && 'opacity-40')}
                 />
                 <MaskedInput id={id} mask="#hhhhhh" placeholder="#rrggbb" disabled={disabled} className="font-mono uppercase" value={value.replace('#', '')} onValueChange={(raw) => onValueChange(raw === '' ? '' : `#${raw.toLowerCase()}`)} {...aria} />
             </div>

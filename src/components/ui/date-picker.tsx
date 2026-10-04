@@ -17,6 +17,8 @@ type Props = {
     invalid?: boolean;
     id?: string;
     placeholder?: string;
+    /** Accessible name when there is no visible `Field` label (e.g. a toolbar filter). */
+    'aria-label'?: string;
 };
 
 /**
@@ -39,6 +41,7 @@ export function DatePicker({
     invalid,
     id,
     placeholder = 'Pilih tanggal',
+    'aria-label': ariaLabel,
 }: Props) {
     const [open, setOpen] = useState(false);
     const selected = value ? parseISO(value) : undefined;
@@ -50,6 +53,7 @@ export function DatePicker({
                     id={id}
                     type="button"
                     data-invalid={invalid || undefined}
+                    aria-label={ariaLabel}
                     className={cn(controlClass, 'flex items-center justify-between text-left data-[invalid]:border-danger data-[invalid]:ring-danger/20')}
                 >
                     <span className={cn(!selected && 'text-muted/70')}>
