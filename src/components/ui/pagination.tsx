@@ -44,7 +44,8 @@ export function Pagination({
             <div className="flex items-center gap-2">
                 <span>{meta.total === 0 ? '0 hasil' : `${meta.from}–${meta.to} dari ${meta.total}`}</span>
                 <Combobox
-                    className="w-24"
+                    className="w-32"
+                    aria-label="Baris per halaman"
                     searchable={false}
                     options={perPageOptions.map((n) => ({ value: n, label: `${n} / halaman` }))}
                     value={perPage}

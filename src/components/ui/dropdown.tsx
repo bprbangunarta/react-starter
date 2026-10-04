@@ -11,6 +11,7 @@ export function DropdownContent({ className, ...props }: React.ComponentProps<ty
             <M.Content
                 align="end"
                 sideOffset={4}
+                collisionPadding={8}
                 className={cn('z-50 min-w-36 rounded-md border border-line bg-surface p-1 shadow-lg', className)}
                 {...props}
             />

@@ -85,10 +85,10 @@ const badgeTones = {
 
 const alertTones = {
     neutral: 'border-line bg-canvas text-muted',
-    info: 'border-info-line bg-info-soft text-info-ink',
-    success: 'border-success-line bg-success-soft text-success-ink',
-    warning: 'border-warning-line bg-warning-soft text-warning-ink',
-    danger: 'border-danger-line bg-danger-soft text-danger-ink',
+    info: 'border-info-line bg-info-soft text-info-ink [&>svg]:text-info',
+    success: 'border-success-line bg-success-soft text-success-ink [&>svg]:text-success',
+    warning: 'border-warning-line bg-warning-soft text-warning-ink [&>svg]:text-warning',
+    danger: 'border-danger-line bg-danger-soft text-danger-ink [&>svg]:text-danger',
 } as const;
 
 export type BadgeTone = keyof typeof badgeTones;
@@ -114,7 +114,7 @@ export function Alert({ tone = 'info', icon, className, children, ...props }: Re
 export function Badge({ tone = 'neutral', className, ...props }: React.ComponentProps<'span'> & { tone?: BadgeTone }) {
     return (
         <span
-            className={cn('inline-flex items-center rounded px-1.5 py-0.5 text-[11px] leading-4 font-medium ring-1 ring-inset', badgeTones[tone], className)}
+            className={cn('inline-flex items-center rounded px-1.5 py-0.5 text-2xs leading-4 font-medium ring-1 ring-inset', badgeTones[tone], className)}
             {...props}
         />
     );

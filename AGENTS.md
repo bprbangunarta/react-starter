@@ -19,7 +19,8 @@ Acuan lain: `/styleguide` (jalankan `npm run dev`, sidebar → Panduan; semua ko
 ```bash
 npm install
 npm run dev        # server pengembangan
-npm run check      # tsc + ESLint + pemeriksa standar kode (wajib lolos sebelum selesai)
+npm run check      # tsc + ESLint + Prettier + pemeriksa standar + tes (wajib lolos sebelum selesai)
+npm run format     # rapikan kode (Prettier); npm run test untuk tes saja
 npm run build      # check + build produksi
 npm run rebrand -- --name "Nama" --color "#0f766e"   # nama, warna utama, favicon, email, halaman error
 ```

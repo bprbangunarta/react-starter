@@ -35,6 +35,3 @@ export function SortHead({
 }
 
 /** Toggle helper for list pages: clicking the active column flips the direction. */
-export function nextSort(current: { sort: string; direction: 'asc' | 'desc' }, column: string) {
-    return { sort: column, direction: current.sort === column && current.direction === 'asc' ? ('desc' as const) : ('asc' as const) };
-}

@@ -27,7 +27,7 @@
     --color-success-soft: oklch(0.97 0.025 155);
     --color-success-line: oklch(0.88 0.07 155);
     --color-success-ink: oklch(0.42 0.1 155);
-    --color-warning: oklch(0.68 0.15 80);
+    --color-warning: oklch(0.62 0.14 75);
     --color-warning-soft: oklch(0.97 0.03 90);
     --color-warning-line: oklch(0.88 0.08 85);
     --color-warning-ink: oklch(0.45 0.1 70);
@@ -36,6 +36,7 @@
     --color-info-line: oklch(0.88 0.06 250);
     --color-info-ink: oklch(0.42 0.12 250);
 
+    --text-2xs: 0.6875rem;
     --text-xs: 0.75rem;
     --text-sm: 0.8125rem;
 }

@@ -12,8 +12,9 @@ konfigurasi di `eslint.config.js`), dan pemeriksa aturan rumah `npm run standard
 3. [Tampilan (Compact UI)](#tampilan)
 4. [Token dan CSS](#token)
 5. [Data, formulir, dan keamanan](#data)
-6. [Audit log dan MFA](#audit-mfa)
-7. [Sebelum selesai](#selesai)
+6. [Audit log, autentikasi, dan MFA](#audit-mfa)
+7. [Tes](#tes)
+8. [Sebelum selesai](#selesai)
 
 <a id="kode"></a>
 ## 1. Kode
@@ -114,7 +115,7 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
 <a id="token"></a>
 ## 4. Token dan CSS
 
-Satu-satunya sumber gaya adalah `src/index.css` (Tailwind v4, `@theme`). Jangan menulis warna atau ukuran baru di komponen (warna tertulis langsung **[mesin]**); ubah token di sana. Warna status **hanya** lewat tangga di tabel di bawah
+Satu-satunya sumber gaya adalah `src/index.css` (Tailwind v4, `@theme`). Jangan menulis warna atau ukuran baru di komponen (warna tertulis langsung **[mesin]**; ukuran teks sembarang seperti `text-[11px]` ditolak **[mesin]**); ubah token di sana. Warna status **hanya** lewat tangga di tabel di bawah
 (`bg-success-soft text-success-ink`, dst.), bukan palet Tailwind (`emerald`, `amber`, `red`); pesan sebaris memakai `Alert`, bukan `div` buatan sendiri.
 Ganti warna utama dan merek lewat `npm run rebrand` (lihat README).
 `html { font-size: 15px }` sehingga `1rem = 15px`. Warna status dijaga mesin **[mesin]**: palet Tailwind (`emerald`, `amber`, `red`, ...) ditolak.
@@ -129,13 +130,16 @@ Ganti warna utama dan merek lewat `npm run rebrand` (lihat README).
 | `--color-ink` / `--color-muted` | `oklch(0.24 0.02 265)` / `oklch(0.55 0.02 265)` | teks utama / label, hint, header tabel |
 | `--color-danger` | `oklch(0.55 0.2 27)` | galat, tombol hapus |
 | `--color-{success,warning,info,danger}` + `-soft` / `-line` / `-ink` | tangga seragam: soft L 0.97, line L 0.88, ink L 0.42–0.45; hue 155 / 80 / 250 / 27 | status: badge, `Alert`, toast, indikator jaringan |
-| `--text-xs` / `--text-sm` | `0.75rem` / `0.8125rem` | label dan hint / isi, sel tabel, tombol |
+| `--text-2xs` / `--text-xs` / `--text-sm` | `0.6875rem` / `0.75rem` / `0.8125rem` | badge, waktu, label seksi, penghitung / label dan hint / isi, sel tabel, tombol |
 
 | Elemen | Aturan |
 |---|---|
 | Kontrol | tinggi `h-8`; tombol kecil `h-7`; tombol ikon `size-7`; font `text-sm` |
 | Ikon | lucide-react, `size-3.5` di tombol, `size-4` di menu |
-| Radius | kontrol `rounded-md`, kartu `rounded-lg border border-line bg-surface` |
+| Radius | kontrol `rounded-md`, kartu `rounded-lg border border-line bg-surface`; `rounded` untuk chip, kotak centang, dan kode; `rounded-full` untuk bulatan |
+| Teks | `text-2xs` keterangan sangat kecil; `text-xs` label/hint; `text-sm` isi; `text-base` judul halaman dan merek; ukuran besar hanya di halaman 404 |
+| Bayangan | `shadow-sm` jempol sakelar, `shadow-md` penanda mengambang, `shadow-lg` dropdown/popover, `shadow-xl` dialog/laci |
+| Lapisan | header `z-30`, laci `z-40`, dialog dan penanda jaringan `z-50`, tooltip `z-60`, popover `z-70` |
 | Tabel | sel `px-3 py-1.5`, header `text-xs text-muted bg-canvas`, `divide-y divide-line` |
 
 Email (`email/login-code.ts`) dan halaman error (`error-pages/*.html`) tidak bisa memakai CSS aplikasi, jadi warnanya ditulis sebaris
@@ -165,11 +169,23 @@ dirinci sebagai kontrak di [API.md](API.md). UI hanya menampilkan dan **tidak bo
 - Layar yang belum dilindungi MFA menampilkan pengingat di atas halaman.
 - Server tiruan hanya mencatat sebagian kejadian audit dan menyimpan kata sandi sebagai teks; itu demi demo, bukan contoh untuk backend.
 
+<a id="tes"></a>
+## 7. Tes
+
+Vitest + Testing Library (jsdom); berkas tes `*.test.ts(x)` diletakkan di sebelah kodenya. `npm run test` (atau `npm run test:watch`), dan juga bagian dari `npm run check`.
+
+- **Wajib dites:** logika murni (`lib/`), komponen isian yang punya perilaku (format, mask, kursor), perilaku aksesibilitas yang mudah rusak (label terhubung ke isian,
+  `aria-describedby`), dan alur server tiruan yang mengandung aturan (kata sandi kedaluwarsa, riwayat kata sandi).
+- **Cara mengetes komponen:** lewat perilaku yang terlihat pengguna (`userEvent.type`, `getByLabelText`, `toHaveValue`), bukan detail implementasi (state, nama kelas).
+- **Panduan harus lengkap:** tes `pages/styleguide.test.ts` gagal bila ada token warna di `src/index.css` yang tidak ada di daftar token Panduan. Tes yang sama juga gagal bila ada komponen di `components/ui` yang
+  tidak punya contoh di `/styleguide` (kecuali blok bangunan internal yang tercantum di tes).
+- Jangan membuat tes yang bergantung pada waktu nyata atau jaringan; tes menyentuh `localStorage` hanya lewat server tiruan (dibersihkan otomatis tiap tes).
+
 <a id="selesai"></a>
-## 7. Sebelum selesai
+## 8. Sebelum selesai
 
 ```bash
-npm run check      # tsc --noEmit + ESLint + npm run standards
+npm run check      # tsc --noEmit + ESLint + Prettier + npm run standards + tes
 npm run build
 ```
 

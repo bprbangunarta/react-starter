@@ -39,7 +39,7 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
         <nav className="flex flex-col gap-0.5 overflow-y-auto p-2" aria-label="Menu utama">
             {MENU.map((section, index) => (
                 <div key={section.label ?? index} className="flex flex-col gap-0.5">
-                    {section.label && <p className="mt-2 px-2.5 pb-0.5 text-[11px] font-semibold tracking-wide text-muted/80 uppercase">{section.label}</p>}
+                    {section.label && <p className="mt-2 px-2.5 pb-0.5 text-2xs font-semibold tracking-wide text-muted/80 uppercase">{section.label}</p>}
                     {section.items.map((item) => (
                         <NavLink
                             key={item.to}

@@ -95,8 +95,3 @@ export function saveDb(db: Db): void {
         // Storage full or blocked: the session still works from memory.
     }
 }
-
-export function resetDb(): void {
-    cache = null;
-    localStorage.removeItem(KEY);
-}

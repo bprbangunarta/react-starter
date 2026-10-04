@@ -12,7 +12,9 @@ Butuh Node.js 20.19+ atau 22.12+ (syarat Vite 8).
 ```bash
 npm install
 npm run dev          # http://localhost:5173
-npm run check        # tsc --noEmit + ESLint + pemeriksa standar kode
+npm run check        # tsc + ESLint + Prettier + pemeriksa standar + tes (wajib lolos sebelum selesai)
+npm run test         # hanya tes (Vitest); npm run test:watch untuk mode pantau
+npm run format       # merapikan kode dengan Prettier
 npm run build        # check + vite build ke dist/
 npm run preview      # menjalankan hasil build
 ```
@@ -115,6 +117,23 @@ Secara manual:
   `scripts/generate-error-pages.mjs`).
 - **Nama perusahaan di email:** parameter `company` pada `renderLoginCodeEmail`; di versi Blade lewat `config('app.company')` (bawaan: nama aplikasi).
 - **Kunci demo** `starterkit.db.v2` di `src/mock/db.ts` boleh diganti; ia hilang bersama `src/mock/` saat backend tersambung.
+
+## Praktik terbaik yang sudah diterapkan
+
+Walau hanya frontend statis, dasar-dasar produksinya sudah ada. Yang **sengaja belum** ada ditulis di bawah supaya jelas.
+
+| Bidang | Sudah | Keterangan |
+|---|---|---|
+| Kinerja | pemecahan kode per halaman (`React.lazy`), aset ber-hash dengan cache setahun, gzip di nginx, font dilayani sendiri | bundel awal sekitar 130 kB gzip |
+| Keamanan | CSP, `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, COOP di `security-headers.conf`; tanpa skrip pihak ketiga; tanpa `dangerouslySetInnerHTML`; rahasia tidak di klien | HSTS tersedia (dikomentari), aktifkan bila nginx melayani HTTPS |
+| Aksesibilitas | label terhubung ke isian (`Field`), ESLint `jsx-a11y`, skip link, fokus dialog lewat Radix, kontras warna dihitung (teks AA, ikon 3:1), `lang="id"` | |
+| Kualitas | `strict` TypeScript, ESLint (hooks, promise, a11y), Prettier, pemeriksa aturan rumah, Vitest, CI GitHub Actions (`.github/workflows/ci.yml`) | `npm run check` menjalankan semuanya |
+| Ketahanan | `ErrorBoundary`, keadaan memuat/kosong/galat di tiap daftar, penanda koneksi putus, galat 422 per kolom | |
+| Operasional | Docker multi-tahap, `engines` dan `.nvmrc`, `.editorconfig`, 0 kerentanan `npm audit` saat ini | jalankan `npm audit` berkala |
+
+**Sengaja belum ada** (tambahkan bila perlu): tes ujung ke ujung (Playwright) karena belum ada backend nyata; i18n (aplikasi satu bahasa, Indonesia);
+PWA/offline; pemantauan galat (Sentry dan sejenisnya); logout otomatis saat tak aktif (idle timeout, sebaiknya bersama kebijakan sesi backend);
+mode gelap.
 
 <a id="indexing"></a>
 ## Akses mesin pencarian (anti-crawl)

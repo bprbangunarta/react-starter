@@ -1,4 +1,4 @@
-import { Download, Inbox, Pencil, Plus, Save, Search, Trash2 } from 'lucide-react';
+import { Copy, Download, Inbox, Info, MoreHorizontal, Pencil, Plus, Save, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { toast } from 'sonner';
@@ -12,6 +12,7 @@ import { CurrencyInput } from '@/components/ui/currency-input';
 import { DataTable } from '@/components/ui/data-table';
 import type { Column } from '@/components/ui/data-table';
 import { DatePicker } from '@/components/ui/date-picker';
+import { DropdownContent, DropdownItem, DropdownLabel, DropdownMenu, DropdownSeparator, DropdownTrigger } from '@/components/ui/dropdown';
 import { ConfirmDialog, DialogFooter, Modal } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import { FileInput } from '@/components/ui/file-input';
@@ -99,11 +100,14 @@ const TONES: BadgeTone[] = ['neutral', 'info', 'success', 'warning', 'danger'];
 type Row = { id: number; name: string; status: BadgeTone; amount: number };
 type Draft = { id: number | null; name: string; status: BadgeTone; amount: string };
 const EMPTY_DRAFT: Draft = { id: null, name: '', status: 'success', amount: '' };
-const INITIAL_ROWS: Row[] = [
-    { id: 1, name: 'Proyek Alfa', status: 'success', amount: 12_500_000 },
-    { id: 2, name: 'Proyek Beta', status: 'warning', amount: 3_200_000 },
-    { id: 3, name: 'Proyek Gamma', status: 'danger', amount: 870_000 },
-];
+const NAMES = ['Alfa', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa', 'Lambda', 'Sigma'];
+const STATUSES: BadgeTone[] = ['success', 'warning', 'danger', 'info', 'neutral'];
+const INITIAL_ROWS: Row[] = NAMES.map((name, index) => ({
+    id: index + 1,
+    name: `Proyek ${name}`,
+    status: STATUSES[index % STATUSES.length] ?? 'neutral',
+    amount: 870_000 + ((index * 3_730_000) % 12_000_000),
+}));
 
 function Section({ title, description, children }: { title: string; description?: string; children: ReactNode }) {
     return (
@@ -253,7 +257,12 @@ export default function Styleguide() {
     const [removing, setRemoving] = useState<Row | null>(null);
     const email = renderLoginCodeEmail({ appName: APP_NAME, code: '482915', minutes: 10, name: 'Rina Wulandari', sentAt: '1 Oktober 2026, 21:16 WIB' });
 
-    const visible = rows.filter((r) => r.name.toLowerCase().includes(search.trim().toLowerCase()) && (status === null || r.status === status));
+    const [page, setPage] = useState(1);
+    const [perPage, setPerPage] = useState(5);
+    const matching = rows.filter((r) => r.name.toLowerCase().includes(search.trim().toLowerCase()) && (status === null || r.status === status));
+    const lastPage = Math.max(1, Math.ceil(matching.length / perPage));
+    const current = Math.min(page, lastPage);
+    const visible = matching.slice((current - 1) * perPage, current * perPage);
 
     const openDraft = (next: Draft) => {
         setNameError(undefined);
@@ -332,7 +341,7 @@ export default function Styleguide() {
                 >
                     <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                         {TOKENS.map(([name, swatch, use]) => (
-                            <div key={name} className="flex items-center gap-2.5">
+                            <div key={name} className="flex min-w-0 items-center gap-2.5">
                                 <span className={`size-8 shrink-0 rounded-md border border-line ${swatch}`} />
                                 <div className="min-w-0">
                                     <p className="font-mono text-xs">{name}</p>
@@ -345,11 +354,17 @@ export default function Styleguide() {
 
                 <Section
                     title="Tipografi dan ukuran"
-                    description="Font Instrument Sans. Isi text-sm (0.8125rem), label dan hint text-xs, kontrol h-8, radius rounded-md, kartu rounded-lg border border-line."
+                    description="Font Instrument Sans. Isi text-sm (0.8125rem), label dan hint text-xs, keterangan sangat kecil text-2xs, kontrol h-8, radius rounded-md, kartu rounded-lg border border-line."
                 >
                     <p className="text-base font-semibold">Judul halaman (text-base font-semibold)</p>
                     <p className="text-sm">Isi dan sel tabel (text-sm)</p>
                     <p className="text-xs text-muted">Label, keterangan, dan hint (text-xs text-muted)</p>
+                    <p className="text-2xs text-muted">Keterangan sangat kecil: badge, waktu notifikasi, label seksi sidebar, penghitung (text-2xs)</p>
+                    <p className="text-xs text-muted">
+                        Bayangan: <code>shadow-sm</code> bidang kecil (jempol sakelar), <code>shadow-md</code> penanda mengambang, <code>shadow-lg</code>{' '}
+                        dropdown dan popover, <code>shadow-xl</code> dialog dan laci. Lapisan: header <code>z-30</code>, laci <code>z-40</code>, dialog dan
+                        penanda jaringan <code>z-50</code>, tooltip <code>z-60</code>, popover <code>z-70</code>.
+                    </p>
                 </Section>
 
                 <Section title="Tombol" description="Aksi level halaman: ikon + label. Footer dialog: hanya teks. Aksi baris tabel: ikon saja dengan Tip.">
@@ -467,6 +482,22 @@ export default function Styleguide() {
                                 />
                             </FilterBar>
                         }
+                        pagination={{
+                            meta: {
+                                current_page: current,
+                                last_page: lastPage,
+                                from: matching.length === 0 ? 0 : (current - 1) * perPage + 1,
+                                to: Math.min(matching.length, current * perPage),
+                                total: matching.length,
+                            },
+                            perPage,
+                            options: [5, 10],
+                            onPage: setPage,
+                            onPerPage: (value) => {
+                                setPerPage(value);
+                                setPage(1);
+                            },
+                        }}
                         empty={{ icon: <Inbox />, title: 'Tidak ada data' }}
                     />
                 </div>
@@ -494,6 +525,39 @@ export default function Styleguide() {
                                 <p className="text-sm">Isi kartu. Aksi di header (badge atau tombol ikon + label) boleh ada tanpa footer.</p>
                             </CardBody>
                         </Card>
+                    </div>
+                </Section>
+
+                <Section
+                    title="Menu dropdown dan tooltip"
+                    description="Dropdown untuk beberapa aksi di satu tempat (menu akun, aksi baris yang banyak): item berikon, pemisah, dan item berbahaya di bawah. Tip memberi nama pada tombol ikon."
+                >
+                    <div className="flex flex-wrap items-center gap-2">
+                        <DropdownMenu>
+                            <DropdownTrigger asChild>
+                                <Button variant="outline">
+                                    <MoreHorizontal /> Aksi
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownContent>
+                                <DropdownLabel>Proyek Alfa</DropdownLabel>
+                                <DropdownItem icon={<Pencil />} onSelect={() => toast.info('Ubah')}>
+                                    Ubah
+                                </DropdownItem>
+                                <DropdownItem icon={<Copy />} onSelect={() => toast.info('Duplikat')}>
+                                    Duplikat
+                                </DropdownItem>
+                                <DropdownSeparator />
+                                <DropdownItem danger icon={<Trash2 />} onSelect={() => toast.error('Hapus')}>
+                                    Hapus
+                                </DropdownItem>
+                            </DropdownContent>
+                        </DropdownMenu>
+                        <Tip label="Contoh tooltip">
+                            <Button variant="ghost" size="icon" aria-label="Info">
+                                <Info />
+                            </Button>
+                        </Tip>
                     </div>
                 </Section>
 
