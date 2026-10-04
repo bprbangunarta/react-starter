@@ -11,6 +11,7 @@
         "standards": "node scripts/check-standards.mjs",
         "check": "npm run typecheck && npm run lint && npm run standards",
         "error-pages": "node scripts/generate-error-pages.mjs",
+        "rebrand": "node scripts/rebrand.mjs",
         "lint": "eslint ."
     },
     "dependencies": {

@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { Download, Eye, ScrollText, ShieldCheck, X } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Download, Eye, ScrollText, ShieldCheck, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -9,7 +9,7 @@ import { DialogFooter, Modal } from '@/components/ui/dialog';
 import { FilterBar, SearchInput } from '@/components/ui/filter-bar';
 import { DataTable } from '@/components/ui/data-table';
 import type { Column } from '@/components/ui/data-table';
-import { Badge, PageHeader } from '@/components/ui/misc';
+import { Alert, Badge, PageHeader } from '@/components/ui/misc';
 import type { BadgeTone } from '@/components/ui/misc';
 import type { PageMeta } from '@/components/ui/pagination';
 import { Tip } from '@/components/ui/tooltip';
@@ -234,18 +234,11 @@ export default function AuditLogsIndex() {
             />
 
             {verification && (
-                <div
-                    role="status"
-                    className={
-                        verification.ok
-                            ? 'mb-3 rounded-md border border-emerald-600/20 bg-emerald-50 px-3 py-2 text-sm text-emerald-700'
-                            : 'mb-3 rounded-md border border-danger/30 bg-red-50 px-3 py-2 text-sm text-danger'
-                    }
-                >
+                <Alert tone={verification.ok ? 'success' : 'danger'} icon={verification.ok ? <CheckCircle2 /> : <AlertTriangle />} className="mb-3">
                     {verification.ok
                         ? `Rantai utuh: ${verification.checked} entri terverifikasi.`
                         : `Rantai terputus di entri #${verification.broken_at}. ${verification.reason}`}
-                </div>
+                </Alert>
             )}
 
             <DataTable

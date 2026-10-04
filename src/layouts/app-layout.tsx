@@ -9,6 +9,7 @@ import { ReauthDialog } from '@/components/reauth-dialog';
 import { Button } from '@/components/ui/button';
 import { DropdownContent, DropdownItem, DropdownLabel, DropdownMenu, DropdownSeparator, DropdownTrigger } from '@/components/ui/dropdown';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { APP_INITIAL, APP_NAME } from '@/lib/brand';
 import { cn } from '@/lib/utils';
 
 /** The sidebar. Add an entry here for every page the product gets. */
@@ -26,8 +27,8 @@ const MENU: { label?: string; items: { label: string; to: string; icon: LucideIc
 function Brand() {
     return (
         <Link to="/" className="flex items-center gap-2 text-sm font-semibold">
-            <span className="flex size-6 items-center justify-center rounded bg-primary text-xs font-bold text-white">S</span>
-            Starter Kit
+            <span className="flex size-6 items-center justify-center rounded bg-primary text-xs font-bold text-white">{APP_INITIAL}</span>
+            {APP_NAME}
         </Link>
     );
 }
@@ -132,7 +133,7 @@ export default function AppLayout() {
                         </div>
                     </header>
                     {me.security.enabled && me.security.method === null && (
-                        <div role="status" className="flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-3 py-1.5 text-xs text-amber-800 sm:px-5">
+                        <div role="status" className="flex items-center gap-2 border-b border-warning-line bg-warning-soft px-3 py-1.5 text-xs text-warning-ink sm:px-5">
                             <ShieldAlert className="size-3.5 shrink-0" />
                             <span className="min-w-0 flex-1 truncate">Akun Anda belum dilindungi verifikasi dua langkah.</span>
                             <Link to="/profile" className="shrink-0 font-medium underline underline-offset-2 hover:no-underline">

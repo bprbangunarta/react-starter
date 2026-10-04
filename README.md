@@ -46,7 +46,8 @@ src/
     resource.ts              useResource: memuat data GET dengan parameter
     download.ts              unduh CSV (tiruan membuat berkas di peramban)
     format.ts, utils.ts      format tanggal/rupiah, cn()
-    title.ts                 useTitle: judul tab "Halaman - Starter Kit"
+    brand.ts                 nama aplikasi dan huruf logo (diubah lewat `npm run rebrand`)
+    title.ts                 useTitle: judul tab "Halaman - <nama aplikasi>"
   auth/session.tsx           siapa yang masuk (me), notifikasi, keluar
   layouts/app-layout.tsx     sidebar, header, menu akun, pengingat MFA  (tambah menu di MENU)
   pages/                     login, two-factor-challenge, dashboard, profile, audit-logs, styleguide, not-found
@@ -56,9 +57,10 @@ src/
   mock/                      server tiruan (HAPUS saat backend asli siap)
 email/                       template email OTP (TypeScript, dan Blade untuk Laravel)
 error-pages/                 halaman error statis (401, 403, 404, 419, 429, 500, 503)
-scripts/                     pemeriksa standar kode, pembuat halaman error
+scripts/                     pemeriksa standar kode, pembuat halaman error, rebrand
 Dockerfile, nginx.conf,      pengemasan produksi: UI statis + proxy `/api/` ke backend (ubah `backend:7100` di nginx.conf)
 security-headers.conf
+.env.example                 ALLOW_INDEXING (akses mesin pencarian)
 README.md                    panduan ini
 AGENTS.md                    peta dokumen dan ringkasan aturan (baca dulu bila mengubah kode)
 docs/                        STANDARDS.md (aturan wajib kode dan tampilan), API.md (kontrak endpoint)
@@ -83,6 +85,45 @@ backend asli:
 
 Bila backend memakai token alih-alih cookie, ubah `send()` di `src/lib/http.ts` (satu tempat) untuk menambah header
 `Authorization`; tidak ada layar yang berubah.
+
+## Rebranding
+
+Satu perintah mengganti nama, warna utama, favicon, template email, dan halaman error:
+
+```bash
+npm run rebrand -- --name "Nama Aplikasi" --color "#0f766e"      # --initial N untuk huruf logo (bawaan: huruf pertama nama)
+```
+
+Yang diubah: `src/lib/brand.ts` (satu-satunya sumber nama dan huruf logo; dipakai sidebar, login, 404, judul tab, pratinjau email),
+token `--color-primary`, `-hover`, `-soft` di `src/index.css` (dihitung dari hex ke OKLCH; ada peringatan bila teks putih di atasnya
+kurang kontras), `<title>` di `index.html`, nama di `package.json`, `public/favicon.svg` dan `favicon.ico` (persegi membulat berwarna utama
+dengan huruf logo), warna merek di `email/`, dan `error-pages/`. Salah satu opsi boleh dipakai sendiri. Pembuatan `favicon.ico` butuh
+`rsvg-convert` dan ImageMagick (`brew install librsvg imagemagick`); tanpa itu skrip memberi tahu dan `favicon.svg` tetap diperbarui.
+
+Secara manual:
+
+- **Warna utama:** ubah tiga token primary di `src/index.css`; warna status (berhasil, info, peringatan, galat) tidak ikut berubah.
+- **Logo/favicon sendiri:** timpa `public/favicon.svg`, `public/favicon.ico` (32×32 atau multi-ukuran), dan bila perlu ganti kotak huruf di
+  `app-layout.tsx`, `login.tsx`, `not-found.tsx` dengan `<img>`. Email dan halaman error memakai kotak huruf sebaris (ubah di `email/` dan
+  `scripts/generate-error-pages.mjs`).
+- **Nama perusahaan di email:** parameter `company` pada `renderLoginCodeEmail`.
+- **Kunci demo** `starterkit.db.v1` di `src/mock/db.ts` boleh diganti; ia hilang bersama `src/mock/` saat backend tersambung.
+
+<a id="indexing"></a>
+## Akses mesin pencarian (anti-crawl)
+
+Ini aplikasi admin internal, jadi **bawaannya tertutup bagi mesin pencari**: meta `noindex, nofollow`, `robots.txt` berisi `Disallow: /`,
+dan header `X-Robots-Tag: noindex, nofollow` di nginx. Halaman error statis selalu `noindex`. Semuanya dikendalikan satu variabel:
+
+| Mode | Cara |
+|---|---|
+| **Tertutup (bawaan)** | tidak perlu apa-apa, atau `ALLOW_INDEXING=false` |
+| **Boleh diindeks** | bangun dengan `ALLOW_INDEXING=true npm run build` (atau tulis di `.env`; contoh di `.env.example`), dan untuk Docker: `docker build --build-arg ALLOW_INDEXING=true .` |
+
+`vite.config.ts` menyuntikkan meta dan membuat `dist/robots.txt` sesuai variabel itu (juga dilayani saat `npm run dev`); `Dockerfile`
+menghapus header `X-Robots-Tag` dari `security-headers.conf` bila `true`. Tanpa Docker, atur header yang sama di web server Anda.
+`robots.txt` hanya meminta crawler yang patuh; ia bukan kontrol akses. Untuk data sungguhan tetap andalkan login dan, bila perlu,
+pembatasan jaringan (VPN/IP).
 
 ## Menambah halaman
 
@@ -165,7 +206,7 @@ tanpa `any`, semua akses server lewat `http`, semua tabel lewat `DataTable`, war
       verifikasi terjadwal; entri tidak memuat rahasia.
 - [ ] Setiap kejadian di [docs/STANDARDS.md](docs/STANDARDS.md) bagian 6 tercatat.
 - [ ] Email OTP memakai template di `email/` dan domain pengirim ber-SPF/DKIM/DMARC.
-- [ ] Header `X-Robots-Tag: noindex, nofollow` dan `robots.txt` (`Disallow: /`) bila aplikasi internal (sudah ada di `public/`).
+- [ ] Aplikasi internal tetap tertutup bagi mesin pencari (bawaan; lihat [Akses mesin pencarian](#indexing)); batasi juga jaringannya bila perlu.
 - [ ] Aksi sensitif (bila ada) membalas 403 `reauth_required` dan `POST /reauth` tersedia (lihat [API.md](docs/API.md)).
 - [ ] Hapus `src/mock/` setelah semua endpoint tersambung.
 

@@ -61,15 +61,34 @@ export function PageHeader({ title, description, actions }: { title: string; des
     );
 }
 
+/** Status tones: soft surface, line, and ink from the shared ladder in src/index.css. Badge, Alert, and toasts use the same family. */
 const badgeTones = {
     neutral: 'bg-canvas text-muted ring-line',
-    info: 'bg-primary-soft text-primary ring-primary/20',
-    success: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
-    warning: 'bg-amber-50 text-amber-700 ring-amber-600/20',
-    danger: 'bg-red-50 text-danger ring-danger/20',
+    info: 'bg-info-soft text-info-ink ring-info-line',
+    success: 'bg-success-soft text-success-ink ring-success-line',
+    warning: 'bg-warning-soft text-warning-ink ring-warning-line',
+    danger: 'bg-danger-soft text-danger-ink ring-danger-line',
+} as const;
+
+const alertTones = {
+    neutral: 'border-line bg-canvas text-muted',
+    info: 'border-info-line bg-info-soft text-info-ink',
+    success: 'border-success-line bg-success-soft text-success-ink',
+    warning: 'border-warning-line bg-warning-soft text-warning-ink',
+    danger: 'border-danger-line bg-danger-soft text-danger-ink',
 } as const;
 
 export type BadgeTone = keyof typeof badgeTones;
+
+/** An inline message (result of an action, notice). Icon optional; `danger` is announced as an alert, the rest as status. */
+export function Alert({ tone = 'info', icon, className, children, ...props }: React.ComponentProps<'div'> & { tone?: BadgeTone; icon?: ReactNode }) {
+    return (
+        <div role={tone === 'danger' ? 'alert' : 'status'} className={cn('flex items-start gap-2 rounded-md border px-3 py-2 text-sm [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0', alertTones[tone], className)} {...props}>
+            {icon}
+            <div className="min-w-0 flex-1">{children}</div>
+        </div>
+    );
+}
 
 export function Badge({ tone = 'neutral', className, ...props }: React.ComponentProps<'span'> & { tone?: BadgeTone }) {
     return (

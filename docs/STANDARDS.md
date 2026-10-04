@@ -91,7 +91,9 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
 <a id="token"></a>
 ## 4. Token dan CSS
 
-Satu-satunya sumber gaya adalah `src/index.css` (Tailwind v4, `@theme`). Jangan menulis warna atau ukuran baru di komponen (warna tertulis langsung **[mesin]**); ubah token di sana.
+Satu-satunya sumber gaya adalah `src/index.css` (Tailwind v4, `@theme`). Jangan menulis warna atau ukuran baru di komponen (warna tertulis langsung **[mesin]**); ubah token di sana. Warna status **hanya** lewat tangga di atas
+(`bg-success-soft text-success-ink`, dst.), bukan palet Tailwind (`emerald`, `amber`, `red`); pesan sebaris memakai `Alert`, bukan `div` buatan sendiri.
+Ganti warna utama dan merek lewat `npm run rebrand` (lihat README).
 `html { font-size: 15px }` sehingga `1rem = 15px`.
 
 | Token | Nilai | Dipakai untuk |
@@ -103,6 +105,7 @@ Satu-satunya sumber gaya adalah `src/index.css` (Tailwind v4, `@theme`). Jangan 
 | `--color-line` | `oklch(0.92 0.006 260)` | semua garis dan batas |
 | `--color-ink` / `--color-muted` | `oklch(0.24 0.02 265)` / `oklch(0.55 0.02 265)` | teks utama / label, hint, header tabel |
 | `--color-danger` | `oklch(0.55 0.2 27)` | galat, tombol hapus |
+| `--color-{success,warning,info,danger}` + `-soft` / `-line` / `-ink` | tangga seragam: soft L 0.97, line L 0.88, ink L 0.42–0.45; hue 155 / 80 / 250 / 27 | status: badge, `Alert`, toast, indikator jaringan |
 | `--text-xs` / `--text-sm` | `0.75rem` / `0.8125rem` | label dan hint / isi, sel tabel, tombol |
 
 | Elemen | Aturan |

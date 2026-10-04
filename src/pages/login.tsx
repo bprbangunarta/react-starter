@@ -8,6 +8,7 @@ import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/misc';
 import { PasswordInput } from '@/components/ui/password-input';
+import { APP_INITIAL, APP_NAME } from '@/lib/brand';
 import { useForm } from '@/lib/form';
 import { USE_MOCK } from '@/lib/http';
 import { useTitle } from '@/lib/title';
@@ -27,8 +28,8 @@ export default function Login() {
             <NetworkStatus />
             <div className="w-full max-w-xs">
                 <div className="mb-4 flex flex-col items-center gap-1">
-                    <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-base font-bold text-white">S</span>
-                    <h1 className="text-base font-semibold">Starter Kit</h1>
+                    <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-base font-bold text-white">{APP_INITIAL}</span>
+                    <h1 className="text-base font-semibold">{APP_NAME}</h1>
                     <p className="text-center text-xs text-muted">Silakan masuk menggunakan akun Anda dengan email atau username dan kata sandi yang telah terdaftar.</p>
                 </div>
                 <Card className="p-4">

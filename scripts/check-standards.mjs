@@ -35,6 +35,11 @@ const rules = [
         skip: (file) => file.endsWith('components/ui/combobox.tsx'),
     },
     { name: 'console.log/debugger tertinggal', test: (line) => /\bconsole\.log\(|\bdebugger\b/.test(line), skip: () => false },
+    {
+        name: 'Palet Tailwind untuk status dilarang: pakai token success/warning/info/danger (-soft, -line, -ink)',
+        test: (line) => /\b(bg|text|border|ring)-(red|green|emerald|amber|yellow|orange|blue|sky|rose|lime|teal)-\d{2,3}\b/.test(line),
+        skip: () => false,
+    },
     { name: 'Tipe any dilarang', test: (line) => /:\s*any\b|\bas any\b|<any>/.test(line), skip: () => false },
     { name: '@ts-ignore/@ts-nocheck dilarang: perbaiki tipenya', test: (line) => /@ts-(ignore|nocheck)/.test(line), skip: () => false, inComments: true },
     {

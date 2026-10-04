@@ -13,11 +13,12 @@ import { ConfirmDialog, DialogFooter, Modal } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import { FilterBar, SearchInput } from '@/components/ui/filter-bar';
 import { Input } from '@/components/ui/input';
-import { Badge, Card, EmptyState, ErrorState, PageHeader, Skeleton } from '@/components/ui/misc';
+import { Alert, Badge, Card, EmptyState, ErrorState, PageHeader, Skeleton } from '@/components/ui/misc';
 import type { BadgeTone } from '@/components/ui/misc';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tip } from '@/components/ui/tooltip';
+import { APP_NAME } from '@/lib/brand';
 import { rupiah } from '@/lib/format';
 import { useTitle } from '@/lib/title';
 
@@ -38,6 +39,14 @@ const ERROR_PAGES = Object.entries(import.meta.glob<string>('../../error-pages/*
     .map(([file, html]) => ({ code: /(\d{3})\.html$/.exec(file)?.[1] ?? file, html }))
     .sort((a, b) => a.code.localeCompare(b.code));
 const ERROR_LABELS: Record<string, string> = { '401': 'Perlu masuk', '403': 'Akses ditolak', '404': 'Tidak ditemukan', '419': 'Kedaluwarsa', '429': 'Terlalu banyak', '500': 'Galat server', '503': 'Pemeliharaan' };
+
+/** Status ladder: one row per tone. Class names are written out so Tailwind can see them. */
+const STATUS = [
+    { tone: 'success', label: 'Berhasil', swatches: ['bg-success', 'bg-success-soft', 'bg-success-line', 'bg-success-ink'], notify: () => toast.success('Data tersimpan') },
+    { tone: 'info', label: 'Informasi', swatches: ['bg-info', 'bg-info-soft', 'bg-info-line', 'bg-info-ink'], notify: () => toast.info('Ada pembaruan data') },
+    { tone: 'warning', label: 'Peringatan', swatches: ['bg-warning', 'bg-warning-soft', 'bg-warning-line', 'bg-warning-ink'], notify: () => toast.warning('Sesi hampir berakhir') },
+    { tone: 'danger', label: 'Galat', swatches: ['bg-danger', 'bg-danger-soft', 'bg-danger-line', 'bg-danger-ink'], notify: () => toast.error('Gagal menyimpan data') },
+] as const;
 
 const TONES: BadgeTone[] = ['neutral', 'info', 'success', 'warning', 'danger'];
 
@@ -76,7 +85,7 @@ export default function Styleguide() {
     const [draft, setDraft] = useState<Draft | null>(null);
     const [nameError, setNameError] = useState<string | undefined>();
     const [removing, setRemoving] = useState<Row | null>(null);
-    const email = renderLoginCodeEmail({ appName: 'Starter Kit', code: '482915', minutes: 10, name: 'Rina Wulandari', sentAt: '1 Oktober 2026, 21:16 WIB' });
+    const email = renderLoginCodeEmail({ appName: APP_NAME, code: '482915', minutes: 10, name: 'Rina Wulandari', sentAt: '1 Oktober 2026, 21:16 WIB' });
 
     const visible = rows.filter((r) => r.name.toLowerCase().includes(search.trim().toLowerCase()) && (status === null || r.status === status));
 
@@ -176,6 +185,20 @@ export default function Styleguide() {
                         <Field label="Pilihan"><Combobox options={[{ value: 'a', label: 'Opsi A' }, { value: 'b', label: 'Opsi B', description: 'Pembeda pilihan yang mirip' }, { value: 'c', label: 'Opsi C' }]} value={select} onChange={setSelect} clearable /></Field>
                         <Field label="Tanggal"><DatePicker value={date} onChange={setDate} placeholder="Pilih tanggal" /></Field>
                         <Field label="Kode verifikasi"><CodeInput value={code} onValueChange={setCode} placeholder="••••••" /></Field>
+                    </div>
+                </Section>
+
+                <Section title="Warna status (badge, alert, toast)" description="Satu keluarga warna: tiap nada punya base (ikon), soft (latar), line (garis), dan ink (teks). Toast, badge, alert, dan indikator jaringan memakai token yang sama.">
+                    <div className="grid gap-2.5">
+                        {STATUS.map((s) => (
+                            <div key={s.tone} className="grid items-center gap-2 md:grid-cols-[9rem_8rem_auto_1fr_auto]">
+                                <p className="text-xs font-medium">{s.label}</p>
+                                <div className="flex gap-1">{s.swatches.map((c) => <span key={c} title={c} className={`size-6 rounded border border-line ${c}`} />)}</div>
+                                <Badge tone={s.tone}>{s.tone}</Badge>
+                                <Alert tone={s.tone} className="py-1.5 text-xs">Contoh pesan {s.label.toLowerCase()} di dalam halaman.</Alert>
+                                <Button variant="outline" size="sm" onClick={s.notify}>Coba toast</Button>
+                            </div>
+                        ))}
                     </div>
                 </Section>
 

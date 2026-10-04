@@ -17,8 +17,44 @@
     --color-muted: oklch(0.55 0.02 265);
     --color-danger: oklch(0.55 0.2 27);
 
+    /*
+     * Status colours share one ladder so they read as a single family: soft (surface) L 0.97, line (border) L 0.88,
+     * base (icon, solid) and ink (text on soft) per hue. Hues: danger 27, warning 80, success 155, info 250.
+     */
+    --color-danger-soft: oklch(0.97 0.02 27);
+    --color-danger-line: oklch(0.88 0.06 27);
+    --color-danger-ink: oklch(0.45 0.16 27);
+    --color-success: oklch(0.55 0.14 155);
+    --color-success-soft: oklch(0.97 0.025 155);
+    --color-success-line: oklch(0.88 0.07 155);
+    --color-success-ink: oklch(0.42 0.1 155);
+    --color-warning: oklch(0.68 0.15 80);
+    --color-warning-soft: oklch(0.97 0.03 90);
+    --color-warning-line: oklch(0.88 0.08 85);
+    --color-warning-ink: oklch(0.45 0.1 70);
+    --color-info: oklch(0.55 0.15 250);
+    --color-info-soft: oklch(0.97 0.02 250);
+    --color-info-line: oklch(0.88 0.06 250);
+    --color-info-ink: oklch(0.42 0.12 250);
+
     --text-xs: 0.75rem;
     --text-sm: 0.8125rem;
+}
+
+/* Toasts (sonner richColors) take the status ladder above, so they match Badge and Alert. */
+html [data-sonner-toaster][data-sonner-theme] {
+    --success-bg: var(--color-success-soft);
+    --success-border: var(--color-success-line);
+    --success-text: var(--color-success-ink);
+    --error-bg: var(--color-danger-soft);
+    --error-border: var(--color-danger-line);
+    --error-text: var(--color-danger-ink);
+    --warning-bg: var(--color-warning-soft);
+    --warning-border: var(--color-warning-line);
+    --warning-text: var(--color-warning-ink);
+    --info-bg: var(--color-info-soft);
+    --info-border: var(--color-info-line);
+    --info-text: var(--color-info-ink);
 }
 
 /* Compact calendar (react-day-picker v9): 28px cells, small caption and navigation. */

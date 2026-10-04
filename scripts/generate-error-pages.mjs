@@ -1,9 +1,14 @@
 // Builds the static error pages in error-pages/ (self-contained HTML: no build step, no assets), for a web server or a
 // framework to serve when the app itself cannot (maintenance, 5xx, 401/403/404/419/429).
 //   node scripts/generate-error-pages.mjs [AppName]
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
-const app = process.argv[2] ?? 'Starter Kit';
+// Name, logo letter, and colours come from the app itself, so `npm run rebrand` keeps the error pages in step.
+const brand = readFileSync('src/lib/brand.ts', 'utf8');
+const theme = readFileSync('src/index.css', 'utf8');
+const app = process.argv[2] ?? /APP_NAME = '(.*)'/.exec(brand)?.[1] ?? 'Starter Kit';
+const initial = /APP_INITIAL = '(.*)'/.exec(brand)?.[1] ?? app.charAt(0).toUpperCase();
+const token = (name, fallback) => new RegExp(`--color-${name}: (.*);`).exec(theme)?.[1] ?? fallback;
 const pages = [
     [401, 'Perlu masuk', 'Silakan masuk untuk melanjutkan.', 'Ke beranda'],
     [403, 'Akses ditolak', 'Peran Anda tidak diizinkan membuka halaman ini. Bila ini keliru, minta administrator memberikan aksesnya.', 'Ke beranda'],
@@ -15,7 +20,7 @@ const pages = [
 ];
 
 const css = `
-:root{--primary:oklch(0.45 0.16 265);--primary-hover:oklch(0.4 0.16 265);--canvas:oklch(0.975 0.003 260);--ink:oklch(0.24 0.02 265);--muted:oklch(0.55 0.02 265)}
+:root{--primary:${token('primary', 'oklch(0.45 0.16 265)')};--primary-hover:${token('primary-hover', 'oklch(0.4 0.16 265)')};--canvas:${token('canvas', 'oklch(0.975 0.003 260)')};--ink:${token('ink', 'oklch(0.24 0.02 265)')};--muted:${token('muted', 'oklch(0.55 0.02 265)')}}
 *{box-sizing:border-box}
 html{font-size:15px}
 body{margin:0;background:var(--canvas);color:var(--ink);font-family:'Instrument Sans Variable','Instrument Sans',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
@@ -48,7 +53,7 @@ for (const [code, title, description, label, reload] of pages) {
 </head>
 <body>
 <main>
-<div class="brand"><span class="mark">${app.charAt(0).toUpperCase()}</span><span class="name">${app}</span></div>
+<div class="brand"><span class="mark">${initial}</span><span class="name">${app}</span></div>
 <p class="code">${code}</p>
 <h1>${title}</h1>
 <p class="d">${description}</p>

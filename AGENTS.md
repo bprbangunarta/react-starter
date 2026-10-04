@@ -7,7 +7,7 @@ Starter Kit: antarmuka React + TypeScript + Vite + Tailwind (Compact UI, sama de
 
 | Berkas | Isi | Buka bila |
 |---|---|---|
-| [README.md](README.md) | menjalankan, isi, struktur, menyambung backend, menambah halaman, email OTP, halaman error, daftar periksa backend, pemecahan masalah | pertama kali memakai proyek |
+| [README.md](README.md) | menjalankan, isi, struktur, menyambung backend, rebranding, akses mesin pencarian, menambah halaman, email OTP, halaman error, daftar periksa backend, pemecahan masalah | pertama kali memakai proyek |
 | [docs/STANDARDS.md](docs/STANDARDS.md) | **aturan wajib**: kode, tampilan (Compact UI), token, data, audit log, MFA | menulis atau mengubah kode/tampilan |
 | [docs/API.md](docs/API.md) | kontrak endpoint, galat 422, rantai hash audit log | mengubah akses server atau menambah endpoint |
 
