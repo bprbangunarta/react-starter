@@ -1,8 +1,11 @@
 # Kontrak API
 
+Dokumen ini adalah **kontrak yang diharapkan frontend**, bahan serah terima ke tim backend. Bagaimana backend mengimplementasikannya adalah urusan mereka;
+layar hanya bergantung pada bentuk request/respons di bawah.
+
 Semua layar memanggil `http.get/post/put/delete(url, data)` di `src/lib/http.ts`. Saat ini jawabannya dari `src/mock/server.ts`
-(`USE_MOCK = true`). Untuk memakai backend asli: isi `API_BASE`, set `USE_MOCK = false`, dan sediakan endpoint di bawah. Hapus folder
-`src/mock/` setelahnya.
+(`USE_MOCK = true`). Setelah backend menjawab sesuai kontrak ini, server tiruan dilepas dengan langkah di
+[README](../README.md#cara-kerja-server-tiruan-dan-melepasnya).
 
 ## Aturan umum
 
@@ -36,7 +39,7 @@ sudah lewat batas, `POST /login` membalas `password_expired: true` dan **belum m
 
 Aturan kata sandi baru (juga berlaku untuk `PUT /profile/password`), semuanya 422 di kolomnya: minimal 8 karakter (`password`), konfirmasi sama
 (`password_confirmation`), **tidak sama dengan kata sandi saat ini** dan **tidak sama dengan N kata sandi sebelumnya** (bawaan tiruan 5; `password`).
-Backend asli membandingkan lewat hash (riwayat disimpan sebagai hash, tidak pernah teks) dan menyimpan `password_changed_at`.
+Layar tidak melihat riwayatnya: ia hanya menampilkan pesan 422 dari server.
 Kejadian audit: `auth.password_expired`, `auth.password_expired_changed`, `auth.password_expired_change_failed`.
 
 ## Verifikasi dua langkah saat masuk
@@ -74,7 +77,7 @@ Item: `{ id, title, body, module, level: 'info'\|'success'\|'warning', url, read
 ## Audit log
 
 Catatan tambah-saja (tidak pernah diubah atau dihapus) dengan **rantai hash**: `hash = SHA-256(isi entri + previous_hash)`; entri
-pertama memakai hash nol. Contoh perhitungan ada di `src/mock/audit.ts` (di backend asli sebaiknya HMAC dengan kunci rahasia).
+pertama memakai hash nol. Layar hanya membaca dan menampilkan hasil `/audit-logs/verify`; contoh perhitungan acuan ada di `src/mock/audit.ts`.
 
 | Metode | URL | Hasil |
 |---|---|---|
@@ -89,3 +92,12 @@ method, url, user_agent, request_id, old, new, context, previous_hash, hash }`. 
 Kejadian yang sebaiknya dicatat: masuk, keluar, gagal masuk, MFA (dikirim, gagal, berhasil, kode pemulihan dipakai), ganti kata
 sandi (berhasil/gagal), MFA diaktifkan/dimatikan, ekspor dan verifikasi audit log, akses ditolak. **Jangan pernah** menyimpan
 rahasia (kata sandi, kode, kunci) di `old`/`new`/`context`.
+
+## Aturan sisi server yang diasumsikan layar
+
+Ini kewajiban backend; layar tidak menegakkannya sendiri dan tidak boleh menggantikannya:
+
+- Kata sandi minimal 8 karakter dan percobaan salah dibatasi; kata sandi hanya disimpan sebagai hash.
+- OTP email berlaku 10 menit, maksimal 5 kali salah, ada jeda kirim ulang dan batas per jam, disimpan sebagai hash; 8 kode pemulihan sekali pakai (hash).
+- Audit log tidak punya jalur ubah/hapus; verifikasi rantai juga dijalankan terjadwal di server.
+- Kejadian di bagian Audit log di atas dicatat di server, tanpa rahasia (kata sandi, kode, kunci).

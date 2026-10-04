@@ -1,7 +1,7 @@
 # AGENTS.md
 
 Starter Kit: antarmuka React + TypeScript + Vite + Tailwind (tampilan Compact UI) dengan autentikasi, MFA, dan audit log.
-**Tanpa backend**: data dari server tiruan di `src/mock/`; backend asli menyediakan endpoint yang sama.
+**Hanya frontend**: data dari server tiruan di `src/mock/`; backend dikerjakan pihak lain mengikuti kontrak `docs/API.md`.
 
 ## Dokumen (baca sesuai pekerjaan)
 
@@ -21,6 +21,7 @@ npm install
 npm run dev        # server pengembangan
 npm run check      # tsc + ESLint + pemeriksa standar kode (wajib lolos sebelum selesai)
 npm run build      # check + build produksi
+npm run rebrand -- --name "Nama" --color "#0f766e"   # nama, warna utama, favicon, email, halaman error
 ```
 
 ## Ringkasan aturan (rinci di docs/STANDARDS.md)
@@ -29,4 +30,5 @@ npm run build      # check + build produksi
 - TypeScript ketat, tanpa `any`. Semua akses server lewat `src/lib/http.ts` (`http`, `useForm`, `useResource`).
 - Pakai ulang `src/components/ui`; semua tabel lewat `DataTable`; warna hanya lewat token tema.
 - Audit log tambah-saja dengan rantai hash; rahasia tidak pernah masuk log, `localStorage`, atau URL.
+- Pesan commit berbahasa Inggris, satu perubahan logis per commit.
 - Perubahan endpoint dicatat di `docs/API.md`; `src/mock/` dihapus setelah backend asli tersambung.

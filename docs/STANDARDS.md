@@ -54,6 +54,7 @@ konfigurasi di `eslint.config.js`), dan pemeriksa aturan rumah `npm run standard
   Dua aturan sengaja dimatikan di konfigurasi, dengan alasannya tertulis di sana: `set-state-in-effect` (pemuatan saat mount lewat
   `useResource`/sesi adalah pola resmi) dan `no-autofocus` (login dan dialog memang memfokuskan isian pertama).
 - Mematikan aturan ESLint per baris (`eslint-disable-next-line`) hanya dengan komentar alasan di atasnya.
+
 <a id="tampilan"></a>
 ## 3. Tampilan (Compact UI)
 
@@ -73,7 +74,7 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
   | Tempat | Bentuk | Contoh |
   |---|---|---|
   | header halaman, toolbar, header kartu, dan baris pengaturan di body kartu | **ikon + label** (ikon kiri) | Tambah, Ekspor CSV, Atur ulang, Atur/Ganti (MFA), Kirim kode |
-  | footer dialog dan footer kartu (`DialogFooter`, `CardFooter`) | **teks saja** | Batal, Simpan, Hapus, Konfirmasi, Matikan **[mesin]** |
+  | footer dialog dan footer kartu (`DialogFooter`, `CardFooter`) | **teks saja** **[mesin]** | Batal, Simpan, Hapus, Konfirmasi, Matikan |
   | tombol kirim pada kartu auth tanpa header (login, verifikasi) | **teks saja**, selebar kartu | Masuk, Verifikasi |
   | aksi baris tabel, tombol tutup, paginasi panah | **ikon saja** (`size="icon"`) + `aria-label` + `Tip` | Ubah, Hapus, Tutup |
   | tautan di keadaan kosong/galat, nomor halaman | teks saja | Coba lagi |
@@ -113,10 +114,10 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
 <a id="token"></a>
 ## 4. Token dan CSS
 
-Satu-satunya sumber gaya adalah `src/index.css` (Tailwind v4, `@theme`). Jangan menulis warna atau ukuran baru di komponen (warna tertulis langsung **[mesin]**); ubah token di sana. Warna status **hanya** lewat tangga di atas
+Satu-satunya sumber gaya adalah `src/index.css` (Tailwind v4, `@theme`). Jangan menulis warna atau ukuran baru di komponen (warna tertulis langsung **[mesin]**); ubah token di sana. Warna status **hanya** lewat tangga di tabel di bawah
 (`bg-success-soft text-success-ink`, dst.), bukan palet Tailwind (`emerald`, `amber`, `red`); pesan sebaris memakai `Alert`, bukan `div` buatan sendiri.
 Ganti warna utama dan merek lewat `npm run rebrand` (lihat README).
-`html { font-size: 15px }` sehingga `1rem = 15px`.
+`html { font-size: 15px }` sehingga `1rem = 15px`. Warna status dijaga mesin **[mesin]**: palet Tailwind (`emerald`, `amber`, `red`, ...) ditolak.
 
 | Token | Nilai | Dipakai untuk |
 |---|---|---|
@@ -146,29 +147,23 @@ Email (`email/login-code.ts`) dan halaman error (`error-pages/*.html`) tidak bis
 - Validasi sebenarnya di backend; batasan UI (`maxLength`, `min`, `max`) **berpasangan** dengan aturan backend.
 - Galat 422 dipetakan ke kolomnya lewat `useForm`; jangan tampilkan galat teknis mentah.
 - Jangan simpan rahasia (kata sandi, token, kode) di `localStorage`/`sessionStorage`, URL, atau log. Di luar `src/mock/` keduanya dilarang **[mesin]**;
-  server tiruan memakainya hanya untuk demo, **jangan menyalin kebiasaan itu ke backend asli**.
+  server tiruan memakainya hanya untuk demo.
 
 <a id="audit-mfa"></a>
-## 6. Audit log dan MFA
+## 6. Audit log, autentikasi, dan MFA (yang dijaga UI)
 
-**Audit log (wajib, standar OJK):** (server tiruan hanya mencatat sebagian kejadian di bawah; backend asli wajib mencatat semuanya)
+Aturan sisi server (hash, pembatasan percobaan, masa berlaku OTP, rantai hash, pencatatan kejadian) adalah tanggung jawab backend dan
+dirinci sebagai kontrak di [API.md](API.md). UI hanya menampilkan dan **tidak boleh melemahkannya**:
 
-- **Tambah-saja** dengan rantai hash; tidak ada layar atau API untuk mengubah atau menghapus entri.
-- Dicatat: perubahan data bisnis dan kejadian keamanan (masuk/keluar/gagal, MFA kirim/gagal/berhasil/kode pemulihan dipakai, ganti kata
-  sandi, MFA aktif/mati, konfirmasi kata sandi, ekspor dan verifikasi audit log, akses ditolak, baca data sensitif).
-- Entri memuat siapa, kapan, dari mana (IP, peramban, URL), hasil, dan nilai sebelum/sesudah. **Rahasia tidak pernah masuk entri.**
-- Verifikasi rantai bisa dijalankan dari layar dan terjadwal di backend.
-
-**Autentikasi dan MFA:**
-
-- Kata sandi minimal 8 karakter; percobaan salah dibatasi (kunci sementara).
-- **Masa berlaku kata sandi** (bawaan 30 hari, dapat diatur): bila lewat, masuk yang benar tidak membuat sesi tetapi mengarahkan ke `/password-expired`
-  untuk kata sandi baru. Kata sandi baru tidak boleh sama dengan yang sekarang atau beberapa sebelumnya (riwayat disimpan sebagai hash). Aturan
-  yang sama berlaku di Profil; kolomnya dipakai bersama lewat `components/password-fields.tsx`.
-- MFA opsional per pengguna: authenticator (TOTP) atau OTP email. OTP email berlaku 10 menit, maksimal 5 kali salah, ada jeda kirim ulang
-  dan batas per jam, disimpan sebagai hash. 8 kode pemulihan sekali pakai.
-- Setiap kegagalan, pengiriman, dan penahanan tercatat di audit log (tanpa kodenya).
+- **Audit log hanya dibaca:** tidak ada layar, tombol, atau panggilan untuk mengubah atau menghapus entri. UI menyediakan filter, detail
+  sebelum/sesudah, ekspor CSV, dan tombol "Periksa integritas" yang menampilkan hasil verifikasi rantai dari server.
+- **Rahasia tidak pernah tampil atau tersimpan di sisi klien** (kata sandi, kode OTP, kunci TOTP selain saat pengaturan awal, token): tidak di
+  URL, `localStorage`, atau log. Kunci TOTP dan kode pemulihan hanya tampil sekali saat MFA diaktifkan.
+- **Masa berlaku kata sandi:** bila server membalas `password_expired`, UI mengarahkan ke `/password-expired` (tiga kolom yang sama dengan Profil,
+  lewat `components/password-fields.tsx`) dan menampilkan pesan 422 apa adanya.
+- **MFA:** opsional per pengguna (authenticator atau OTP email); UI menampilkan jeda kirim ulang dari server dan kode pemulihan sekali pakai.
 - Layar yang belum dilindungi MFA menampilkan pengingat di atas halaman.
+- Server tiruan hanya mencatat sebagian kejadian audit dan menyimpan kata sandi sebagai teks; itu demi demo, bukan contoh untuk backend.
 
 <a id="selesai"></a>
 ## 7. Sebelum selesai

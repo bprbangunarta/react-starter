@@ -1,9 +1,9 @@
 # Starter Kit
 
 Kerangka antarmuka **React + TypeScript + Vite + Tailwind** untuk dasbor admin internal dengan tampilan Compact UI (padat dan rapi),
-lengkap dengan **autentikasi, MFA, dan audit log**. Proyek ini **tanpa backend**: semua data berasal dari server tiruan di peramban,
-jadi setiap layar sudah bisa dicoba dan terasa seperti aslinya. Backend sungguhan (mis. dengan PostgreSQL) cukup menyediakan
-endpoint di [API.md](docs/API.md); tidak ada layar yang perlu ditulis ulang.
+lengkap dengan layar **autentikasi, MFA, dan audit log**. Proyek ini **hanya frontend**: semua data berasal dari server tiruan di peramban,
+jadi setiap layar sudah bisa dicoba dan terasa seperti aslinya. Backend dikerjakan pihak lain; mereka cukup mengikuti kontrak di
+[API.md](docs/API.md) dan tidak ada layar yang perlu ditulis ulang.
 
 ## Menjalankan
 
@@ -48,13 +48,15 @@ src/
     resource.ts              useResource: memuat data GET dengan parameter
     download.ts              unduh CSV (tiruan membuat berkas di peramban)
     format.ts, utils.ts      format tanggal/rupiah, cn()
+    mask.ts                  aturan mask isian (telepon, NIK, NPWP) untuk MaskedInput
     brand.ts                 nama aplikasi dan huruf logo (diubah lewat `npm run rebrand`)
     title.ts                 useTitle: judul tab "Halaman - <nama aplikasi>"
   auth/session.tsx           siapa yang masuk (me), notifikasi, keluar
   layouts/app-layout.tsx     sidebar, header, menu akun, pengingat MFA  (tambah menu di MENU)
-  pages/                     login, two-factor-challenge, dashboard, profile, audit-logs, styleguide, not-found
-  components/ui/             komponen dasar: button, input, field, combobox, data-table, dialog, dropdown, date-picker, ...
-  components/                bel notifikasi, penanda jaringan, dialog konfirmasi kata sandi (reauth), error boundary
+  pages/                     login, two-factor-challenge, password-expired, dashboard, profile, audit-logs, styleguide, not-found
+  components/ui/             komponen dasar: button, input, field, combobox, data-table, dialog, dropdown, date-picker, currency-input,
+                             masked-input, color-input, textarea, choice (checkbox/switch/radio), file-input, misc (Card, Alert, Badge, ...)
+  components/                bel notifikasi, penanda jaringan, dialog konfirmasi kata sandi (reauth), kolom kata sandi bersama, error boundary
   hooks/use-network-status.ts
   mock/                      server tiruan (HAPUS saat backend asli siap)
 email/                       template email OTP (TypeScript, dan Blade untuk Laravel)
@@ -68,22 +70,25 @@ AGENTS.md                    peta dokumen dan ringkasan aturan (baca dulu bila m
 docs/                        STANDARDS.md (aturan wajib kode dan tampilan), API.md (kontrak endpoint)
 ```
 
-## Cara kerja server tiruan dan menyambung ke backend
+## Cara kerja server tiruan dan melepasnya
 
 Semua layar memanggil `http.get/post/put/delete(url, data)` (`src/lib/http.ts`) dan **tidak tahu** siapa yang menjawab. Saat
-`USE_MOCK = true`, jawabannya dari `src/mock/server.ts` (tunda 0,2 detik supaya loading terlihat, lalu JSON atau galat). Untuk
-backend asli:
+`USE_MOCK = true`, jawabannya dari `src/mock/server.ts` (tunda 0,2 detik supaya loading terlihat, lalu JSON atau galat). Bila backend
+sudah menjawab sesuai kontrak:
 
-1. Di `src/lib/http.ts`: isi `API_BASE` dan ubah `USE_MOCK` menjadi `false`. Permintaan menjadi `fetch(API_BASE + url)` dengan
-   cookie sesi (`credentials: 'include'`).
-2. Sediakan endpoint di [API.md](docs/API.md) dengan bentuk respons yang sama. Yang paling penting:
+1. Pastikan backend mengikuti [API.md](docs/API.md). Yang paling penting bagi layar:
    - sukses = 2xx dengan JSON (bila ada `message`, tampil sebagai toast);
    - validasi gagal = **422** `{ "message": "...", "errors": { "kolom": ["pesan"] } }` (pesan tampil di bawah kolom);
    - belum masuk = **401** (layar kembali ke login).
-3. Hapus folder `src/mock/` dan baris `import { handleMock }` di `src/lib/http.ts`.
-   Saat pengembangan, `vite.config.ts` meneruskan `/api/*` ke `API_URL` (bawaan `http://127.0.0.1:8000`, tanpa awalan `/api`); di
+2. **Lepas server tiruan** (empat sunting; hasilnya sudah dicoba: `npm run check` lolos):
+   1. Hapus folder `src/mock/`.
+   2. `src/lib/http.ts`: hapus `import { handleMock }`, baris `export const USE_MOCK = true;`, dan blok `if (USE_MOCK) { return ... }` di awal
+      `send()`. Permintaan menjadi `fetch(API_BASE + url)` dengan cookie sesi (`credentials: 'include'`); isi `API_BASE` bila perlu.
+   3. `src/lib/download.ts`: sisakan cabang backend saja (`window.location.assign(...)`), hapus impor `USE_MOCK`/`http` dan kode pembuat berkas
+      di peramban. Ekspor CSV (`/audit-logs/export`) cukup mengalirkan `text/csv`.
+   4. `src/pages/login.tsx`: hapus blok petunjuk `{USE_MOCK && (...)}` beserta impor `USE_MOCK` dan ikon `Info`.
+3. Saat pengembangan, `vite.config.ts` meneruskan `/api/*` ke `API_URL` (bawaan `http://127.0.0.1:8000`, tanpa awalan `/api`); di
    produksi `nginx.conf` melakukan hal yang sama.
-4. Ekspor CSV (`/audit-logs/export`) cukup mengalirkan `text/csv`; layar mengunduhnya lewat tautan biasa.
 
 Bila backend memakai token alih-alih cookie, ubah `send()` di `src/lib/http.ts` (satu tempat) untuk menambah header
 `Authorization`; tidak ada layar yang berubah.
@@ -173,15 +178,15 @@ const { subject, html, text } = renderLoginCodeEmail({
 ```
 
 Pratinjaunya tampil di `/styleguide`. Untuk Laravel, versi Blade yang sama ada di `email/blade/` (`login-code.blade.php`,
-`login-code-text.blade.php`, dan kelas `LoginCode.php.txt`). Aturan kode OTP (tersimpan sebagai hash, berlaku 10 menit, maksimal 5
-salah, jeda kirim ulang) ada di [docs/STANDARDS.md](docs/STANDARDS.md) bagian 6.
+`login-code-text.blade.php`, dan kelas `LoginCode.php.txt`). Aturan OTP sisi server (hash, masa berlaku, batas salah) ada di [docs/API.md](docs/API.md), bagian "Aturan sisi server".
 
 ## Halaman error statis
 
 Pratinjau ketujuhnya (termasuk 503 pemeliharaan) ada di `/styleguide`.
 
 `error-pages/` berisi HTML mandiri (tanpa aset) untuk 401, 403, 404, 419, 429, 500, dan 503, untuk disajikan server web atau
-framework saat aplikasi tidak bisa menjawab (pemeliharaan, galat server). Ubah nama aplikasinya dan buat ulang:
+framework saat aplikasi tidak bisa menjawab (pemeliharaan, galat server). Nama, huruf logo, dan warnanya diambil dari `src/lib/brand.ts` dan
+`src/index.css` (jadi ikut berubah lewat `npm run rebrand`); buat ulang bila perlu, argumen opsional menimpa nama:
 
 ```bash
 npm run error-pages -- "Nama Aplikasi"
@@ -197,20 +202,16 @@ tanpa `any`, semua akses server lewat `http`, semua tabel lewat `DataTable`, war
 `dangerouslySetInnerHTML`, `localStorage`, ekspor bawaan, `key` berindeks, `console.log`, penjajaran judul+aksi) dan menjadi bagian dari
 `npm run check` dan `npm run build`.
 
-## Daftar periksa untuk tim backend
+## Serah terima ke tim backend
 
-- [ ] Endpoint sesi, MFA, profil, notifikasi, dan audit log sesuai [API.md](docs/API.md), termasuk bentuk galat 422.
-- [ ] Kata sandi di-hash; percobaan masuk dibatasi; sesi aman (cookie `HttpOnly`, `Secure`, `SameSite`).
-- [ ] Masa berlaku kata sandi (bawaan 30 hari, dapat diatur) dan riwayat kata sandi (hash, bukan teks) dengan `POST /login` membalas `password_expired: true`; lihat [API.md](docs/API.md).
-- [ ] TOTP: rahasia disimpan terenkripsi; kode divalidasi dengan toleransi ±1 langkah; kode OTP email disimpan sebagai hash.
-- [ ] Kode pemulihan di-hash dan sekali pakai.
-- [ ] Audit log **append-only** dengan rantai hash (disarankan HMAC dengan kunci rahasia di server); tidak ada jalur ubah/hapus;
-      verifikasi terjadwal; entri tidak memuat rahasia.
-- [ ] Setiap kejadian di [docs/STANDARDS.md](docs/STANDARDS.md) bagian 6 tercatat.
-- [ ] Email OTP memakai template di `email/` dan domain pengirim ber-SPF/DKIM/DMARC.
-- [ ] Aplikasi internal tetap tertutup bagi mesin pencari (bawaan; lihat [Akses mesin pencarian](#indexing)); batasi juga jaringannya bila perlu.
-- [ ] Aksi sensitif (bila ada) membalas 403 `reauth_required` dan `POST /reauth` tersedia (lihat [API.md](docs/API.md)).
-- [ ] Hapus `src/mock/` setelah semua endpoint tersambung.
+Proyek ini hanya frontend. Yang diserahkan ke tim backend adalah [docs/API.md](docs/API.md): daftar endpoint, bentuk request dan respons,
+galat 422, dan aturan yang diasumsikan layar. Cara mengimplementasikannya (penyimpanan, hash, pembatasan percobaan, rantai hash audit log,
+pengiriman email) sepenuhnya urusan mereka. Dari sisi frontend, serah terima selesai bila:
+
+- [ ] semua endpoint di `docs/API.md` menjawab dengan bentuk yang sama, termasuk galat 422 dan 401;
+- [ ] server tiruan sudah dilepas (langkah di atas) dan `npm run check` lolos;
+- [ ] proxy `/api` (`vite.config.ts`, `nginx.conf`) menunjuk ke backend yang benar;
+- [ ] akses mesin pencarian sesuai kebutuhan (lihat [Akses mesin pencarian](#indexing)).
 
 ## Pemecahan masalah
 
