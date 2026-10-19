@@ -84,3 +84,33 @@ describe('mock server: audit log order', () => {
         expect(await list({ direction: 'sideways' })).toEqual(await list({}));
     });
 });
+
+describe('mock server: audit log sort keys', () => {
+    const column = async (params: Record<string, string>, pick: (e: { module: string; user: string | null; outcome: string; ip: string }) => string) =>
+        (
+            (await handleMock('GET', '/audit-logs', undefined, { per_page: 50, ...params })) as {
+                data: { module: string; user: string | null; outcome: string; ip: string }[];
+            }
+        ).data.map(pick);
+
+    beforeEach(async () => {
+        await post('/logout');
+        await post('/login', { username: 'admin', password: 'password' });
+    });
+
+    it.each([
+        ['module', (e: { module: string }) => e.module],
+        ['outcome', (e: { outcome: string }) => e.outcome],
+        ['user', (e: { user: string | null }) => e.user ?? ''],
+    ])('sorts by %s in both directions', async (key, pick) => {
+        const asc = await column({ sort: key, direction: 'asc' }, pick);
+        const desc = await column({ sort: key, direction: 'desc' }, pick);
+
+        expect([...asc].sort((a, b) => a.localeCompare(b, 'id'))).toEqual(asc);
+        expect([...desc].sort((a, b) => b.localeCompare(a, 'id'))).toEqual(desc);
+    });
+
+    it('falls back to time for a sort key it does not know', async () => {
+        expect(await column({ sort: 'password_hash' }, (e) => e.module)).toEqual(await column({ sort: 'time' }, (e) => e.module));
+    });
+});

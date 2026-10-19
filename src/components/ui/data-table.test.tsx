@@ -12,7 +12,7 @@ const rows: Row[] = [
 const columns: Column<Row>[] = [
     { key: 'name', header: 'Nama', cell: (r) => r.name, sort: 'name' },
     { key: 'amount', header: 'Nilai', cell: (r) => r.amount, sort: 'amount' },
-    { key: 'note', header: 'Catatan', cell: () => '–' },
+    { key: 'note', header: 'Catatan', cell: () => '–', sort: 'note' },
 ];
 
 afterEach(() => {
@@ -20,8 +20,42 @@ afterEach(() => {
 });
 
 describe('DataTable sorting', () => {
-    it('gives every column that declares `sort` a header button, and leaves the others plain', () => {
+    it('gives every column with data a header button, and leaves a column of row actions plain', () => {
+        const withActions: Column<Row>[] = [...columns, { key: 'actions', header: 'Aksi', srOnly: true, cell: () => '…' }];
         render(
+            <DataTable
+                empty={{ icon: null, title: 'Kosong' }}
+                rows={rows}
+                rowKey={(r) => r.id}
+                columns={withActions}
+                sort={{ sort: 'name', direction: 'asc', onSort: () => undefined }}
+            />,
+        );
+
+        expect(screen.getByRole('button', { name: 'Nama' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Nilai' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Catatan' })).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Aksi' })).not.toBeInTheDocument();
+    });
+
+    it('warns while developing when a sorting table has a column with data that cannot sort', () => {
+        const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const partial: Column<Row>[] = [...columns.slice(0, 2), { key: 'note', header: 'Catatan', cell: () => '–' }];
+        render(
+            <DataTable
+                empty={{ icon: null, title: 'Kosong' }}
+                rows={rows}
+                rowKey={(r) => r.id}
+                columns={partial}
+                sort={{ sort: 'name', direction: 'asc', onSort: () => undefined }}
+            />,
+        );
+
+        expect(error).toHaveBeenCalledWith(expect.stringContaining('no "sort" key on: note'));
+    });
+
+    it('writes the header in the smallest text size, uppercase', () => {
+        const { container } = render(
             <DataTable
                 empty={{ icon: null, title: 'Kosong' }}
                 rows={rows}
@@ -31,9 +65,7 @@ describe('DataTable sorting', () => {
             />,
         );
 
-        expect(screen.getByRole('button', { name: 'Nama' })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: 'Nilai' })).toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: 'Catatan' })).not.toBeInTheDocument();
+        expect(container.querySelector('thead')).toHaveClass('text-2xs', 'uppercase');
     });
 
     it('tells screen readers which column is sorted and in which direction', () => {

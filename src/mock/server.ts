@@ -8,7 +8,7 @@ import { record, seed, verify } from '@/mock/audit';
 import type { NewEntry } from '@/mock/audit';
 import { otpauthUri, randomBase32, randomCode, recoveryCodes, verifyTotp } from '@/mock/crypto';
 import { loadDb, saveDb } from '@/mock/db';
-import type { Db, MockNotification, MockUser } from '@/mock/db';
+import type { AuditEntry, Db, MockNotification, MockUser } from '@/mock/db';
 
 const EMAIL_COOLDOWN_S = 20;
 const MAX_ATTEMPTS = 5;
@@ -703,8 +703,26 @@ async function route(method: Method, url: string, body: Body, params: Params): P
         const term = str(params.search).toLowerCase();
         const from = str(params.from);
         const to = str(params.to);
-        // Sorted by time only; `direction` is the whole contract (anything but `asc` is the default, newest first).
-        const ordered = params.direction === 'asc' ? [...db.audit] : [...db.audit].reverse();
+        // Sort keys are a whitelist (anything else falls back to time); `direction` is `asc`, or the default `desc`. Ties keep the chain order.
+        const sorters: Record<string, (e: AuditEntry) => string | number> = {
+            time: (e) => e.id,
+            host: (e) => e.ip ?? '',
+            user: (e) => e.user ?? '',
+            module: (e) => e.module,
+            event: (e) => e.event,
+            record: (e) => e.subject ?? '',
+            outcome: (e) => e.outcome,
+        };
+        const key = typeof params.sort === 'string' && params.sort in sorters ? params.sort : 'time';
+        const sign = params.direction === 'asc' ? 1 : -1;
+        const value = sorters[key] ?? sorters.time;
+        const ordered = [...db.audit].sort((x, y) => {
+            const a = value?.(x) ?? 0;
+            const b = value?.(y) ?? 0;
+            const byKey = typeof a === 'number' && typeof b === 'number' ? a - b : String(a).localeCompare(String(b), 'id');
+
+            return (byKey || x.id - y.id) * sign;
+        });
         const filtered = ordered.filter(
             (e) =>
                 (!params.module || e.module === params.module) &&

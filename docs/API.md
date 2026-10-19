@@ -85,7 +85,7 @@ pertama memakai hash nol. Layar hanya membaca dan menampilkan hasil `/audit-logs
 
 | Metode | URL | Hasil |
 |---|---|---|
-| GET | `/audit-logs?search&module&outcome&from&to&sort&direction&page&per_page` | `{ data: Entry[], meta: {current_page,last_page,from,to,total,per_page}, modules: string[] }`, terbaru dulu. `sort` hanya `time` dan `direction` `asc` atau `desc` (bawaan `desc`; nilai lain jatuh ke bawaan); kolom lain sengaja tak bisa diurutkan karena urutan lain membaca jutaan baris tanpa indeks, jadi ada filter. `per_page` ∈ 10, 25, 50 |
+| GET | `/audit-logs?search&module&outcome&from&to&sort&direction&page&per_page` | `{ data: Entry[], meta: {current_page,last_page,from,to,total,per_page}, modules: string[] }`, terbaru dulu. `sort` ∈ `time` (bawaan), `host`, `user`, `module`, `event`, `record`, `outcome` dan `direction` ∈ `asc`, `desc` (bawaan `desc`); nilai lain jatuh ke bawaan. Semua kolom berisi data bisa diurutkan, jadi server wajib punya indeks untuk tiap kunci. `per_page` ∈ 10, 25, 50 |
 | GET | `/audit-logs/export?...filter yang sama` | berkas `text/csv` (kolom: Waktu, Pengguna, Modul, Kejadian, Data, Hasil, IP, URL) |
 | POST | `/audit-logs/verify` | `{ ok, checked, broken_at, reason }`; hasilnya sendiri dicatat sebagai entri |
 

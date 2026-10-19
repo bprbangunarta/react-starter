@@ -82,14 +82,25 @@ export function DataTable<T>({
     dense = false,
     className,
 }: Props<T>) {
-    // A column with `sort` needs the table's `sort` prop too, or its header silently stays plain; say so while developing.
+    // Sorting is all or nothing while developing: a column with `sort` needs the table's `sort` prop (or its header silently stays plain),
+    // and in a table that sorts every column with data has a `sort` key (only a column of row actions, `srOnly`, may go without).
     const sortable = columns.some((c) => c.sort);
+    const unsortable = columns
+        .filter((c) => !c.sort && !c.srOnly)
+        .map((c) => c.key)
+        .join(', ');
 
     useEffect(() => {
-        if (import.meta.env.DEV && sortable && !sort) {
-            console.error('DataTable: a column has "sort" but the table got no "sort" prop, so its header is not clickable.');
+        if (!import.meta.env.DEV || !sortable) {
+            return;
         }
-    }, [sortable, sort]);
+
+        if (!sort) {
+            console.error('DataTable: a column has "sort" but the table got no "sort" prop, so its header is not clickable.');
+        } else if (unsortable !== '') {
+            console.error(`DataTable: every column with data should sort; no "sort" key on: ${unsortable}.`);
+        }
+    }, [sortable, sort, unsortable]);
 
     const th = (c: Column<T>) => cn('px-3 py-2 font-medium whitespace-nowrap', c.align === 'right' ? 'text-right' : 'text-left', c.narrow && 'w-10');
 
@@ -98,7 +109,7 @@ export function DataTable<T>({
     ) : (
         <div className="relative overflow-x-auto">
             <table className={cn('w-full', dense ? 'text-xs' : 'text-sm')}>
-                <thead className="border-b border-line bg-canvas text-xs tracking-wide text-muted uppercase">
+                <thead className="border-b border-line bg-canvas text-2xs tracking-wide text-muted uppercase">
                     <tr>
                         {columns.map((c) =>
                             c.sort && sort ? (
@@ -140,7 +151,13 @@ export function DataTable<T>({
                                           key={c.key}
                                           // Row actions must not trigger the row click.
                                           onClick={c.srOnly ? (e) => e.stopPropagation() : undefined}
-                                          className={cn('px-3 py-1.5 whitespace-nowrap', c.align === 'right' && 'text-right', c.className)}
+                                          // Tight rows: the icon button of a row's actions (26px) sets the row height, so its cell gets the least padding.
+                                          className={cn(
+                                              'px-3 whitespace-nowrap',
+                                              c.srOnly ? 'py-0.5' : 'py-1',
+                                              c.align === 'right' && 'text-right',
+                                              c.className,
+                                          )}
                                       >
                                           {c.cell(row, index)}
                                       </td>

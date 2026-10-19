@@ -138,15 +138,15 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
   kosong, galat + coba lagi, `onRowClick`, paginasi, dan gulir `relative overflow-x-auto`. Definisikan kolom sebagai `Column<Row>[]`:
   `sort` (kunci urutan), `align: 'right'` untuk angka, `srOnly` + `narrow` untuk kolom aksi (klik di sana tidak
   memicu klik baris). **Kolom tidak pernah disembunyikan di layar sempit** (tidak ada `hideBelow`): sel dan header tidak membungkus teks (`whitespace-nowrap`),
-  header berhuruf kapital dengan sedikit jarak huruf, dan tabel yang lebar menggulir ke samping di dalam kartunya. Dalam kartu/dialog: `bare`, dan `dense` untuk teks kecil. Contoh lengkap: `src/pages/audit-logs.tsx`.
+  header berhuruf kapital dengan sedikit jarak huruf dan satu ukuran lebih kecil dari isi (`text-2xs`), dan tabel yang lebar menggulir ke samping di dalam kartunya. Dalam kartu/dialog: `bare`, dan `dense` untuk teks kecil. Contoh lengkap: `src/pages/audit-logs.tsx`.
   Pembungkus gulir wajib `relative`, kalau tidak elemen `absolute` (mis. `sr-only`) melebarkan halaman di ponsel.
 - **Combobox:** jangan memotong identitas di daftar; daftar boleh lebih lebar dan membungkus baris. Untuk opsi yang mirip, isi `description`
   (ikut dicari). Di dalam `Modal`, periksa gulir roda/sentuh dan navigasi keyboard (opsi aktif harus terlihat).
 - **DatePicker:** kalender kosong terbuka di bulan berjalan (atau bulan terdekat dalam rentang), bukan di ujung rentang. Pakai kelas
   `compact-calendar` (sel 28px).
-- **Urutan di daftar:** setiap kolom yang wajar diurutkan punya tombol header (`sort` di kolom **dan** properti `sort` di `DataTable`; `DataTable` memperingatkan di konsol bila hanya salah satunya ada),
-  dan daftar yang dipaginasi server diurutkan di server dengan kunci yang sama di daftar putih (ditambah bersama; kunci tak dikenal jatuh ke urutan bawaan). Kolom dibiarkan tak bisa diurutkan hanya dengan alasan
-  tertulis: audit log hanya diurutkan menurut waktu karena urutan lain membaca jutaan baris tanpa indeks, jadi ia punya filter. "Atur ulang" mengembalikan urutan bawaan.
+- **Urutan di daftar:** **semua kolom yang berisi data punya tombol header** (`sort` di kolom **dan** properti `sort` di `DataTable`); hanya kolom aksi (`srOnly`) yang tidak. `DataTable` memperingatkan di konsol
+  bila ada kolom `sort` tanpa properti `sort`, atau kolom berisi data tanpa kunci `sort` di tabel yang diurutkan. Daftar yang dipaginasi server diurutkan di server dengan kunci yang sama di daftar putih
+  (ditambah bersama; kunci tak dikenal jatuh ke urutan bawaan), dan **server menyiapkan indeks** untuk tiap kunci. Klik pertama pada kolom baru mengurutkan naik, klik berikutnya membalik; "Atur ulang" mengembalikan urutan bawaan.
 - **Responsif:** periksa layar yang diubah di lebar 375px dan 1280px (lebar desktop, bukan lebar bawaan panel), dengan isi panjang yang realistis, dalam keadaan memuat, kosong, dan galat;
   `document.documentElement.scrollWidth` harus sama dengan lebar layar. Komponen UI baru punya contoh di `/ui-guideline`, dan token warna baru masuk daftar token (tes menegakkan keduanya).
 
@@ -179,7 +179,7 @@ Ganti warna utama dan merek lewat `npm run rebrand` (lihat README).
 | Teks | `text-2xs` keterangan sangat kecil; `text-xs` label/hint; `text-sm` isi; `text-base` judul halaman dan merek; ukuran besar hanya di halaman 404 |
 | Bayangan | `shadow-sm` jempol sakelar, `shadow-md` penanda mengambang, `shadow-lg` dropdown/popover, `shadow-xl` dialog/laci |
 | Lapisan | header `z-30`, laci `z-40`, dialog dan penanda jaringan `z-50`, tooltip `z-60`, popover `z-70` |
-| Tabel | sel `px-3 py-1.5`, header `text-xs text-muted bg-canvas`, `divide-y divide-line` |
+| Tabel | sel `px-3 py-1` (kolom aksi `py-0.5`: tombol ikonnya yang menentukan tinggi baris), header `text-2xs text-muted bg-canvas` kapital, `divide-y divide-line` |
 
 Email (`email/login-code.ts`) dan halaman error (`error-pages/*.html`) tidak bisa memakai CSS aplikasi, jadi warnanya ditulis sebaris
 (merek email `#33479f`, parameter `brandColor`).

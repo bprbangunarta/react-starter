@@ -40,6 +40,7 @@ type LogRow = {
     request_id: string;
     hash: string;
 };
+type SortKey = 'time' | 'host' | 'user' | 'module' | 'event' | 'record' | 'outcome';
 type Filters = {
     search: string;
     module: string | null;
@@ -47,8 +48,8 @@ type Filters = {
     from: string | null;
     to: string | null;
     per_page: number;
-    /** The audit log sorts by time only: a sort on another column would read millions of unindexed rows, so it has filters instead. */
-    sort: 'time';
+    /** Every column with data sorts (the keys are the server's whitelist, see docs/API.md). */
+    sort: SortKey;
     direction: 'asc' | 'desc';
 };
 type Verification = {
@@ -122,12 +123,12 @@ export default function AuditLogsIndex() {
     const onSearch = setSearch;
     const clear = (changes: Partial<Filters>) => {
         setSearch('');
-        // "Atur ulang" also returns to the default order (newest first).
-        setFilters((f) => ({ ...f, search: '', direction: 'desc', ...changes, page: 1 }));
+        // "Atur ulang" also returns to the default order (by time, newest first).
+        setFilters((f) => ({ ...f, search: '', sort: 'time', direction: 'desc', ...changes, page: 1 }));
     };
 
     const hasFilters = Boolean(filters.search || filters.module || filters.outcome || filters.from || filters.to);
-    const canReset = hasFilters || filters.direction !== 'desc';
+    const canReset = hasFilters || filters.sort !== 'time' || filters.direction !== 'desc';
     const iso = (d: string) => (d ? d : null);
 
     const exportCsv = () => void downloadCsv('/audit-logs/export', filters);
@@ -154,33 +155,39 @@ export default function AuditLogsIndex() {
         {
             key: 'ip',
             header: 'Host',
+            sort: 'host',
             className: 'whitespace-nowrap',
             cell: (log) => log.ip ?? '–',
         },
         {
             key: 'user',
             header: 'Pengguna',
+            sort: 'user',
             cell: (log) => log.user ?? 'Sistem',
         },
         {
             key: 'module',
             header: 'Modul',
+            sort: 'module',
             className: 'whitespace-nowrap',
             cell: (log) => log.module,
         },
         {
             key: 'event',
             header: 'Kejadian',
+            sort: 'event',
             cell: (log) => log.event,
         },
         {
             key: 'record',
             header: 'Data',
+            sort: 'record',
             cell: (log) => log.subject ?? '–',
         },
         {
             key: 'outcome',
             header: 'Hasil',
+            sort: 'outcome',
             cell: (log) => <Badge tone={TONES[log.outcome]}>{OUTCOME_LABEL[log.outcome]}</Badge>,
         },
         {
@@ -293,7 +300,12 @@ export default function AuditLogsIndex() {
                     </FilterBar>
                 }
                 columns={columns}
-                sort={{ sort: filters.sort, direction: filters.direction, onSort: () => visit({ direction: filters.direction === 'desc' ? 'asc' : 'desc' }) }}
+                sort={{
+                    sort: filters.sort,
+                    direction: filters.direction,
+                    onSort: (column) =>
+                        visit({ sort: column as SortKey, direction: filters.sort === column ? (filters.direction === 'asc' ? 'desc' : 'asc') : 'asc' }),
+                }}
                 empty={{
                     icon: <ScrollText />,
                     title: hasFilters ? 'Tidak ada entri yang cocok dengan filter' : 'Belum ada entri',
