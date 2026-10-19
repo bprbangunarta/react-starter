@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { renderLoginCodeEmail } from '../../email/login-code';
 import { Button } from '@/components/ui/button';
 import { CodeInput } from '@/components/ui/code-input';
+import { BarChart, ColumnChart, DonutChart } from '@/components/ui/chart';
 import { Checkbox, RadioGroup, Switch } from '@/components/ui/choice';
 import { ColorInput } from '@/components/ui/color-input';
 import { Combobox } from '@/components/ui/combobox';
@@ -58,6 +59,11 @@ const TOKENS = [
     ['danger-soft', 'bg-danger-soft', 'Galat: latar badge, alert, toast'],
     ['danger-line', 'bg-danger-line', 'Galat: garis tepi'],
     ['danger-ink', 'bg-danger-ink', 'Galat: teks di atas latar soft'],
+    ['chart-1', 'bg-chart-1', 'Grafik: warna seri 1 (tanpa arti status)'],
+    ['chart-2', 'bg-chart-2', 'Grafik: warna seri 2 (tanpa arti status)'],
+    ['chart-3', 'bg-chart-3', 'Grafik: warna seri 3 (tanpa arti status)'],
+    ['chart-4', 'bg-chart-4', 'Grafik: warna seri 4 (tanpa arti status)'],
+    ['chart-5', 'bg-chart-5', 'Grafik: warna seri 5 (tanpa arti status)'],
 ];
 
 /** The static error pages (error-pages/*.html, made by `npm run error-pages`), keyed by status code. */
@@ -96,6 +102,25 @@ const STATUS = [
         notify: () => toast.error('Gagal menyimpan data'),
     },
 ] as const;
+
+const CHART_DONUT = [
+    { label: 'Tetap', count: 42 },
+    { label: 'Kontrak', count: 18 },
+    { label: 'Trainee', count: 6 },
+];
+const CHART_COLUMNS = [
+    { label: '< 1', count: 6 },
+    { label: '1-3', count: 14 },
+    { label: '3-5', count: 20 },
+    { label: '5-10', count: 17 },
+    { label: '> 10', count: 9 },
+];
+const CHART_BARS = [
+    { label: 'Kantor Pusat', count: 31 },
+    { label: 'Kantor Cabang Utara', count: 19 },
+    { label: 'Kantor Kas Selatan', count: 11 },
+    { label: 'Belum diisi', count: 5 },
+];
 
 const TONES: BadgeTone[] = ['neutral', 'info', 'success', 'warning', 'danger'];
 
@@ -426,6 +451,26 @@ export default function Styleguide() {
                         dropdown dan popover, <code>shadow-xl</code> dialog dan laci. Lapisan: header <code>z-30</code>, laci <code>z-40</code>, dialog dan
                         penanda jaringan <code>z-50</code>, tooltip <code>z-60</code>, popover <code>z-70</code>.
                     </p>
+                </Section>
+
+                <Section
+                    title="Grafik"
+                    description="Donat untuk sedikit bagian dari satu keseluruhan, kolom untuk rentang yang berurutan, batang mendatar untuk nama panjang. Angka selalu tertulis di samping bagiannya; warna hanya pelengkap."
+                >
+                    <div className="grid gap-4 md:grid-cols-3">
+                        <div className="flex flex-col gap-2">
+                            <SubTitle>DonutChart</SubTitle>
+                            <DonutChart label="Contoh donat" items={CHART_DONUT} centerLabel="contoh" />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <SubTitle>ColumnChart</SubTitle>
+                            <ColumnChart label="Contoh kolom" items={CHART_COLUMNS} />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <SubTitle>BarChart</SubTitle>
+                            <BarChart label="Contoh batang" items={CHART_BARS} />
+                        </div>
+                    </div>
                 </Section>
 
                 <Section title="Tombol" description="Aksi level halaman: ikon + label. Footer dialog: hanya teks. Aksi baris tabel: ikon saja dengan Tip.">

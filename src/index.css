@@ -36,6 +36,16 @@
     --color-info-line: oklch(0.88 0.06 250);
     --color-info-ink: oklch(0.42 0.12 250);
 
+    /*
+     * Chart series colours: five hues of about equal weight, each at least 3:1 against the surface (a test checks it), so a slice or a bar
+     * is seen without relying on its neighbour. They carry no status meaning; the number beside each part always says what it is.
+     */
+    --color-chart-1: oklch(0.45 0.16 265);
+    --color-chart-2: oklch(0.58 0.1 195);
+    --color-chart-3: oklch(0.62 0.14 75);
+    --color-chart-4: oklch(0.52 0.14 330);
+    --color-chart-5: oklch(0.55 0.03 265);
+
     --text-2xs: 0.6875rem;
     --text-xs: 0.75rem;
     --text-sm: 0.8125rem;

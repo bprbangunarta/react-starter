@@ -67,4 +67,8 @@ describe('colour contrast (WCAG)', () => {
     it.each(['success', 'warning', 'info', 'danger'])('%s icon colour reaches 3:1 on its soft background', (tone) => {
         expect(ratio(tone, `${tone}-soft`)).toBeGreaterThanOrEqual(3);
     });
+
+    it.each([1, 2, 3, 4, 5])('chart series colour %i reaches 3:1 on the surface', (n) => {
+        expect(ratio(`chart-${n}`, 'surface')).toBeGreaterThanOrEqual(3);
+    });
 });
