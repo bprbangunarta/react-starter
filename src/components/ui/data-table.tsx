@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { Card, EmptyState, ErrorState, Skeleton } from '@/components/ui/misc';
 import { Pagination } from '@/components/ui/pagination';
@@ -12,8 +13,6 @@ export type Column<T> = {
     /** Server-side sort field; gives the header a sort button. */
     sort?: string;
     align?: 'left' | 'right';
-    /** Hide the column below this breakpoint. */
-    hideBelow?: 'sm' | 'md' | 'lg';
     /** Extra classes for the body cells. */
     className?: string;
     /** Hide the label visually (e.g. a column of row actions), keeping it for screen readers. */
@@ -22,11 +21,7 @@ export type Column<T> = {
     narrow?: boolean;
 };
 
-const HIDE = {
-    sm: 'hidden sm:table-cell',
-    md: 'hidden md:table-cell',
-    lg: 'hidden lg:table-cell',
-};
+// A column is never hidden on a narrow screen: a wide table scrolls sideways inside its card (`overflow-x-auto`, cells do not wrap).
 
 type Props<T> = {
     columns: Column<T>[];
@@ -87,8 +82,16 @@ export function DataTable<T>({
     dense = false,
     className,
 }: Props<T>) {
-    const th = (c: Column<T>) =>
-        cn('px-3 py-2 font-medium whitespace-nowrap', c.align === 'right' ? 'text-right' : 'text-left', c.hideBelow && HIDE[c.hideBelow], c.narrow && 'w-10');
+    // A column with `sort` needs the table's `sort` prop too, or its header silently stays plain; say so while developing.
+    const sortable = columns.some((c) => c.sort);
+
+    useEffect(() => {
+        if (import.meta.env.DEV && sortable && !sort) {
+            console.error('DataTable: a column has "sort" but the table got no "sort" prop, so its header is not clickable.');
+        }
+    }, [sortable, sort]);
+
+    const th = (c: Column<T>) => cn('px-3 py-2 font-medium whitespace-nowrap', c.align === 'right' ? 'text-right' : 'text-left', c.narrow && 'w-10');
 
     const body = error ? (
         <ErrorState message={error} onRetry={onRetry} />
@@ -105,7 +108,7 @@ export function DataTable<T>({
                                     sort={sort.sort}
                                     direction={sort.direction}
                                     onSort={sort.onSort}
-                                    className={cn(c.align === 'right' && 'text-right [&_button]:ml-auto', c.hideBelow && HIDE[c.hideBelow])}
+                                    className={cn(c.align === 'right' && 'text-right [&_button]:ml-auto')}
                                 >
                                     {typeof c.header === 'string' ? c.header : c.key}
                                 </SortHead>
@@ -137,12 +140,7 @@ export function DataTable<T>({
                                           key={c.key}
                                           // Row actions must not trigger the row click.
                                           onClick={c.srOnly ? (e) => e.stopPropagation() : undefined}
-                                          className={cn(
-                                              'px-3 py-1.5 whitespace-nowrap',
-                                              c.align === 'right' && 'text-right',
-                                              c.hideBelow && HIDE[c.hideBelow],
-                                              c.className,
-                                          )}
+                                          className={cn('px-3 py-1.5 whitespace-nowrap', c.align === 'right' && 'text-right', c.className)}
                                       >
                                           {c.cell(row, index)}
                                       </td>

@@ -703,16 +703,16 @@ async function route(method: Method, url: string, body: Body, params: Params): P
         const term = str(params.search).toLowerCase();
         const from = str(params.from);
         const to = str(params.to);
-        const filtered = [...db.audit]
-            .reverse()
-            .filter(
-                (e) =>
-                    (!params.module || e.module === params.module) &&
-                    (!params.outcome || e.outcome === params.outcome) &&
-                    (!from || e.at.slice(0, 10) >= from) &&
-                    (!to || e.at.slice(0, 10) <= to) &&
-                    (!term || [e.user, e.username, e.event, e.subject, e.ip].some((v) => v?.toLowerCase().includes(term))),
-            );
+        // Sorted by time only; `direction` is the whole contract (anything but `asc` is the default, newest first).
+        const ordered = params.direction === 'asc' ? [...db.audit] : [...db.audit].reverse();
+        const filtered = ordered.filter(
+            (e) =>
+                (!params.module || e.module === params.module) &&
+                (!params.outcome || e.outcome === params.outcome) &&
+                (!from || e.at.slice(0, 10) >= from) &&
+                (!to || e.at.slice(0, 10) <= to) &&
+                (!term || [e.user, e.username, e.event, e.subject, e.ip].some((v) => v?.toLowerCase().includes(term))),
+        );
 
         if (url === '/audit-logs/export') {
             await audit(db, user, {

@@ -179,6 +179,18 @@ for (const file of files) {
     }
 }
 
+// Multi-line rule: PageHeader gives its action buttons equal widths by itself, so `actions` is the buttons (a fragment), never a wrapping div.
+for (const file of files) {
+    const text = sources.get(file);
+
+    if (/<PageHeader\b[^>]*?actions=\{\s*<div\b/s.test(text) && !isTest(file)) {
+        failures++;
+        console.error(
+            `${relative(process.cwd(), file)}  PageHeader: actions berisi tombolnya langsung (fragment), tanpa div pembungkus, supaya tombolnya sama lebar`,
+        );
+    }
+}
+
 if (failures > 0) {
     console.error(`\n${failures} pelanggaran standar kode.`);
     process.exit(1);

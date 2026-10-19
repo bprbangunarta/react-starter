@@ -61,3 +61,26 @@ describe('mock server: sign-in and password rules', () => {
         expect(error.errors.password?.[0]).toMatch(/sebelumnya/);
     });
 });
+
+describe('mock server: audit log order', () => {
+    const list = async (params: Record<string, string>) =>
+        ((await handleMock('GET', '/audit-logs', undefined, { per_page: 10, ...params })) as { data: { at: string }[] }).data.map((e) => e.at);
+
+    beforeEach(async () => {
+        await post('/logout');
+        await post('/login', { username: 'admin', password: 'password' });
+    });
+
+    it('lists newest first by default, and oldest first with direction=asc', async () => {
+        const newest = await list({});
+        const oldest = await list({ sort: 'time', direction: 'asc' });
+
+        expect([...newest].sort().reverse()).toEqual(newest);
+        expect([...oldest].sort()).toEqual(oldest);
+        expect(oldest[0] !== newest[0]).toBe(true);
+    });
+
+    it('falls back to the default order for a value it does not know', async () => {
+        expect(await list({ direction: 'sideways' })).toEqual(await list({}));
+    });
+});

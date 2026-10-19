@@ -345,7 +345,17 @@ export default function UiGuideline() {
 
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(5);
-    const matching = rows.filter((r) => r.name.toLowerCase().includes(search.trim().toLowerCase()) && (status === null || r.status === status));
+    // Sorting: clicking a header sorts by it (ascending first); clicking the active one flips the direction. Here it runs on the rows in
+    // memory; in a list paged by the server it is the server that sorts, with the same keys in a whitelist (see docs/STANDARDS.md).
+    const [order, setOrder] = useState<{ sort: string; direction: 'asc' | 'desc' }>({ sort: 'name', direction: 'asc' });
+    const compare: Record<string, (a: Row, b: Row) => number> = {
+        name: (a, b) => a.name.localeCompare(b.name, 'id'),
+        status: (a, b) => TONES.indexOf(a.status) - TONES.indexOf(b.status),
+        amount: (a, b) => a.amount - b.amount,
+    };
+    const matching = rows
+        .filter((r) => r.name.toLowerCase().includes(search.trim().toLowerCase()) && (status === null || r.status === status))
+        .sort((a, b) => (compare[order.sort]?.(a, b) ?? 0) * (order.direction === 'asc' ? 1 : -1));
     const lastPage = Math.max(1, Math.ceil(matching.length / perPage));
     const current = Math.min(page, lastPage);
     const visible = matching.slice((current - 1) * perPage, current * perPage);
@@ -378,8 +388,8 @@ export default function UiGuideline() {
 
     const columns: Column<Row>[] = [
         { key: 'name', header: 'Nama', className: 'font-medium', cell: (r) => r.name, sort: 'name' },
-        { key: 'status', header: 'Status', cell: (r) => <Badge tone={r.status}>{r.status}</Badge> },
-        { key: 'amount', header: 'Nilai', align: 'right', hideBelow: 'sm', className: 'tabular-nums', cell: (r) => rupiah(r.amount) },
+        { key: 'status', header: 'Status', cell: (r) => <Badge tone={r.status}>{r.status}</Badge>, sort: 'status' },
+        { key: 'amount', header: 'Nilai', align: 'right', className: 'tabular-nums', cell: (r) => rupiah(r.amount), sort: 'amount' },
         {
             key: 'actions',
             header: 'Aksi',
@@ -588,6 +598,10 @@ export default function UiGuideline() {
                                 />
                             </FilterBar>
                         }
+                        sort={{
+                            ...order,
+                            onSort: (column) => setOrder((o) => ({ sort: column, direction: o.sort === column && o.direction === 'asc' ? 'desc' : 'asc' })),
+                        }}
                         pagination={{
                             meta: {
                                 current_page: current,

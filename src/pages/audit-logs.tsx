@@ -47,6 +47,9 @@ type Filters = {
     from: string | null;
     to: string | null;
     per_page: number;
+    /** The audit log sorts by time only: a sort on another column would read millions of unindexed rows, so it has filters instead. */
+    sort: 'time';
+    direction: 'asc' | 'desc';
 };
 type Verification = {
     ok: boolean;
@@ -99,6 +102,8 @@ export default function AuditLogsIndex() {
         from: null,
         to: null,
         per_page: 25,
+        sort: 'time',
+        direction: 'desc',
         page: 1,
     });
     const [search, setSearch] = useState('');
@@ -117,10 +122,12 @@ export default function AuditLogsIndex() {
     const onSearch = setSearch;
     const clear = (changes: Partial<Filters>) => {
         setSearch('');
-        setFilters((f) => ({ ...f, search: '', ...changes, page: 1 }));
+        // "Atur ulang" also returns to the default order (newest first).
+        setFilters((f) => ({ ...f, search: '', direction: 'desc', ...changes, page: 1 }));
     };
 
     const hasFilters = Boolean(filters.search || filters.module || filters.outcome || filters.from || filters.to);
+    const canReset = hasFilters || filters.direction !== 'desc';
     const iso = (d: string) => (d ? d : null);
 
     const exportCsv = () => void downloadCsv('/audit-logs/export', filters);
@@ -140,6 +147,7 @@ export default function AuditLogsIndex() {
         {
             key: 'time',
             header: 'Waktu',
+            sort: 'time',
             className: 'whitespace-nowrap',
             cell: (log) => formatDateTime(log.at),
         },
@@ -147,7 +155,6 @@ export default function AuditLogsIndex() {
             key: 'ip',
             header: 'Host',
             className: 'whitespace-nowrap',
-            hideBelow: 'md',
             cell: (log) => log.ip ?? '–',
         },
         {
@@ -159,7 +166,6 @@ export default function AuditLogsIndex() {
             key: 'module',
             header: 'Modul',
             className: 'whitespace-nowrap',
-            hideBelow: 'md',
             cell: (log) => log.module,
         },
         {
@@ -170,7 +176,6 @@ export default function AuditLogsIndex() {
         {
             key: 'record',
             header: 'Data',
-            hideBelow: 'md',
             cell: (log) => log.subject ?? '–',
         },
         {
@@ -200,14 +205,14 @@ export default function AuditLogsIndex() {
                 title="Audit Logs"
                 description="Catatan anti-rusak tentang siapa melakukan apa, kapan, dan dari mana"
                 actions={
-                    <div className="flex items-center gap-2">
+                    <>
                         <Button variant="outline" onClick={verify} disabled={verifying}>
                             <ShieldCheck /> {verifying ? 'Memeriksa…' : 'Periksa integritas'}
                         </Button>
                         <Button onClick={exportCsv}>
                             <Download /> Ekspor CSV
                         </Button>
-                    </div>
+                    </>
                 }
             />
 
@@ -269,7 +274,7 @@ export default function AuditLogsIndex() {
                             value={filters.outcome}
                             onChange={(v) => visit({ outcome: v as Filters['outcome'] })}
                         />
-                        {hasFilters && (
+                        {canReset && (
                             <Button
                                 variant="ghost"
                                 size="sm"
@@ -288,6 +293,7 @@ export default function AuditLogsIndex() {
                     </FilterBar>
                 }
                 columns={columns}
+                sort={{ sort: filters.sort, direction: filters.direction, onSort: () => visit({ direction: filters.direction === 'desc' ? 'asc' : 'desc' }) }}
                 empty={{
                     icon: <ScrollText />,
                     title: hasFilters ? 'Tidak ada entri yang cocok dengan filter' : 'Belum ada entri',

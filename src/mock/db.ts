@@ -97,3 +97,9 @@ export function saveDb(db: Db): void {
         // Storage full or blocked: the session still works from memory.
     }
 }
+
+/** Forget the stored database, so the next call starts from the seed again (tests use it to stay independent of each other). */
+export function resetDb(): void {
+    cache = null;
+    localStorage.removeItem(KEY);
+}

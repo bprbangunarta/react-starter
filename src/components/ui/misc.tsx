@@ -69,7 +69,8 @@ export function PageHeader({ title, description, actions }: { title: string; des
                 <h1 className="text-base font-semibold">{title}</h1>
                 {description && <p className="text-xs text-muted">{description}</p>}
             </div>
-            {actions && <div className="flex items-center gap-2">{actions}</div>}
+            {/* A grid of auto-fit columns gives the buttons of the row one width (that of the longest label), so a pair never looks uneven. */}
+            {actions && <div className="grid auto-cols-fr grid-flow-col items-center gap-2">{actions}</div>}
         </div>
     );
 }
