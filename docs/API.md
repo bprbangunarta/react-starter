@@ -14,6 +14,8 @@ Semua layar memanggil `http.get/post/put/delete(url, data)` di `src/lib/http.ts`
 - **Validasi gagal:** status **422**, `{ "message": "...", "errors": { "kolom": ["pesan pertama", ...] } }`. Pesan pertama tiap kolom
   tampil di bawah kolom itu.
 - **Gagal lain:** status 4xx/5xx, `{ "message": "..." }` (tampil sebagai toast merah). **401** = belum masuk (layar kembali ke login).
+- **Sesi diakhiri dengan sengaja** (masuk di perangkat lain, kredensial berubah): `401` dengan `{ "code": "session_ended", "message": "..." }`; pesannya tampil sebagai toast sebelum layar kembali ke login.
+- **Unggah berkas:** isi `multipart/form-data` (`FormData`), tanpa tipe konten JSON; galat validasi tetap 422 per kolom.
 - **Konfirmasi kata sandi:** untuk aksi sensitif backend boleh membalas **403** `{ "code": "reauth_required", "message": "..." }`; UI membuka dialog konfirmasi (`components/reauth-dialog.tsx`) yang memanggil `POST /reauth`, lalu pengguna mengulangi aksinya.
 - Teks untuk pengguna berbahasa Indonesia. Waktu dalam ISO 8601.
 
@@ -21,7 +23,7 @@ Semua layar memanggil `http.get/post/put/delete(url, data)` di `src/lib/http.ts`
 
 | Metode | URL | Isi / hasil |
 |---|---|---|
-| GET | `/me` | `{ user: {id,name,username,email}, security: {enabled, method: 'totp'\|'email'\|null}, notifications: {unread, items[]} }`, 401 bila belum masuk |
+| GET | `/me` | `{ user: {id,name,username,email,avatar_url}, security: {enabled, method: 'totp'\|'email'\|null}, session: {idle_minutes}, notifications: {unread, items[]} }`, 401 bila belum masuk. `avatar_url` null bila tak ada foto; `idle_minutes` batas diam yang ditegakkan server (layar memperingatkan satu menit sebelumnya dan memanggil `/me` sesekali selama orang bekerja) |
 | POST | `/login` | `{ username, password, remember }` → `{ two_factor: false, ...me }`, atau `{ two_factor: true }` (lanjut ke verifikasi), atau `{ two_factor: false, password_expired: true }` (kata sandi benar tetapi sudah kedaluwarsa; lanjut ke perpanjangan, belum ada sesi). 422 `errors.username` bila salah |
 | POST | `/logout` | `{}` |
 | POST | `/reauth` | `{ password }` → `{ message }` (sesi dianggap "segar" beberapa menit). 422 `errors.password` bila salah |
@@ -56,6 +58,8 @@ Kejadian audit: `auth.password_expired`, `auth.password_expired_changed`, `auth.
 | Metode | URL | Isi / hasil |
 |---|---|---|
 | GET | `/profile` | `{ account: {name,username,email}, twoFactor: {method, emailAvailable, recoveryRemaining} }` |
+| POST | `/profile/avatar` | `multipart/form-data` berisi `avatar` (JPG, PNG, atau WebP, maksimal 2 MB) → `{ message }`. 422 `errors.avatar` bila tipe atau ukuran salah. Pembatasan yang sama ditegakkan layar, tetapi server memeriksa lagi |
+| DELETE | `/profile/avatar` | → `{ message }`; foto diganti huruf pertama nama |
 | PUT | `/profile/password` | `{ current_password, password, password_confirmation }`. 422 per kolom |
 | POST | `/profile/two-factor/totp/start` | `{ secret, uri }` (`uri` = `otpauth://totp/...`, dibuat jadi QR di layar) |
 | POST | `/profile/two-factor/totp` | `{ code }` → `{ message, recovery_codes: string[] }` |
@@ -81,7 +85,7 @@ pertama memakai hash nol. Layar hanya membaca dan menampilkan hasil `/audit-logs
 
 | Metode | URL | Hasil |
 |---|---|---|
-| GET | `/audit-logs?search&module&outcome&from&to&page&per_page` | `{ data: Entry[], meta: {current_page,last_page,from,to,total,per_page}, modules: string[] }`, terbaru dulu. `per_page` ∈ 10, 25, 50 |
+| GET | `/audit-logs?search&module&outcome&from&to&sort&direction&page&per_page` | `{ data: Entry[], meta: {current_page,last_page,from,to,total,per_page}, modules: string[] }`, terbaru dulu. `sort` hanya `time` dan `direction` `asc` atau `desc` (bawaan `desc`; nilai lain jatuh ke bawaan); kolom lain sengaja tak bisa diurutkan karena urutan lain membaca jutaan baris tanpa indeks, jadi ada filter. `per_page` ∈ 10, 25, 50 |
 | GET | `/audit-logs/export?...filter yang sama` | berkas `text/csv` (kolom: Waktu, Pengguna, Modul, Kejadian, Data, Hasil, IP, URL) |
 | POST | `/audit-logs/verify` | `{ ok, checked, broken_at, reason }`; hasilnya sendiri dicatat sebagai entri |
 

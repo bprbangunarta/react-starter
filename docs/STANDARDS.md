@@ -62,13 +62,15 @@ konfigurasi di `eslint.config.js`), dan pemeriksa aturan rumah `npm run standard
 Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acuan hidupnya adalah halaman `/ui-guideline`
 (sidebar → UI Guideline): tampilan baru harus terlihat sama. Perubahan pola memperbaiki komponen bersama dan diterapkan ke semua halaman.
 
-- **Pakai ulang** `src/components/ui` (Button, Input, Field, Combobox, DatePicker, Modal/ConfirmDialog, Dropdown, Tabs, Tip, Card,
-  EmptyState, ErrorState, Skeleton, PageHeader). Jangan pakai kontrol native atau berukuran lain.
+- **Pakai ulang** `src/components/ui` (Button, Input, Field, Combobox, DatePicker, Modal/ConfirmDialog, Dropdown, Tabs, Tip, Card, Alert, Badge,
+  EmptyState, ErrorState, Skeleton, PageHeader, DataTable, BarChart, ColumnChart, DonutChart, dan isian khusus). Ubah komponen dengan memperbaiki komponen
+  bersama di `components/ui`, bukan dengan gaya satu kali di halaman. Jangan pakai kontrol native atau berukuran lain.
 - **Layout:** sidebar `w-60` (laci ponsel `w-64`), header `h-12`, konten `p-3 sm:p-5`, jarak antar seksi `gap-3`. `PageHeader`: judul
   `text-base font-semibold`, keterangan `text-xs text-muted`, aksi di kanan; susunannya sudah disepakati, jangan diubah tanpa diminta.
 - **Baris teks + aksi** (header halaman/blok/dialog, baris pengaturan): `flex flex-wrap items-center justify-between gap-2`, teks
   `min-w-0`. `items-start justify-between` hanya untuk opsi `Combobox` **[mesin]**.
-- **Header halaman:** keterangan pendek, tidak mengulang data yang sudah tampil di isi halaman.
+- **Header halaman:** keterangan pendek, tidak mengulang data yang sudah tampil di isi halaman. Tombol di `actions` `PageHeader` berlebar sama (grid `auto-cols-fr`):
+  isi `actions` dengan tombolnya langsung (fragment), **tanpa `div` pembungkus** **[mesin]**.
 - **Daftar:** selalu punya keadaan memuat (Skeleton), kosong, dan galat; setiap aksi memberi toast (sonner) sukses/gagal.
 - **Tombol** (ikon atau tidak ditentukan oleh **tempatnya**, bukan selera):
 
@@ -78,6 +80,7 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
   | footer dialog dan footer kartu (`DialogFooter`, `CardFooter`) | **teks saja** **[mesin]** | Batal, Simpan, Hapus, Konfirmasi, Matikan |
   | tombol kirim pada kartu auth tanpa header (login, verifikasi) | **teks saja**, selebar kartu | Masuk, Verifikasi |
   | aksi baris tabel, tombol tutup, paginasi panah | **ikon saja** (`size="icon"`) + `aria-label` + `Tip` | Ubah, Hapus, Tutup |
+  | tombol di samping isian (buat acak, salin) | **ikon saja**, `size="fieldIcon"` (setinggi isian, `h-8`) di dalam `InputGroup` | Buat kata sandi acak, Salin |
   | tautan di keadaan kosong/galat, nomor halaman | teks saja | Coba lagi |
 
   Urutan footer: batal paling kiri, konfirmasi paling kanan. Satu tempat tidak boleh bercampur: bila satu footer atau satu toolbar sudah memakai ikon,
@@ -89,19 +92,37 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
   garis bawah), `CardBody` (isi, `p-3`), dan `CardFooter` (garis atas) **hanya bila kartu punya tombol** kirim/batal. Kartu tanpa tombol tidak punya footer.
   Tombol di footer: batal paling kiri, konfirmasi paling kanan, **teks saja**; hint boleh di kiri. Jangan menaruh tombol Simpan di dalam body
   atau membuat judul kartu dengan `<h2>` buatan sendiri. Contoh: kartu Kata sandi di Profil dan bagian "Kartu" di `/ui-guideline`.
-- **Form:** grid 2–4 kolom dalam `Card` per seksi (judul `text-sm font-semibold`), `Field` dengan label `text-xs`, galat `text-xs text-danger`
-  di bawah isian, tanda `*` merah untuk wajib.
+- **Form:** grid 2–4 kolom dalam `Card` per seksi (judul `text-sm font-semibold`), `Field` dengan label `text-xs`, tanda `*` merah untuk wajib.
+- **Tanpa keterangan di bawah isian:** di bawah isian hanya galat validasi yang tampil. Keterangan isian diberikan sebagai `hint` `Field`: tampil sebagai tooltip pada
+  ikon info di samping label dan dibaca pembaca layar sebagai deskripsi isian. Hint pendek: untuk satu hal yang tidak terlihat dari label (format, batas, akibat
+  pilihan); yang lebih panjang masuk ke deskripsi kartu atau halaman. `Textarea` tidak punya hint sendiri (penghitung huruf satu-satunya di bawahnya); baris sakelar dan
+  centang memegang baris keterangannya sendiri karena itu bagian dari pilihannya. Isian dengan tombol di sampingnya memakai `InputGroup` di dalam `Field`.
 - **Jenis isian** (semua ada contohnya di `/ui-guideline`, bagian Isian):
   - **Uang dan angka besar:** `CurrencyInput` (teks, hanya angka, format `1.000.000` otomatis, awalan `Rp`; `prefix={null}` untuk angka biasa).
-    Nilainya **number** (`1000000`); ke API dikirim angka itu, tidak pernah teks berformat. `type="number"` hanya untuk angka kecil tanpa format.
+    Nilainya **number** (`1000000`); ke API dikirim angka itu, tidak pernah teks berformat.
   - **Format tetap** (telepon, NIK, NPWP, kode): `MaskedInput` dengan `mask` dari `lib/mask.ts` (`9` angka, `a` huruf, `*` huruf/angka, `h` hex;
     lainnya literal). Nilainya data tanpa tanda baca (`081234567890`); ke API dikirim itu, bukan teks bermask. Tambah mask baru di `MASKS`.
+  - **Huruf dan karakter terbatas** (nama, kode): `FilteredInput` dengan himpunan karakter (`NAME_CHARACTER`, `ALPHANUMERIC_CHARACTER`, `CODE_CHARACTER`, sama dengan aturan server):
+    karakter lain tidak pernah masuk, diketik maupun ditempel.
   - **Warna:** `ColorInput` (`#rrggbb`); **kode OTP:** `CodeInput`; **kata sandi:** `PasswordInput`; **tanggal:** `DatePicker`; **pilihan:** `Combobox`
     (banyak opsi) atau `RadioGroup` (sampai sekitar 5 opsi yang perlu terlihat); **teks panjang:** `Textarea` (beri `maxLength` untuk penghitung).
   - **Centang vs sakelar:** `Checkbox` untuk pilihan yang menunggu tombol Simpan; `Switch` untuk pengaturan yang berlaku seketika.
   - **Berkas:** `FileInput` (klik atau seret; batasi `accept` dan `maxBytes`; ukuran dan tipe tetap divalidasi ulang di backend).
   - Isian berformat tetap teks bagi pembaca layar: jangan ganti `inputMode`/`autoComplete` yang sudah ada, dan bungkus semuanya dengan `Field`
     (`Field` menyambungkan label, hint, dan galat ke isian lewat `id`, `aria-describedby`, `aria-invalid`).
+- **Layar menegakkan apa yang ditegakkan server.** Aturan server tentang *apa yang boleh diketik* (hanya angka, nama tanpa angka, panjang, rentang) ditegakkan juga oleh
+  isian, sehingga kolom yang tidak bisa memuat suatu karakter tidak pernah menampilkannya; server tetap yang berwenang dan memeriksa lagi. Pilih kontrol menurut aturannya:
+  `MaskedInput` untuk format angka (`'9'.repeat(n)` untuk angka polos), `FilteredInput` untuk huruf atau huruf dan angka, `DatePicker` untuk tanggal, `Combobox` untuk pilihan, dan
+  **`maxLength` pada setiap isian teks bebas** (kata sandi 128, nama 100, dst.). `type="number"` dan `type="tel"` **dilarang** **[mesin]** (menerima `e`, tanda, dan huruf). Kirim nilai
+  tanpa format. Bila satu aturan berubah di satu sisi, ubah sisi lainnya di commit yang sama dan simpan tes yang mengetik karakter salah ke isian.
+- **Tanggal, waktu, dan angka untuk orang** ditulis di satu tempat, `lib/format.ts` (`formatDate`, `formatDateTime`, `formatRelative`, `formatNumber`, `rupiah`; `CurrencyInput` untuk mengetik uang);
+  layar tidak memanggil `format`, `Intl`, atau `toLocale...String` sendiri **[mesin]**. Nilai untuk mesin (API, token) tetap ISO dan angka polos; nilai kosong tampil sebagai tanda strip ("–").
+- **Menu:** satu fitur satu nama dari label sampai berkas: alamat adalah bentuk Inggris dari label (`/audit-logs` untuk "Audit Logs", `/ui-guideline` untuk "UI Guideline"), berkas `pages/audit-logs.tsx`,
+  rute di `App.tsx`, dan tesnya memakai kata yang sama (`layouts/menu-names.test.ts` gagal bila tidak). Judul layar sama dengan label. Label menu satu kata, paling banyak dua, maksimal 15 karakter,
+  tanpa garis miring **[mesin]**; nama panjang ada di judul halaman. Urutan mengikuti urutan pekerjaan (data yang dibutuhkan data lain lebih dulu). Halaman sejenis dikelompokkan sebagai submenu
+  (`{ label, icon, children }` di `layouts/menu.ts`): tertutup sampai dibuka, terbuka sendiri selama salah satu halamannya tampil. Daftarnya satu: `layouts/menu.ts`.
+- **Grafik:** `DonutChart` untuk sedikit bagian dari satu keseluruhan, `ColumnChart` untuk rentang berurutan, `BarChart` untuk nama panjang. **Angka selalu tertulis** di samping tiap bagian
+  (gambar hanya pelengkap, tersembunyi dari pembaca layar); warna `chart-1` sampai `chart-5` tidak bermakna status dan tiap warnanya minimal 3:1 terhadap latar (dijaga tes).
 - **Lapisan mengambang** (dialog, laci, popover, dropdown, tooltip) hanya lewat komponen di `components/ui` (Radix); `fixed inset-0` buatan sendiri dilarang **[mesin]**
   (laci menu ponsel juga dialog Radix). Perilaku yang wajib dan dijaga tes:
   - dialog punya nama (judul) dan peran; `Esc` dan tombol tutup menutupnya; fokus pindah ke dalam saat dibuka dan **kembali ke tombol pembuka** saat ditutup (`useRestoreFocus`
@@ -114,14 +135,19 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
 - **Toolbar daftar:** `FilterBar` + `SearchInput`; pencarian sendirian di kiri, semua filter dan tombol Reset di kanan.
 - **Tabel:** semua tabel memakai `DataTable` (`<table>` mentah dilarang **[mesin]**). Komponen ini mengurus kartu, toolbar, urutan (`sort`), skeleton,
   kosong, galat + coba lagi, `onRowClick`, paginasi, dan gulir `relative overflow-x-auto`. Definisikan kolom sebagai `Column<Row>[]`:
-  `hideBelow` ('sm'|'md'|'lg') untuk layar kecil, `align: 'right'` untuk angka, `srOnly` + `narrow` untuk kolom aksi (klik di sana tidak
-  memicu klik baris). Dalam kartu/dialog: `bare`, dan `dense` untuk teks kecil. Contoh lengkap: `src/pages/audit-logs.tsx`.
+  `sort` (kunci urutan), `align: 'right'` untuk angka, `srOnly` + `narrow` untuk kolom aksi (klik di sana tidak
+  memicu klik baris). **Kolom tidak pernah disembunyikan di layar sempit** (tidak ada `hideBelow`): sel dan header tidak membungkus teks (`whitespace-nowrap`),
+  header berhuruf kapital dengan sedikit jarak huruf, dan tabel yang lebar menggulir ke samping di dalam kartunya. Dalam kartu/dialog: `bare`, dan `dense` untuk teks kecil. Contoh lengkap: `src/pages/audit-logs.tsx`.
   Pembungkus gulir wajib `relative`, kalau tidak elemen `absolute` (mis. `sr-only`) melebarkan halaman di ponsel.
 - **Combobox:** jangan memotong identitas di daftar; daftar boleh lebih lebar dan membungkus baris. Untuk opsi yang mirip, isi `description`
   (ikut dicari). Di dalam `Modal`, periksa gulir roda/sentuh dan navigasi keyboard (opsi aktif harus terlihat).
 - **DatePicker:** kalender kosong terbuka di bulan berjalan (atau bulan terdekat dalam rentang), bukan di ujung rentang. Pakai kelas
   `compact-calendar` (sel 28px).
-- **Responsif:** periksa di lebar 375px dan desktop; `document.documentElement.scrollWidth` harus sama dengan lebar layar.
+- **Urutan di daftar:** setiap kolom yang wajar diurutkan punya tombol header (`sort` di kolom **dan** properti `sort` di `DataTable`; `DataTable` memperingatkan di konsol bila hanya salah satunya ada),
+  dan daftar yang dipaginasi server diurutkan di server dengan kunci yang sama di daftar putih (ditambah bersama; kunci tak dikenal jatuh ke urutan bawaan). Kolom dibiarkan tak bisa diurutkan hanya dengan alasan
+  tertulis: audit log hanya diurutkan menurut waktu karena urutan lain membaca jutaan baris tanpa indeks, jadi ia punya filter. "Atur ulang" mengembalikan urutan bawaan.
+- **Responsif:** periksa layar yang diubah di lebar 375px dan 1280px (lebar desktop, bukan lebar bawaan panel), dengan isi panjang yang realistis, dalam keadaan memuat, kosong, dan galat;
+  `document.documentElement.scrollWidth` harus sama dengan lebar layar. Komponen UI baru punya contoh di `/ui-guideline`, dan token warna baru masuk daftar token (tes menegakkan keduanya).
 
 <a id="token"></a>
 ## 4. Token dan CSS
@@ -141,6 +167,7 @@ Ganti warna utama dan merek lewat `npm run rebrand` (lihat README).
 | `--color-ink` / `--color-muted` | `oklch(0.24 0.02 265)` / `oklch(0.55 0.02 265)` | teks utama / label, hint, header tabel |
 | `--color-danger` | `oklch(0.55 0.2 27)` | galat, tombol hapus |
 | `--color-{success,warning,info,danger}` + `-soft` / `-line` / `-ink` | tangga seragam: soft L 0.97, line L 0.88, ink L 0.42–0.45; hue 155 / 80 / 250 / 27 | status: badge, `Alert`, toast, indikator jaringan |
+| `--color-chart-1` … `-5` | lima rona berbobot setara, tiap warnanya ≥ 3:1 terhadap `surface` | seri grafik (tanpa arti status) |
 | `--text-2xs` / `--text-xs` / `--text-sm` | `0.6875rem` / `0.75rem` / `0.8125rem` | badge, waktu, label seksi, penghitung / label dan hint / isi, sel tabel, tombol |
 
 | Elemen | Aturan |
@@ -178,6 +205,9 @@ dirinci sebagai kontrak di [API.md](API.md). UI hanya menampilkan dan **tidak bo
   lewat `components/password-fields.tsx`) dan menampilkan pesan 422 apa adanya.
 - **MFA:** opsional per pengguna (authenticator atau OTP email); UI menampilkan jeda kirim ulang dari server dan kode pemulihan sekali pakai.
 - Layar yang belum dilindungi MFA menampilkan pengingat di atas halaman.
+- **Sesi tak aktif:** server memberi batas diam (`session.idle_minutes` di `/me`) dan yang menegakkannya; `IdleTimeout` menjaga layar tetap jujur: permintaan senyap sesekali selama orang bekerja,
+  dialog "Sesi akan berakhir" satu menit sebelum habis (tetap masuk atau keluar), lalu keluar ke halaman masuk. Bila server mengakhiri sesi dengan sengaja (`401` `code: session_ended`), pesannya
+  tampil sebagai toast sebelum halaman masuk.
 - Server tiruan hanya mencatat sebagian kejadian audit dan menyimpan kata sandi sebagai teks; itu demi demo, bukan contoh untuk backend.
 
 <a id="tes"></a>

@@ -7,7 +7,6 @@ Hapus barisnya bila sudah dikerjakan dan pindahkan ringkasannya ke tabel "Prakti
 
 | Peningkatan | Mengapa belum | Usulan | Prioritas |
 |---|---|---|---|
-| Logout otomatis saat tak aktif (idle timeout) | Harus sejalan dengan masa sesi di backend | Pantau aktivitas di `SessionProvider`, peringatkan 1 menit sebelum habis, panggil `/logout` | T |
 | Pemantauan galat produksi | Butuh layanan pihak ketiga dan kebijakan data | Sentry atau sejenisnya dari `ErrorBoundary` dan `http.ts`; jangan kirim rahasia | T |
 | Pembaruan dependensi otomatis | Belum ada repositori tetap | Dependabot atau Renovate + CI yang sudah ada; `npm audit` berkala | T |
 | Tes ujung ke ujung (Playwright) | Belum ada backend nyata; server tiruan sudah dicakup tes unit | Skenario login, MFA, kata sandi kedaluwarsa, CRUD; jalan di CI terhadap `npm run preview` | S |
@@ -24,4 +23,6 @@ Hapus barisnya bila sudah dikerjakan dan pindahkan ringkasannya ke tabel "Prakti
 | Bawa perbaikan starter ke `mso-api/admin-ui` | `admin-ui` adalah turunan starter; ia belum punya tes, ESLint, Prettier, CI, kartu header/body/footer, tangga warna status, dan komponen isian baru | Urusan repo mso-api: salin komponen dan aturan, lalu jalankan `npm run check` di sana (halaman Pengguna/API Key/Referensi perlu disesuaikan) | S |
 | Muat ulang otomatis bila potongan kode lama hilang setelah deploy | Saat ini `ErrorBoundary` menampilkan "Muat ulang untuk mencoba lagi" (teruji: modul lazy gagal diambil) | Dengarkan `vite:preloadError` dan `location.reload()` sekali (jangan pakai `sessionStorage`; dilarang oleh pemeriksa) | S |
 | Naikkan versi mayor dependensi | ESLint 10 menunggu `eslint-plugin-jsx-a11y`; TypeScript 7 menunggu `typescript-eslint`; React Router 8 dan `@types/node` 26 belum dicoba | Naikkan satu per satu, jalankan `npm run check` dan CI | S |
-
+| Izin per halaman (`can`, `NoPermission`) | Starter sengaja tanpa peran dan izin; codex memakainya (`layouts/menu.ts` dengan `can`, halaman "Tidak ada akses") | Tambah bila aplikasi turunan punya peran: `can` pada entri menu, `visibleMenu`, dan `permissionFor` dari codex | R |
+| Halaman aktivitas pengguna sendiri | codex punya `/activity` (jejak audit milik pengguna itu sendiri) | Layar baca-saja dari audit log yang difilter ke pengguna yang masuk | R |
+| Pemeriksa duplikasi kode (`jscpd`) | codex menjalankannya sebagai `npm run duplicates`; starter belum cukup besar | Tambah ke `npm run check` bila kode bertambah | R |
