@@ -1,5 +1,3 @@
-import { format } from 'date-fns';
-import { id } from 'date-fns/locale';
 import { AlertTriangle, CheckCircle2, Download, Eye, ScrollText, ShieldCheck, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -13,6 +11,7 @@ import { Alert, Badge, PageHeader } from '@/components/ui/misc';
 import type { BadgeTone } from '@/components/ui/misc';
 import type { PageMeta } from '@/components/ui/pagination';
 import { Tip } from '@/components/ui/tooltip';
+import { formatDateTime } from '@/lib/format';
 import { http } from '@/lib/http';
 import { useResource } from '@/lib/resource';
 import { useTitle } from '@/lib/title';
@@ -142,7 +141,7 @@ export default function AuditLogsIndex() {
             key: 'time',
             header: 'Waktu',
             className: 'whitespace-nowrap',
-            cell: (log) => format(new Date(log.at.replace(' ', 'T')), 'dd MMM yyyy HH:mm:ss', { locale: id }),
+            cell: (log) => formatDateTime(log.at),
         },
         {
             key: 'ip',

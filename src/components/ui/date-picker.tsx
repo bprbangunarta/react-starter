@@ -6,6 +6,7 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { controlClass } from '@/components/ui/input';
+import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -56,7 +57,7 @@ export function DatePicker({
                     aria-label={ariaLabel}
                     className={cn(controlClass, 'flex items-center justify-between text-left data-[invalid]:border-danger data-[invalid]:ring-danger/20')}
                 >
-                    <span className={cn(!selected && 'text-muted/70')}>{selected ? format(selected, 'dd MMM yyyy', { locale: idLocale }) : placeholder}</span>
+                    <span className={cn(!selected && 'text-muted/70')}>{selected ? formatDate(selected) : placeholder}</span>
                     <CalendarDays className="size-3.5 text-muted" />
                 </button>
             </PopoverTrigger>

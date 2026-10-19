@@ -1,10 +1,10 @@
 import { useLayoutEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { formatNumber } from '@/lib/format';
 import { caretAfter, dataBefore } from '@/lib/mask';
 
 const isDigit = (char: string) => /\d/.test(char);
-const thousands = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 });
 
 type Props = Omit<React.ComponentProps<typeof Input>, 'value' | 'onChange' | 'defaultValue' | 'prefix'> & {
     /** The amount as a number (whole units), or null when empty. */
@@ -23,7 +23,7 @@ type Props = Omit<React.ComponentProps<typeof Input>, 'value' | 'onChange' | 'de
 export function CurrencyInput({ value, onValueChange, prefix = 'Rp', maxDigits = 15, className, ...props }: Props) {
     const ref = useRef<HTMLInputElement>(null);
     const caret = useRef<number | null>(null);
-    const text = value === null ? '' : thousands.format(value);
+    const text = value === null ? '' : formatNumber(value);
 
     useLayoutEffect(() => {
         if (caret.current !== null && ref.current && document.activeElement === ref.current) {
@@ -58,7 +58,7 @@ export function CurrencyInput({ value, onValueChange, prefix = 'Rp', maxDigits =
 
                     digits = digits.slice(0, maxDigits).replace(/^0+(?=\d)/, '');
                     const next = digits === '' ? null : Number(digits);
-                    caret.current = caretAfter(next === null ? '' : thousands.format(next), Math.min(before, digits.length), isDigit);
+                    caret.current = caretAfter(next === null ? '' : formatNumber(next), Math.min(before, digits.length), isDigit);
                     onValueChange(next);
                 }}
                 {...props}

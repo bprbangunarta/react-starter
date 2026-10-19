@@ -1,11 +1,10 @@
-import { formatDistanceToNow } from 'date-fns';
-import { id } from 'date-fns/locale';
 import { AlertTriangle, Bell, CheckCheck, CheckCircle2, Info } from 'lucide-react';
 import { Link } from 'react-router';
 import { useSession } from '@/auth/session';
 import type { Notifications } from '@/auth/session';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { formatRelative } from '@/lib/format';
 import { http } from '@/lib/http';
 import { cn } from '@/lib/utils';
 
@@ -64,7 +63,7 @@ export function NotificationBell() {
                                     <div className="min-w-0 flex-1">
                                         <p className={cn('text-sm', !n.read && 'font-medium')}>{n.title}</p>
                                         {n.body && <p className="text-xs text-muted">{n.body}</p>}
-                                        <p className="mt-0.5 text-2xs text-muted">{formatDistanceToNow(new Date(n.at), { addSuffix: true, locale: id })}</p>
+                                        <p className="mt-0.5 text-2xs text-muted">{formatRelative(n.at)}</p>
                                     </div>
                                     {!n.read && <span aria-label="Belum dibaca" className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />}
                                 </div>

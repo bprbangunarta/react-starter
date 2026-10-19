@@ -53,6 +53,11 @@ const rules = [
         test: (line) => /\bfixed inset-0\b/.test(line),
         skip: (file) => file.endsWith('components/ui/dialog.tsx'),
     },
+    {
+        name: 'Tanggal, waktu, dan angka untuk orang diformat di lib/format.ts saja (formatDate, formatDateTime, formatRelative, formatNumber, rupiah)',
+        test: (line) => /from 'date-fns\/locale'|\bIntl\.(NumberFormat|DateTimeFormat)\b|\.toLocale(Date|Time)?String\(/.test(line),
+        skip: (file) => isTest(file) || file.endsWith('lib/format.ts') || file.endsWith('components/ui/date-picker.tsx'),
+    },
     { name: 'Tipe any dilarang', test: (line) => /:\s*any\b|\bas any\b|<any>/.test(line), skip: () => false },
     { name: '@ts-ignore/@ts-nocheck dilarang: perbaiki tipenya', test: (line) => /@ts-(ignore|nocheck)/.test(line), skip: () => false, inComments: true },
     {
