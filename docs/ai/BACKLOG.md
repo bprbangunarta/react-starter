@@ -17,7 +17,7 @@ Hapus barisnya bila sudah dikerjakan dan pindahkan ringkasannya ke tabel "Prakti
 | Mode gelap | Token warna belum punya varian gelap | Duplikasi tangga token di `@media (prefers-color-scheme: dark)`; tes kontras sudah ada | R |
 | Multi-bahasa (i18n) | Aplikasi satu bahasa (Indonesia); teks layar masih literal | Pindahkan teks ke kamus bila butuh bahasa kedua | R |
 | PWA / offline | Dasbor admin butuh data langsung; offline tidak bermakna | Hanya bila ada kebutuhan khusus (instal di perangkat) | R |
-| Regresi visual (Storybook/Chromatic atau tangkapan layar Playwright) | `/ui-guideline` sudah jadi acuan hidup | Bandingkan tangkapan layar Panduan di CI | R |
+| Regresi visual (Storybook/Chromatic atau tangkapan layar Playwright) | `/ui-guideline` sudah jadi acuan hidup | Bandingkan tangkapan layar UI Guideline di CI | R |
 | Peran dan izin, manajemen pengguna | Sengaja dikeluarkan dari starter | Tambah sebagai fitur aplikasi turunan, bukan starter | R |
 | Kunci akses (passkey/WebAuthn) sebagai MFA | MFA yang ada (TOTP, OTP email) sudah memadai untuk starter | Butuh dukungan backend; tambah di halaman Profil | R |
 | Bawa perbaikan starter ke `mso-api/admin-ui` | `admin-ui` adalah turunan starter; ia belum punya tes, ESLint, Prettier, CI, kartu header/body/footer, tangga warna status, dan komponen isian baru | Urusan repo mso-api: salin komponen dan aturan, lalu jalankan `npm run check` di sana (halaman Pengguna/API Key/Referensi perlu disesuaikan) | S |

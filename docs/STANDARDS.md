@@ -147,8 +147,10 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
 - **Urutan di daftar:** **semua kolom yang berisi data punya tombol header** (`sort` di kolom **dan** properti `sort` di `DataTable`); hanya kolom aksi (`srOnly`) yang tidak. `DataTable` memperingatkan di konsol
   bila ada kolom `sort` tanpa properti `sort`, atau kolom berisi data tanpa kunci `sort` di tabel yang diurutkan. Daftar yang dipaginasi server diurutkan di server dengan kunci yang sama di daftar putih
   (ditambah bersama; kunci tak dikenal jatuh ke urutan bawaan), dan **server menyiapkan indeks** untuk tiap kunci. Klik pertama pada kolom baru mengurutkan naik, klik berikutnya membalik; "Atur ulang" mengembalikan urutan bawaan.
-- **Responsif:** periksa layar yang diubah di lebar 375px dan 1280px (lebar desktop, bukan lebar bawaan panel), dengan isi panjang yang realistis, dalam keadaan memuat, kosong, dan galat;
-  `document.documentElement.scrollWidth` harus sama dengan lebar layar. Komponen UI baru punya contoh di `/ui-guideline`, dan token warna baru masuk daftar token (tes menegakkan keduanya).
+- **Responsif: ukuran uji yang wajib.** Periksa setiap layar yang diubah di **desktop 1280px** (resolusi desktop acuan; bukan lebar bawaan panel peramban atau jendela), tablet **768px**, dan ponsel **375px**
+  (juga 320px untuk ponsel terkecil dan 390–430px untuk ponsel umum; 1024px dan 1440px bila tata letaknya berubah di sana). Gunakan isi panjang yang realistis dan periksa keadaan memuat, kosong, dan galat.
+  Pada setiap lebar: `document.documentElement.scrollWidth` sama dengan lebar layar (tanpa gulir horizontal halaman; hanya tabel yang menggulir di kartunya), tidak ada kontrol tanpa nama, satu `h1`, dialog dan laci muat
+  di layar (dialog yang lebih tinggi menggulir). Halaman tamu (masuk, kata sandi kedaluwarsa, verifikasi) diperiksa pula. Komponen UI baru punya contoh di `/ui-guideline`, dan token warna baru masuk daftar token (tes menegakkan keduanya).
 
 <a id="token"></a>
 ## 4. Token dan CSS

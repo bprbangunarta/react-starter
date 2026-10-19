@@ -13,6 +13,7 @@ Butuh Node.js 20.19+ atau 22.12+ (syarat Vite 8).
 npm install
 npm run dev          # http://localhost:5173
 npm run check        # tsc + ESLint + Prettier + pemeriksa standar + tes (wajib lolos sebelum selesai)
+npm run typecheck    # hanya tsc; npm run format:check untuk memeriksa format tanpa mengubah
 npm run test         # hanya tes (Vitest); npm run test:watch untuk mode pantau
 npm run format       # merapikan kode dengan Prettier
 npm run build        # check + vite build ke dist/
@@ -29,7 +30,7 @@ Masuk dengan **`admin` / `password`**. Untuk mencoba kata sandi kedaluwarsa, mas
 |---|---|
 | **Autentikasi** | Login (email atau username), keluar, penjaga halaman, sesi, halaman error layar penuh, penanda koneksi putus/pulih |
 | **MFA** | Aplikasi authenticator (TOTP **sungguhan**: kunci dibuat acak, QR dipindai Google Authenticator, kode divalidasi dengan toleransi ±30 detik), OTP email (kodenya tampil di toast karena tidak ada email), 8 kode pemulihan sekali pakai, batas 5 kode salah, jeda kirim ulang, pengaturan dan pemutusan di Profil, pengingat bila belum aktif |
-| **Audit log** | Daftar terbaru dulu dengan pencarian, filter tanggal/modul/hasil, paginasi, detail sebelum/sesudah, **ekspor CSV**, dan **verifikasi integritas rantai hash** (SHA-256) yang sungguhan. Coba ubah satu entri di `localStorage` lalu tekan "Periksa integritas": rantai terputus dan entri yang diubah terdeteksi |
+| **Audit Logs** | Daftar terbaru dulu (semua kolom berisi data bisa diurutkan) dengan pencarian, filter tanggal/modul/hasil, paginasi, detail sebelum/sesudah, **ekspor CSV**, dan **verifikasi integritas rantai hash** (SHA-256) yang sungguhan. Coba ubah satu entri di `localStorage` lalu tekan "Periksa integritas": rantai terputus dan entri yang diubah terdeteksi |
 | **Isian** | `CurrencyInput` (Rp, format ribuan), `MaskedInput` (telepon, NIK, NPWP), `FilteredInput` (huruf dan karakter terbatas), `InputGroup` (isian + tombol di sampingnya), `ColorInput`, `Textarea`, `Checkbox`, `Switch`, `RadioGroup`, `FileInput`; contoh hidup di `/ui-guideline` |
 | **Kata sandi kedaluwarsa** | Setelah masuk dengan benar, bila kata sandi lebih tua dari 30 hari, layar `/password-expired` meminta kata sandi baru (3 kolom yang sama dengan Profil). Kata sandi baru tidak boleh sama dengan yang sekarang atau 5 sebelumnya; lalu lanjut ke verifikasi dua langkah atau langsung masuk |
 | **Profil** | Data akun, foto profil (unggah, ganti, hapus), ganti kata sandi (validasi, batas percobaan, tercatat di audit log), pengaturan MFA |
@@ -79,7 +80,7 @@ docs/                        STANDARDS.md (aturan wajib kode dan tampilan), API.
 ## Cara kerja server tiruan dan melepasnya
 
 Semua layar memanggil `http.get/post/put/delete(url, data)` (`src/lib/http.ts`) dan **tidak tahu** siapa yang menjawab. Saat
-`USE_MOCK = true`, jawabannya dari `src/mock/server.ts` (tunda 0,2 detik supaya loading terlihat, lalu JSON atau galat). Bila backend
+`USE_MOCK` menyala (bawaan), jawabannya dari `src/mock/server.ts` (tunda 0,2 detik supaya loading terlihat, lalu JSON atau galat). Bila backend
 sudah menjawab sesuai kontrak:
 
 1. Pastikan backend mengikuti [API.md](docs/API.md). Yang paling penting bagi layar:
@@ -122,7 +123,7 @@ Secara manual:
   `app-layout.tsx`, `login.tsx`, `not-found.tsx` dengan `<img>`. Email dan halaman error memakai kotak huruf sebaris (ubah di `email/` dan
   `scripts/generate-error-pages.mjs`).
 - **Nama perusahaan di email:** parameter `company` pada `renderLoginCodeEmail`; di versi Blade lewat `config('app.company')` (bawaan: nama aplikasi).
-- **Kunci demo** `starterkit.db.v2` di `src/mock/db.ts` boleh diganti; ia hilang bersama `src/mock/` saat backend tersambung.
+- **Kunci demo** `starterkit.db.v3` di `src/mock/db.ts` boleh diganti; ia hilang bersama `src/mock/` saat backend tersambung.
 
 ## Praktik terbaik yang sudah diterapkan
 
@@ -242,7 +243,7 @@ pengiriman email) sepenuhnya urusan mereka. Dari sisi frontend, serah terima sel
 |---|---|
 | Layar kosong sebentar saat pertama dibuka | Server tiruan membuat 160 entri audit log berantai hash sekali saja (sekitar satu detik) |
 | "crypto.subtle undefined" | Dibuka lewat `http://` selain `localhost`; pakai HTTPS atau `localhost` |
-| Ingin mengulang dari awal | Hapus kunci `starterkit.db.v2` di `localStorage` |
+| Ingin mengulang dari awal | Hapus kunci `starterkit.db.v3` di `localStorage` |
 | Kode authenticator ditolak | Jam perangkat harus akurat; kode berlaku 30 detik dengan toleransi ±1 langkah |
 | Kode OTP email tidak datang | Tidak ada email sungguhan; kodenya tampil di toast "demo: ......" |
 | `npm run build` gagal di `standards` | Baca baris yang dilaporkan; aturannya dijelaskan di docs/STANDARDS.md |

@@ -31,8 +31,3 @@ export const MENU: { label?: string; items: MenuItem[] }[] = [
         ],
     },
 ];
-
-/** Every page link of the menu, parents flattened. */
-export function menuLinks(items: MenuItem[]): MenuLinkItem[] {
-    return items.flatMap((item) => ('children' in item ? item.children : [item]));
-}

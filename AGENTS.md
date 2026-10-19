@@ -23,7 +23,7 @@ Acuan lain: `/ui-guideline` (jalankan `npm run dev`, sidebar → UI Guideline; s
 npm install
 npm run dev        # server pengembangan
 npm run check      # tsc + ESLint + Prettier + pemeriksa standar + tes (wajib lolos sebelum selesai)
-npm run format     # rapikan kode (Prettier); npm run test untuk tes saja
+npm run format     # rapikan kode (Prettier); npm run format:check, npm run typecheck, npm run test untuk satu per satu
 npm run build      # check + build produksi
 npm run rebrand -- --name "Nama" --color "#0f766e"   # nama, warna utama, favicon, email, halaman error
 ```
@@ -32,6 +32,7 @@ npm run rebrand -- --name "Nama" --color "#0f766e"   # nama, warna utama, favico
 
 - Kode berbahasa Inggris; hanya teks layar berbahasa Indonesia. URL Inggris tetapi sepadan dengan judul layar.
 - TypeScript ketat, tanpa `any`. Semua akses server lewat `src/lib/http.ts` (`http`, `useForm`, `useResource`).
+- Uji layar yang diubah di **1280px (desktop)**, 768px, dan 375px; tanpa gulir horizontal halaman (detail di `docs/STANDARDS.md`, bagian Tampilan).
 - Pakai ulang `src/components/ui`; semua tabel lewat `DataTable`; warna hanya lewat token tema.
 - Audit log tambah-saja dengan rantai hash; rahasia tidak pernah masuk log, `localStorage`, atau URL.
 - Pesan commit berbahasa Inggris, satu perubahan logis per commit.

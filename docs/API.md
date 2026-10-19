@@ -4,7 +4,7 @@ Dokumen ini adalah **kontrak yang diharapkan frontend**, bahan serah terima ke t
 layar hanya bergantung pada bentuk request/respons di bawah.
 
 Semua layar memanggil `http.get/post/put/delete(url, data)` di `src/lib/http.ts`. Saat ini jawabannya dari `src/mock/server.ts`
-(`USE_MOCK = true`). Setelah backend menjawab sesuai kontrak ini, server tiruan dilepas dengan langkah di
+(`USE_MOCK` menyala, dapat dimatikan dengan `VITE_USE_MOCK=false`). Setelah backend menjawab sesuai kontrak ini, server tiruan dilepas dengan langkah di
 [README](../README.md#cara-kerja-server-tiruan-dan-melepasnya).
 
 ## Aturan umum
