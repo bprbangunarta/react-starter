@@ -1,34 +1,53 @@
+import { useState } from 'react';
 import { AlertTriangle, Bell, CheckCheck, CheckCircle2, Info } from 'lucide-react';
 import { Link } from 'react-router';
+import { toast } from 'sonner';
 import { useSession } from '@/auth/session';
 import type { Notifications } from '@/auth/session';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { formatRelative } from '@/lib/format';
-import { http } from '@/lib/http';
+import { http, HttpError } from '@/lib/http';
 import { cn } from '@/lib/utils';
 
 const LEVEL_ICONS = {
-    info: { icon: Info, className: 'text-info' },
-    success: { icon: CheckCircle2, className: 'text-success' },
-    warning: { icon: AlertTriangle, className: 'text-warning' },
+    info: { icon: Info, className: 'text-info', label: 'Info' },
+    success: { icon: CheckCircle2, className: 'text-success', label: 'Berhasil' },
+    warning: { icon: AlertTriangle, className: 'text-warning', label: 'Peringatan' },
 } as const;
 
-/** The notification level as a small icon in the status colour (base token of the shared ladder). */
+/** The notification level as a small icon in the status colour (base token of the shared ladder), named in text for a screen reader. */
 function LevelIcon({ level }: { level: keyof typeof LEVEL_ICONS }) {
-    const { icon: Icon, className } = LEVEL_ICONS[level];
+    const { icon: Icon, className, label } = LEVEL_ICONS[level];
 
-    return <Icon aria-hidden="true" className={cn('mt-0.5 size-3.5 shrink-0', className)} />;
+    return (
+        <>
+            <Icon aria-hidden="true" className={cn('mt-0.5 size-3.5 shrink-0', className)} />
+            <span className="sr-only">{label}: </span>
+        </>
+    );
+}
+
+/** A link is followed only when it is a path inside this application; anything else already stored is shown as plain text. */
+export function isInternalPath(url: string | null): url is string {
+    return url !== null && /^\/(?![/\\])/.test(url);
 }
 
 export function NotificationBell() {
     const { me, setNotifications } = useSession();
+    const [open, setOpen] = useState(false);
     const { unread, items } = me?.notifications ?? { unread: 0, items: [] };
 
-    const markRead = async (url: string) => setNotifications(await http.post<Notifications>(url));
+    const markRead = async (url: string, data?: { up_to: number }) => {
+        try {
+            setNotifications(await http.post<Notifications>(url, data));
+        } catch (error) {
+            toast.error(error instanceof HttpError ? error.message : 'Tidak dapat menandai notifikasi. Coba lagi.');
+        }
+    };
 
     return (
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label={`Notifikasi${unread ? ` (${unread} belum dibaca)` : ''}`} className="relative">
                     <Bell />
@@ -45,7 +64,7 @@ export function NotificationBell() {
                     {unread > 0 && (
                         <button
                             type="button"
-                            onClick={() => void markRead('/notifications/read-all')}
+                            onClick={() => void markRead('/notifications/read-all', { up_to: items[0].id })}
                             className="flex cursor-pointer items-center gap-1 text-xs text-primary hover:underline"
                         >
                             <CheckCheck className="size-3.5" /> Tandai semua dibaca
@@ -65,15 +84,27 @@ export function NotificationBell() {
                                         {n.body && <p className="text-xs text-muted">{n.body}</p>}
                                         <p className="mt-0.5 text-2xs text-muted">{formatRelative(n.at)}</p>
                                     </div>
-                                    {!n.read && <span aria-label="Belum dibaca" className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />}
+                                    {!n.read && (
+                                        <>
+                                            <span aria-hidden="true" className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
+                                            <span className="sr-only">Belum dibaca</span>
+                                        </>
+                                    )}
                                 </div>
                             );
                             const read = () => !n.read && void markRead(`/notifications/${n.id}/read`);
 
                             return (
                                 <li key={n.id} className="hover:bg-canvas">
-                                    {n.url ? (
-                                        <Link to={n.url} className="block px-3 py-2" onClick={read}>
+                                    {isInternalPath(n.url) ? (
+                                        <Link
+                                            to={n.url}
+                                            className="block px-3 py-2"
+                                            onClick={() => {
+                                                read();
+                                                setOpen(false);
+                                            }}
+                                        >
                                             {content}
                                         </Link>
                                     ) : (

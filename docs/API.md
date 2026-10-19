@@ -69,10 +69,10 @@ Kode pemulihan: 8 kode berbentuk `xxxxx-xxxxx`, sekali pakai, hanya ditampilkan 
 
 | Metode | URL | Hasil |
 |---|---|---|
-| POST | `/notifications/read-all` | `{ unread, items[] }` |
+| POST | `/notifications/read-all` | body opsional `{ up_to }` (id notifikasi terbaru yang terlihat: hanya yang `id ≤ up_to` ditandai, supaya yang datang belakangan tetap belum dibaca) → `{ unread, items[] }` |
 | POST | `/notifications/{id}/read` | `{ unread, items[] }` |
 
-Item: `{ id, title, body, module, level: 'info'\|'success'\|'warning', url, read, at }`.
+Item: `{ id, title, body, module, level: 'info'\|'success'\|'warning', url, read, at }`. `url` hanya diikuti bila berupa jalur di dalam aplikasi (diawali `/`, bukan `//`); selain itu tampil sebagai teks biasa.
 
 ## Audit log
 

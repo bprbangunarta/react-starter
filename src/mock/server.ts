@@ -673,7 +673,9 @@ async function route(method: Method, url: string, body: Body, params: Params): P
 
     // --- notifications
     if (method === 'POST' && url === '/notifications/read-all') {
-        db.notifications.forEach((n) => (n.read = true));
+        // `up_to`: only what the person saw (the newest id in the list) is marked, so a notification that arrived meanwhile stays unread.
+        const upTo = typeof body.up_to === 'number' ? body.up_to : Infinity;
+        db.notifications.filter((n) => n.id <= upTo).forEach((n) => (n.read = true));
         saveDb(db);
 
         return me(db, user).notifications;
