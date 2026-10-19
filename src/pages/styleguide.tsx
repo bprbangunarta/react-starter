@@ -1,4 +1,4 @@
-import { Copy, Download, Inbox, Info, MoreHorizontal, Pencil, Plus, Save, Search, Trash2 } from 'lucide-react';
+import { Copy, Dices, Download, Inbox, Info, MoreHorizontal, Pencil, Plus, Save, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { toast } from 'sonner';
@@ -17,7 +17,8 @@ import { ConfirmDialog, DialogBody, DialogFooter, Modal } from '@/components/ui/
 import { Field } from '@/components/ui/field';
 import { FileInput } from '@/components/ui/file-input';
 import { FilterBar, SearchInput } from '@/components/ui/filter-bar';
-import { Input } from '@/components/ui/input';
+import { CODE_CHARACTER, FilteredInput, NAME_CHARACTER } from '@/components/ui/filtered-input';
+import { Input, InputGroup } from '@/components/ui/input';
 import { MaskedInput } from '@/components/ui/masked-input';
 import { Alert, Badge, Card, CardBody, CardFooter, CardHeader, EmptyState, ErrorState, PageHeader, Skeleton } from '@/components/ui/misc';
 import type { BadgeTone } from '@/components/ui/misc';
@@ -28,6 +29,7 @@ import { Tip } from '@/components/ui/tooltip';
 import { APP_NAME } from '@/lib/brand';
 import { rupiah } from '@/lib/format';
 import { MASKS } from '@/lib/mask';
+import { generatePassword } from '@/lib/password';
 import { useTitle } from '@/lib/title';
 
 /** Every `--color-*` token of src/index.css (a test keeps this list complete). Class names are written out so Tailwind can see them. */
@@ -130,6 +132,9 @@ function InputExamples() {
     const [amount, setAmount] = useState<number | null>(1_500_000);
     const [quantity, setQuantity] = useState<number | null>(12_500);
     const [small, setSmall] = useState('42');
+    const [person, setPerson] = useState('');
+    const [codeText, setCodeText] = useState('');
+    const [secret, setSecret] = useState('');
     const [phone, setPhone] = useState('081234567890');
     const [nik, setNik] = useState('');
     const [npwp, setNpwp] = useState('');
@@ -148,7 +153,7 @@ function InputExamples() {
             <SubTitle>Teks dan sandi</SubTitle>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <Field label="Teks" required hint="Contoh hint">
-                    <Input placeholder="Ketik sesuatu" />
+                    <Input maxLength={100} placeholder="Ketik sesuatu" />
                 </Field>
                 <Field label="Dengan galat" error="Kolom ini wajib diisi.">
                     <Input />
@@ -169,7 +174,7 @@ function InputExamples() {
                 <Field label="Angka dengan pemisah ribuan" hint="Angka bulat dengan pemisah ribuan">
                     <CurrencyInput prefix={null} value={quantity} onValueChange={setQuantity} placeholder="0" />
                 </Field>
-                <Field label="Angka kecil (4 digit)" hint="type=number dilarang; angka tanpa format memakai MaskedInput">
+                <Field label="Angka kecil (4 digit)" hint="Angka tanpa format memakai MaskedInput, bukan input angka bawaan peramban">
                     <MaskedInput mask="9999" value={small} onValueChange={setSmall} placeholder="0000" className="text-right tabular-nums" />
                 </Field>
             </div>
@@ -192,6 +197,55 @@ function InputExamples() {
             <p className="text-xs text-muted tabular-nums">
                 Dikirim ke API: telepon = {phone || 'kosong'}, NIK = {nik || 'kosong'} ({nik.length}/16), NPWP = {npwp || 'kosong'} ({npwp.length}/15)
             </p>
+
+            <SubTitle>Karakter dibatasi dan tombol di samping isian</SubTitle>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <Field label="Nama (hanya huruf)" hint="Karakter lain tidak pernah masuk, diketik maupun ditempel">
+                    <FilteredInput allowed={NAME_CHARACTER} maxLength={60} value={person} onValueChange={setPerson} placeholder="Rina Wulandari" />
+                </Field>
+                <Field label="Kode (huruf, angka, strip)" hint="Aturan yang sama dengan server, diperiksa lagi di sana">
+                    <FilteredInput allowed={CODE_CHARACTER} maxLength={10} value={codeText} onValueChange={setCodeText} placeholder="KC-01" />
+                </Field>
+                <Field label="Kata sandi acak" className="sm:col-span-2" hint="Tombol di samping isian memakai size=fieldIcon: setinggi isian">
+                    <InputGroup>
+                        <Input
+                            maxLength={64}
+                            value={secret}
+                            autoComplete="off"
+                            spellCheck={false}
+                            className="font-mono"
+                            placeholder="Ketik atau buat acak"
+                            onChange={(e) => setSecret(e.target.value)}
+                        />
+                        <Tip label="Buat kata sandi acak">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="fieldIcon"
+                                aria-label="Buat kata sandi acak"
+                                onClick={() => setSecret(generatePassword())}
+                            >
+                                <Dices />
+                            </Button>
+                        </Tip>
+                        <Tip label="Salin kata sandi">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="fieldIcon"
+                                aria-label="Salin kata sandi"
+                                disabled={secret === ''}
+                                onClick={() => {
+                                    void navigator.clipboard.writeText(secret);
+                                    toast.success('Kata sandi disalin.');
+                                }}
+                            >
+                                <Copy />
+                            </Button>
+                        </Tip>
+                    </InputGroup>
+                </Field>
+            </div>
 
             <SubTitle>Pilihan dan tanggal</SubTitle>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -518,7 +572,7 @@ export default function Styleguide() {
                             <CardHeader title="Kartu form" description="Ada tombol, jadi ada footer" />
                             <CardBody className="flex flex-col gap-3">
                                 <Field label="Nama" required>
-                                    <Input placeholder="Ketik sesuatu" />
+                                    <Input maxLength={100} placeholder="Ketik sesuatu" />
                                 </Field>
                             </CardBody>
                             <CardFooter>
@@ -630,7 +684,13 @@ export default function Styleguide() {
                     >
                         <DialogBody className="grid gap-3">
                             <Field label="Nama" required error={nameError}>
-                                <Input autoFocus value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} aria-invalid={!!nameError} />
+                                <Input
+                                    autoFocus
+                                    maxLength={60}
+                                    value={draft.name}
+                                    onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                                    aria-invalid={!!nameError}
+                                />
                             </Field>
                             <Field label="Status">
                                 <Combobox
@@ -672,7 +732,7 @@ export default function Styleguide() {
             <Modal persistent open={modal} onOpenChange={setModal} title="Contoh dialog" description="Dialog kecil untuk tambah atau ubah data.">
                 <DialogBody>
                     <Field label="Nama" required>
-                        <Input autoFocus />
+                        <Input autoFocus maxLength={60} />
                     </Field>
                 </DialogBody>
                 <DialogFooter>

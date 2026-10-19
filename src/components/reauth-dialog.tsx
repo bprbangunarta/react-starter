@@ -72,6 +72,7 @@ export function ReauthDialog() {
                         <PasswordInput
                             id="reauth-password"
                             autoComplete="current-password"
+                            maxLength={128}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             aria-invalid={!!error}

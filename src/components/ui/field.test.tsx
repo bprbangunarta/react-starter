@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { Field } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
+import { Input, InputGroup } from '@/components/ui/input';
 
 describe('Field', () => {
     it('connects the label to the control', () => {
@@ -71,5 +71,24 @@ describe('Field', () => {
         );
 
         expect(screen.queryByRole('button', { name: 'Lihat keterangan' })).not.toBeInTheDocument();
+    });
+});
+
+describe('Field with an InputGroup', () => {
+    it('wires the label, the error, and the invalid state to the control, not to the row', () => {
+        render(
+            <Field label="Kata sandi" error="Wajib diisi.">
+                <InputGroup>
+                    <Input />
+                    <button type="button">Buat</button>
+                </InputGroup>
+            </Field>,
+        );
+        const input = screen.getByLabelText('Kata sandi');
+
+        expect(input.tagName).toBe('INPUT');
+        expect(input).toHaveAttribute('aria-invalid', 'true');
+        expect(input).toHaveAccessibleDescription('Wajib diisi.');
+        expect(screen.getByRole('button', { name: 'Buat' })).toBeInTheDocument();
     });
 });

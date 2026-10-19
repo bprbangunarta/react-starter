@@ -61,6 +61,7 @@ export default function Login() {
                             <Input
                                 type="text"
                                 autoComplete="username"
+                                maxLength={100}
                                 autoFocus
                                 required
                                 value={form.data.username}
@@ -72,6 +73,7 @@ export default function Login() {
                         <Field label="Kata sandi" error={form.errors.password}>
                             <PasswordInput
                                 autoComplete="current-password"
+                                maxLength={128}
                                 required
                                 value={form.data.password}
                                 onChange={(e) => form.setData('password', e.target.value)}

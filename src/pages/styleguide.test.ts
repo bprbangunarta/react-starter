@@ -24,7 +24,7 @@ describe('style guide', () => {
         const missing: string[] = [];
 
         for (const file of readdirSync(new URL('../components/ui', import.meta.url)).filter((name) => /\.tsx$/.test(name) && !name.includes('.test.'))) {
-            for (const match of read(`src/components/ui/${file}`).matchAll(/export (?:function|const) ([A-Z]\w+)/g)) {
+            for (const match of read(`src/components/ui/${file}`).matchAll(/export (?:function|const) ([A-Z][a-z]\w*)/g)) {
                 const name = match[1] ?? '';
 
                 if (!internal.has(name) && !new RegExp(`\\b${name}\\b`).test(guide)) {

@@ -58,6 +58,11 @@ const rules = [
         test: (line) => /from 'date-fns\/locale'|\bIntl\.(NumberFormat|DateTimeFormat)\b|\.toLocale(Date|Time)?String\(/.test(line),
         skip: (file) => isTest(file) || file.endsWith('lib/format.ts') || file.endsWith('components/ui/date-picker.tsx'),
     },
+    {
+        name: 'type="number"/type="tel" dilarang: kolom angka memakai MaskedInput (components/ui/masked-input.tsx), karena type="number" menerima huruf e dan tanda, dan type="tel" menerima huruf',
+        test: (line) => /\btype=["']?(number|tel)\b/.test(line) || /\btype:\s*['"](number|tel)['"]/.test(line),
+        skip: (file) => isTest(file),
+    },
     { name: 'Tipe any dilarang', test: (line) => /:\s*any\b|\bas any\b|<any>/.test(line), skip: () => false },
     { name: '@ts-ignore/@ts-nocheck dilarang: perbaiki tipenya', test: (line) => /@ts-(ignore|nocheck)/.test(line), skip: () => false, inComments: true },
     {
