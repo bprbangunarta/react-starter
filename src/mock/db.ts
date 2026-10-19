@@ -5,6 +5,8 @@ export type MockUser = {
     username: string;
     email: string;
     password: string;
+    /** A data URL of the profile photo (the mock keeps it in localStorage), or null. */
+    avatar_url: string | null;
     /** When the password was last set (ISO); the policy compares it with today. */
     password_changed_at: string;
     /** Earlier passwords that may not be reused. The mock keeps them as text; a real backend keeps hashes only. */
@@ -67,7 +69,7 @@ export type Db = {
     session: Session;
 };
 
-const KEY = 'starterkit.db.v2';
+const KEY = 'starterkit.db.v3';
 
 let cache: Db | null = null;
 

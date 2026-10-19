@@ -16,6 +16,16 @@ const MAX_ATTEMPTS = 5;
 const PASSWORD_MAX_AGE_DAYS = 30;
 const PASSWORD_HISTORY = 5;
 const DAY_MS = 24 * 3600 * 1000;
+const AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
+
+const readAsDataUrl = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : '');
+        reader.onerror = () => reject(reader.error instanceof Error ? reader.error : new Error('Berkas tidak dapat dibaca.'));
+        reader.readAsDataURL(file);
+    });
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -45,6 +55,7 @@ async function database(): Promise<Db> {
                 username: 'admin',
                 email: 'admin@example.com',
                 password: 'password',
+                avatar_url: null,
                 password_changed_at: new Date(now - 5 * DAY_MS).toISOString(),
                 password_history: [],
                 mfa_method: null,
@@ -58,6 +69,7 @@ async function database(): Promise<Db> {
                 username: 'kadaluarsa',
                 email: 'kadaluarsa@example.com',
                 password: 'password',
+                avatar_url: null,
                 password_changed_at: new Date(now - 45 * DAY_MS).toISOString(),
                 password_history: [],
                 mfa_method: null,
@@ -134,7 +146,7 @@ const str = (value: unknown): string => (typeof value === 'string' ? value : '')
 
 function me(db: Db, user: MockUser) {
     return {
-        user: { id: user.id, name: user.name, username: user.username, email: user.email },
+        user: { id: user.id, name: user.name, username: user.username, email: user.email, avatar_url: user.avatar_url },
         security: { enabled: true, method: user.mfa_method },
         notifications: {
             unread: db.notifications.filter((n) => !n.read).length,
@@ -442,6 +454,50 @@ async function route(method: Method, url: string, body: Body, params: Params): P
         };
     }
 
+    if (method === 'POST' && url === '/profile/avatar') {
+        const file = body.avatar;
+
+        if (!(file instanceof File) || !AVATAR_TYPES.includes(file.type)) {
+            invalid('avatar', 'Berkas harus berupa foto berformat JPG, PNG, atau WebP.');
+        }
+
+        if (file.size > AVATAR_MAX_BYTES) {
+            invalid('avatar', 'Ukuran foto maksimal 2 MB.');
+        }
+
+        user.avatar_url = await readAsDataUrl(file);
+        await audit(db, user, {
+            module: 'profile',
+            event: 'profile.avatar_changed',
+            action: 'avatar_changed',
+            subject_type: 'User',
+            subject_id: user.id,
+            subject: user.username,
+            method: 'POST',
+            url,
+        });
+        saveDb(db);
+
+        return { message: 'Foto profil diperbarui.' };
+    }
+
+    if (method === 'DELETE' && url === '/profile/avatar') {
+        user.avatar_url = null;
+        await audit(db, user, {
+            module: 'profile',
+            event: 'profile.avatar_removed',
+            action: 'avatar_removed',
+            subject_type: 'User',
+            subject_id: user.id,
+            subject: user.username,
+            method: 'DELETE',
+            url,
+        });
+        saveDb(db);
+
+        return { message: 'Foto profil dihapus.' };
+    }
+
     if (method === 'POST' && url === '/reauth') {
         if (str(body.password) !== user.password) {
             await audit(db, user, {
@@ -716,5 +772,6 @@ export async function handleMock(method: Method, url: string, data: unknown, par
         throw new HttpError(0, 'Server tidak dapat dihubungi. Periksa koneksi Anda lalu coba lagi.');
     }
 
-    return route(method, url, (data ?? {}) as Body, params);
+    // A FormData body (an upload) reaches the routes as a plain object whose file is a `File`.
+    return route(method, url, data instanceof FormData ? Object.fromEntries(data.entries()) : ((data ?? {}) as Body), params);
 }

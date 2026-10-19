@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useSession } from '@/auth/session';
+import { AvatarEditor } from '@/components/avatar-editor';
 import { EMPTY_PASSWORD, PasswordFields } from '@/components/password-fields';
 import type { PasswordData } from '@/components/password-fields';
 import { Button } from '@/components/ui/button';
@@ -226,8 +227,9 @@ export default function Profile() {
                 <div className="flex flex-col gap-3">
                     <Card>
                         <CardHeader title="Akun" />
-                        <CardBody>
-                            <dl className="grid gap-3 sm:grid-cols-2">
+                        <CardBody className="flex flex-col gap-3">
+                            <AvatarEditor name={account.name} src={me?.user.avatar_url ?? null} onChanged={() => void refresh()} />
+                            <dl className="grid gap-3 border-t border-line pt-3 sm:grid-cols-2">
                                 <Detail label="Nama">{account.name}</Detail>
                                 <Detail label="Nama pengguna">{account.username}</Detail>
                                 <Detail label="Email">{account.email}</Detail>

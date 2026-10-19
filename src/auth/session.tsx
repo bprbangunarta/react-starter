@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { ReactNode } from 'react';
 import { http, HttpError } from '@/lib/http';
 
-export type AuthUser = { id: number; name: string; username: string; email: string };
+export type AuthUser = { id: number; name: string; username: string; email: string; avatar_url: string | null };
 
 export type Notification = {
     id: number;
