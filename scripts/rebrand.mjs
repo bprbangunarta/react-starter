@@ -112,6 +112,6 @@ try {
     );
 }
 
-execFileSync('node', ['scripts/generate-error-pages.mjs'], { cwd: root, stdio: 'ignore' });
+execFileSync(join(root, 'node_modules/.bin/tsx'), ['scripts/generate-error-pages.ts'], { cwd: root, stdio: 'ignore' });
 done('halaman error statis dibuat ulang (error-pages/)');
 console.log('\nSelesai. Jalankan: npm run check && npm run dev');

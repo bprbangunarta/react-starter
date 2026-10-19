@@ -56,6 +56,7 @@ pekerjaan tertunda di [BACKLOG](BACKLOG.md), kondisi terkini di [STATE](STATE.md
 - Vitest dengan `css: false` mengosongkan impor CSS (termasuk `?raw`): baca `index.css` lewat `node:fs`.
 - Di panel browser bawaan: `cmd+a` tidak memilih teks (isi kolom lewat `form_input`), ref bisa basi setelah render ulang (cari ulang), dan pembukaan pertama sebuah halaman butuh ±2 detik (server dev mengompilasi modul lazy; data tiruan juga dibuat sekali). Setelah `npm update` atau server dev baru menyala, muat ulang penuh halaman uji; modul lazy lama gagal diambil dan `ErrorBoundary` tampil.
 - zsh: tanda `--include=*.tsx` tanpa kutip membuat grep gagal; pakai `--include='*.tsx'`. `sed -i` di macOS butuh argumen cadangan (`-i.bak`).
+- Keputusan pemilik (2026-10-19): halaman error layar penuh dengan ilustrasi, judul kata (bukan "503 Service Unavailable"); layar tamu mobile first dengan merek di tengah bilah atas. Skrip generator memakai `tsx` (`scripts/*.ts`). Pemilik menguji dengan ekstensi Chrome Mobile Simulator, bukan iOS Simulator.
 - `.prettierignore` mengecualikan `*.md`, `error-pages`, `public`, dan `email/blade`; jalankan Prettier pada dokumen secara eksplisit bila perlu.
 - Pembuatan `favicon.ico` oleh `npm run rebrand` butuh `rsvg-convert` dan ImageMagick (ImageMagick saja gagal merender teks SVG).
 - Setelah menghentikan server dev (`pkill -f vite`), halaman yang masih terbuka akan menumpuk galat `ERR_CONNECTION_REFUSED` dari ping koneksi; itu bukan galat aplikasi.

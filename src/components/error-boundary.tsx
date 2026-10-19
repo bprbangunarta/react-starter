@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
-import { ErrorState } from '@/components/ui/misc';
+import { ErrorPage } from '@/components/error-page';
 
 type Props = { children: ReactNode };
 type State = { failed: boolean };
@@ -19,11 +19,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
     render() {
         if (this.state.failed) {
-            return (
-                <div className="flex min-h-screen items-center justify-center bg-canvas">
-                    <ErrorState message="Halaman tidak dapat ditampilkan. Muat ulang untuk mencoba lagi." onRetry={() => window.location.reload()} />
-                </div>
-            );
+            return <ErrorPage status={500} />;
         }
 
         return this.props.children;

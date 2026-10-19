@@ -3,8 +3,11 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { toast } from 'sonner';
 import { renderLoginCodeEmail } from '../../email/login-code';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { CodeInput } from '@/components/ui/code-input';
+import { ILLUSTRATIONS, Illustration } from '@/components/illustrations';
+import type { IllustrationName } from '@/components/illustrations';
+import { ERROR_PAGES as ERROR_SCREENS } from '@/lib/error-pages';
 import { BarChart, ColumnChart, DonutChart } from '@/components/ui/chart';
 import { Checkbox, RadioGroup, Switch } from '@/components/ui/choice';
 import { ColorInput } from '@/components/ui/color-input';
@@ -696,8 +699,22 @@ export default function UiGuideline() {
                 </Section>
 
                 <Section
+                    title="Ilustrasi"
+                    description="Dipakai di layar masuk dan layar error. Warnanya token tema (ikut berubah saat rebranding), dibuat sekali di components/illustrations.tsx dan dipakai juga oleh halaman error statis. Hiasan saja: teks di sebelahnya yang menyampaikan isinya."
+                >
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                        {(Object.keys(ILLUSTRATIONS) as IllustrationName[]).map((name) => (
+                            <figure key={name} className="flex flex-col items-center gap-1 rounded-md border border-line p-2">
+                                <Illustration name={name} className="w-full" />
+                                <figcaption className="font-mono text-2xs text-muted">{name}</figcaption>
+                            </figure>
+                        ))}
+                    </div>
+                </Section>
+
+                <Section
                     title="Halaman error dan pemeliharaan"
-                    description="HTML statis di error-pages/ untuk disajikan web server saat aplikasi tidak bisa menjawab. Di dalam aplikasi, 404 tampil lewat pages/not-found.tsx."
+                    description="Layar penuh tanpa sidebar dan header: ilustrasi, apa yang terjadi dalam kata-kata (bukan hanya angka), kode kecil, dan jalan keluar. Tab di bawah adalah HTML statis di error-pages/ untuk disajikan web server saat aplikasi tidak bisa menjawab (npm run error-pages); tautan di bawahnya membuka layar yang sama di dalam aplikasi."
                 >
                     <Tabs defaultValue="503">
                         <TabsList className="flex-wrap">
@@ -718,6 +735,20 @@ export default function UiGuideline() {
                             </TabsContent>
                         ))}
                     </Tabs>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
+                        <span>Di dalam aplikasi, layar penuh:</span>
+                        {ERROR_SCREENS.map((screen) => (
+                            <a
+                                key={screen.status}
+                                href={`/ui-guideline/errors/${screen.status}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className={buttonVariants({ variant: 'outline', size: 'sm' })}
+                            >
+                                {screen.status}
+                            </a>
+                        ))}
+                    </div>
                 </Section>
 
                 <Section title="Email kode OTP" description="Pratinjau templatenya (email/login-code.ts). Versi Blade untuk Laravel ada di email/blade.">

@@ -121,7 +121,7 @@ Secara manual:
 - **Warna utama:** ubah tiga token primary di `src/index.css`; warna status (berhasil, info, peringatan, galat) tidak ikut berubah.
 - **Logo/favicon sendiri:** timpa `public/favicon.svg`, `public/favicon.ico` (32×32 atau multi-ukuran), dan bila perlu ganti kotak huruf di
   `app-layout.tsx`, `login.tsx`, `not-found.tsx` dengan `<img>`. Email dan halaman error memakai kotak huruf sebaris (ubah di `email/` dan
-  `scripts/generate-error-pages.mjs`).
+  `scripts/error-pages.ts`).
 - **Nama perusahaan di email:** parameter `company` pada `renderLoginCodeEmail`; di versi Blade lewat `config('app.company')` (bawaan: nama aplikasi).
 - **Kunci demo** `starterkit.db.v3` di `src/mock/db.ts` boleh diganti; ia hilang bersama `src/mock/` saat backend tersambung.
 
@@ -206,7 +206,7 @@ Pratinjaunya tampil di `/ui-guideline`. Untuk Laravel, versi Blade yang sama ada
 
 ## Halaman error statis
 
-Pratinjau ketujuhnya (termasuk 503 pemeliharaan) ada di `/ui-guideline`.
+Pratinjau ketujuhnya (termasuk 503 pemeliharaan) ada di `/ui-guideline` (tautan ke `/ui-guideline/errors/:status`). Semua halaman error memakai ilustrasi dan judul berupa kata, bukan kode saja (503 berjudul "Sedang dalam pemeliharaan").
 
 `error-pages/` berisi HTML mandiri (tanpa aset) untuk 401, 403, 404, 419, 429, 500, dan 503, untuk disajikan server web atau
 framework saat aplikasi tidak bisa menjawab (pemeliharaan, galat server). Nama, huruf logo, dan warnanya diambil dari `src/lib/brand.ts` dan
@@ -216,7 +216,9 @@ framework saat aplikasi tidak bisa menjawab (pemeliharaan, galat server). Nama, 
 npm run error-pages -- "Nama Aplikasi"
 ```
 
-Di dalam aplikasi, 404 ditampilkan oleh `src/pages/not-found.tsx` (layar penuh, tombol Kembali dan Ke beranda).
+Isi kata dan ilustrasinya satu sumber dengan aplikasi (`src/lib/error-pages.ts`, `src/components/illustrations.tsx`); tes memastikan HTML yang tersimpan mutakhir.
+
+Di dalam aplikasi, semua halaman error layar penuh tanpa sidebar dan header (`src/components/error-page.tsx`). 404 dari `not-found.tsx`, galat render dari `ErrorBoundary` (500), dan respons 503 dari server memunculkan `MaintenanceGate` (halaman pemeliharaan). Halaman masuk, verifikasi 2 langkah, dan kata sandi kedaluwarsa memakai `AuthLayout` (mobile first: bilah merek di tengah, ilustrasi, lembar formulir; dua kolom dari `lg`).
 
 ## Aturan kode dan pemeriksaan otomatis
 

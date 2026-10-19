@@ -9,7 +9,7 @@ export const EMPTY_PASSWORD: PasswordData = { current_password: '', password: ''
  * The three password fields (current, new, confirmation) shared by Profile and the expired-password screen. The server rules
  * (minimum length, not the same as the previous passwords) come back as 422 messages under the matching field.
  */
-export function PasswordFields({ form }: { form: ReturnType<typeof useForm<PasswordData>> }) {
+export function PasswordFields({ form, stacked = false }: { form: ReturnType<typeof useForm<PasswordData>>; stacked?: boolean }) {
     return (
         <>
             <Field label="Kata sandi saat ini" required error={form.errors.current_password}>
@@ -20,7 +20,7 @@ export function PasswordFields({ form }: { form: ReturnType<typeof useForm<Passw
                     onChange={(e) => form.setData('current_password', e.target.value)}
                 />
             </Field>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className={stacked ? 'grid gap-3' : 'grid gap-3 sm:grid-cols-2'}>
                 <Field label="Kata sandi baru" required error={form.errors.password} hint="Minimal 8 karakter, tidak boleh sama dengan kata sandi sebelumnya">
                     <PasswordInput
                         autoComplete="new-password"

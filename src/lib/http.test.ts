@@ -98,3 +98,22 @@ describe('http uploads', () => {
         expect(call?.[1]?.body).toBe('{"username":"a"}');
     });
 });
+
+describe('http maintenance', () => {
+    afterEach(() => {
+        vi.unstubAllGlobals();
+        vi.unstubAllEnvs();
+    });
+
+    it('tells the app when the server answers 503, so it can show the maintenance page', async () => {
+        const { http } = await load();
+        const seen = vi.fn();
+        window.addEventListener('app:maintenance', seen);
+        respond(503, { message: 'Sedang dalam pemeliharaan.' });
+
+        await expect(http.get('/me')).rejects.toMatchObject({ status: 503 });
+
+        expect(seen).toHaveBeenCalled();
+        window.removeEventListener('app:maintenance', seen);
+    });
+});

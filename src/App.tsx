@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router';
 import { SessionProvider, useSession } from '@/auth/session';
 import AppLayout from '@/layouts/app-layout';
 import Login from '@/pages/login';
+import ErrorPreview from '@/pages/error-preview';
 import NotFound from '@/pages/not-found';
 import PasswordExpired from '@/pages/password-expired';
 import TwoFactorChallenge from '@/pages/two-factor-challenge';
@@ -38,9 +39,10 @@ export default function App() {
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/audit-logs" element={<AuditLogs />} />
                             <Route path="/ui-guideline" element={<UiGuideline />} />
-                            <Route path="*" element={<NotFound />} />
                         </Route>
                     </Route>
+                    <Route path="/ui-guideline/errors/:status" element={<ErrorPreview />} />
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </SessionProvider>
         </BrowserRouter>

@@ -4,31 +4,38 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>500 Terjadi kesalahan - Starter Kit</title>
+<title>Terjadi kesalahan - Starter Kit</title>
 <style>
-:root{--primary:oklch(0.45 0.16 265);--primary-hover:oklch(0.4 0.16 265);--canvas:oklch(0.975 0.003 260);--ink:oklch(0.24 0.02 265);--muted:oklch(0.53 0.02 265)}
+:root{--color-primary:oklch(0.45 0.16 265);--color-primary-hover:oklch(0.4 0.16 265);--color-primary-soft:oklch(0.96 0.02 265);--color-surface:#ffffff;--color-canvas:oklch(0.975 0.003 260);--color-line:oklch(0.92 0.006 260);--color-ink:oklch(0.24 0.02 265);--color-muted:oklch(0.53 0.02 265);--color-danger:oklch(0.55 0.2 27);--color-danger-soft:oklch(0.97 0.02 27);--color-danger-line:oklch(0.88 0.06 27);--color-danger-ink:oklch(0.45 0.16 27);--color-success:oklch(0.55 0.14 155);--color-success-soft:oklch(0.97 0.025 155);--color-success-line:oklch(0.88 0.07 155);--color-success-ink:oklch(0.42 0.1 155);--color-warning:oklch(0.62 0.14 75);--color-warning-soft:oklch(0.97 0.03 90);--color-warning-line:oklch(0.88 0.08 85);--color-warning-ink:oklch(0.45 0.1 70);--color-info:oklch(0.55 0.15 250);--color-info-soft:oklch(0.97 0.02 250);--color-info-line:oklch(0.88 0.06 250);--color-info-ink:oklch(0.42 0.12 250);--color-chart-1:oklch(0.45 0.16 265);--color-chart-2:oklch(0.58 0.1 195);--color-chart-3:oklch(0.62 0.14 75);--color-chart-4:oklch(0.52 0.14 330);--color-chart-5:oklch(0.55 0.03 265)}
 *{box-sizing:border-box}
 html{font-size:15px}
-body{margin:0;background:var(--canvas);color:var(--ink);font-family:'Instrument Sans Variable','Instrument Sans',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-main{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem 1rem;text-align:center}
-.brand{display:flex;align-items:center;gap:.5rem;margin-bottom:2rem}
-.mark{display:flex;width:2rem;height:2rem;align-items:center;justify-content:center;border-radius:.5rem;background:var(--primary);color:#fff;font-size:.8125rem;font-weight:700}
+body{margin:0;background:var(--color-canvas);color:var(--color-ink);font-family:'Instrument Sans Variable','Instrument Sans',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.page{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding:1.5rem 1rem 2rem}
+.brand{display:flex;align-items:center;justify-content:center;gap:.5rem}
+.mark{display:flex;width:2rem;height:2rem;align-items:center;justify-content:center;border-radius:.5rem;background:var(--color-primary);color:#fff;font-size:.8125rem;font-weight:700}
 .name{font-size:1rem;font-weight:600}
-.code{margin:0;font-size:6rem;line-height:1;font-weight:700;letter-spacing:-.025em;color:color-mix(in oklch,var(--primary) 20%,transparent);user-select:none}
-@media(min-width:640px){.code{font-size:8rem}}
-h1{margin:1rem 0 0;font-size:1.5rem;font-weight:600}
-p.d{margin:.5rem 0 0;max-width:28rem;font-size:.8125rem;color:var(--muted)}
-a.b{display:inline-flex;height:2rem;align-items:center;margin-top:1.5rem;padding:0 .75rem;border-radius:.375rem;background:var(--primary);color:#fff;font-size:.8125rem;font-weight:500;text-decoration:none}
-a.b:hover{background:var(--primary-hover)}
+main{flex:1;width:100%;max-width:28rem;margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem 0;text-align:center}
+svg{width:20rem;max-width:100%;height:auto}
+@media(min-width:640px){svg{width:24rem}}
+.badge{margin:.5rem 0 0;padding:.125rem .625rem;border-radius:999px;background:var(--color-primary-soft);color:var(--color-primary);font-size:.6875rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+h1{margin:.75rem 0 0;font-size:1.375rem;font-weight:600}
+@media(min-width:640px){h1{font-size:1.625rem}}
+p.d{margin:.5rem 0 0;max-width:24rem;font-size:.8125rem;line-height:1.6;color:var(--color-muted)}
+a.b{display:inline-flex;height:2rem;align-items:center;justify-content:center;margin-top:1.5rem;padding:0 1rem;border-radius:.375rem;background:var(--color-primary);color:#fff;font-size:.8125rem;font-weight:500;text-decoration:none}
+a.b:hover{background:var(--color-primary-hover)}
+@media(max-width:639px){a.b{width:100%}}
 </style>
 </head>
 <body>
-<main>
+<div class="page">
 <div class="brand"><span class="mark">S</span><span class="name">Starter Kit</span></div>
-<p class="code">500</p>
+<main>
+<svg viewBox="0 0 240 180" role="presentation" aria-hidden="true" focusable="false"><circle cx="120" cy="92" r="72" fill="var(--color-danger-soft)"></circle><ellipse cx="120" cy="164" rx="64" ry="7" fill="var(--color-line)" opacity="0.7"></ellipse><circle cx="34" cy="52" r="4" fill="var(--color-line)"></circle><circle cx="210" cy="36" r="3" fill="var(--color-line)"></circle><path d="M206 120h10M211 115v10" stroke="var(--color-line)" stroke-width="3" stroke-linecap="round"></path><path d="M28 112h8M32 108v8" stroke="var(--color-line)" stroke-width="3" stroke-linecap="round"></path><rect x="64" y="36" width="112" height="38" rx="9" fill="var(--color-surface)" stroke="var(--color-line)" stroke-width="3"></rect><rect x="64" y="80" width="112" height="38" rx="9" fill="var(--color-surface)" stroke="var(--color-line)" stroke-width="3"></rect><circle cx="82" cy="55" r="4.5" fill="var(--color-success)"></circle><circle cx="96" cy="55" r="4.5" fill="var(--color-line)"></circle><rect x="112" y="51" width="50" height="8" rx="4" fill="var(--color-line)"></rect><circle cx="82" cy="99" r="4.5" fill="var(--color-danger)"></circle><circle cx="96" cy="99" r="4.5" fill="var(--color-danger)"></circle><rect x="112" y="95" width="50" height="8" rx="4" fill="var(--color-line)"></rect><path d="M120 118v14q0 14-14 14H84" fill="none" stroke="var(--color-ink)" stroke-width="4.5" stroke-linecap="round"></path><rect x="64" y="139" width="14" height="14" rx="3" fill="var(--color-ink)"></rect><path d="M120 146v6M134 146l6 6M128 138l8-3" stroke="var(--color-danger)" stroke-width="3" stroke-linecap="round"></path><path d="M184 40l18 32h-36z" fill="var(--color-danger)" stroke="var(--color-danger)" stroke-width="4" stroke-linejoin="round"></path><rect x="182" y="50" width="4" height="12" rx="2" fill="var(--color-surface)"></rect><circle cx="184" cy="67" r="2.3" fill="var(--color-surface)"></circle></svg>
+<p class="badge">Kode 500</p>
 <h1>Terjadi kesalahan</h1>
-<p class="d">Terjadi kesalahan tak terduga. Coba lagi sebentar lagi.</p>
-<a class="b" href="javascript:location.reload()">Coba lagi</a>
+<p class="d">Terjadi kesalahan tak terduga di sisi kami. Coba lagi sebentar lagi; bila terus berulang, hubungi administrator.</p>
+<a class="b" href="">Coba lagi</a>
 </main>
+</div>
 </body>
 </html>

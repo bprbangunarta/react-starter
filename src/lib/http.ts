@@ -18,6 +18,9 @@ export const USE_MOCK = import.meta.env.VITE_USE_MOCK !== 'false';
 
 /** Fired when the server asks for a fresh password confirmation (403 `reauth_required`). */
 export const REAUTH_EVENT = 'app:reauth-required';
+
+/** Fired when the server answers 503 (maintenance): `MaintenanceGate` then shows the full-screen maintenance page. */
+export const MAINTENANCE_EVENT = 'app:maintenance';
 export const API_BASE = '/api';
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -66,6 +69,10 @@ async function send<T>(method: Method, url: string, data?: unknown, params?: Par
         // The session was ended on purpose (signed in elsewhere, credentials changed): say why before the sign-in page appears.
         if (response.status === 401 && body.code === 'session_ended' && body.message) {
             toast.info(body.message);
+        }
+
+        if (response.status === 503) {
+            window.dispatchEvent(new Event(MAINTENANCE_EVENT));
         }
 
         if (response.status === 403 && body.code === 'reauth_required') {

@@ -183,6 +183,8 @@ Ganti warna utama dan merek lewat `npm run rebrand` (lihat README).
 | Lapisan | header `z-30`, laci `z-40`, dialog dan penanda jaringan `z-50`, tooltip `z-60`, popover `z-70` |
 | Tabel | sel `px-3 py-1` (kolom aksi `py-0.5`: tombol ikonnya yang menentukan tinggi baris), header `text-2xs text-muted bg-canvas` kapital, `divide-y divide-line` |
 
+Layar di luar kerangka aplikasi (masuk, verifikasi 2 langkah, kata sandi kedaluwarsa) memakai `AuthLayout`; halaman error memakai `ErrorPage` layar penuh (tanpa sidebar/header, judul berupa kata, ilustrasi dari `illustrations.tsx` yang warnanya lewat variabel token). 503 adalah halaman pemeliharaan.
+
 Email (`email/login-code.ts`) dan halaman error (`error-pages/*.html`) tidak bisa memakai CSS aplikasi, jadi warnanya ditulis sebaris
 (merek email `#33479f`, parameter `brandColor`).
 
