@@ -1,4 +1,4 @@
-import { Copy, Dices, Download, Inbox, Info, MoreHorizontal, Pencil, Plus, Save, Search, Trash2 } from 'lucide-react';
+import { Copy, Database, Dices, Download, Inbox, Info, LayoutDashboard, MoreHorizontal, Pencil, Plus, Save, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { toast } from 'sonner';
@@ -7,6 +7,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { CodeInput } from '@/components/ui/code-input';
 import { ILLUSTRATIONS, Illustration } from '@/components/illustrations';
 import type { IllustrationName } from '@/components/illustrations';
+import { MenuLink, SubMenu } from '@/layouts/app-layout';
 import { ERROR_PAGES as ERROR_SCREENS } from '@/lib/error-pages';
 import { BarChart, ColumnChart, DonutChart } from '@/components/ui/chart';
 import { Checkbox, RadioGroup, Switch } from '@/components/ui/choice';
@@ -682,6 +683,21 @@ export default function UiGuideline() {
                             </Button>
                         </Tip>
                     </div>
+                </Section>
+
+                <Section
+                    title="Menu sidebar dengan submenu"
+                    description="Induk adalah tombol (ikon, nama, panah) yang membuka dan menutup daftar halaman; submenu tidak berikon (garis dan titik). Tertutup sampai dibuka, dan terbuka sendiri saat salah satu halamannya tampil. Daftarnya ditulis di layouts/menu.ts: { label, icon, children }."
+                >
+                    <nav aria-label="Contoh menu" className="flex w-60 flex-col gap-0.5 rounded-lg border border-line bg-surface p-2">
+                        <MenuLink item={{ label: 'Dashboard', to: '/', icon: LayoutDashboard, end: true }} onNavigate={() => undefined} />
+                        <SubMenu label="Data Master" icon={Database} onNavigate={() => undefined}>
+                            {[
+                                { label: 'Audit Logs', to: '/audit-logs' },
+                                { label: 'UI Guideline', to: '/ui-guideline' },
+                            ]}
+                        </SubMenu>
+                    </nav>
                 </Section>
 
                 <Section
