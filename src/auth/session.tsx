@@ -21,6 +21,8 @@ export type Me = {
     user: AuthUser;
     security: { enabled: boolean; method: 'totp' | 'email' | null };
     notifications: Notifications;
+    /** How many idle minutes the server allows before the session ends (the idle timer in `IdleTimeout`). */
+    session: { idle_minutes: number };
 };
 
 type SessionValue = {

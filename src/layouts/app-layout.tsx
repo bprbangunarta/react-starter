@@ -5,6 +5,7 @@ import { Suspense, useEffect, useId, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 import { useSession } from '@/auth/session';
 import { Avatar } from '@/components/avatar';
+import { IdleTimeout } from '@/components/idle-timeout';
 import { NetworkStatus } from '@/components/network-status';
 import { NotificationBell } from '@/components/notification-bell';
 import { ReauthDialog } from '@/components/reauth-dialog';
@@ -208,6 +209,7 @@ export default function AppLayout() {
             </div>
             <NetworkStatus />
             <ReauthDialog />
+            <IdleTimeout />
         </TooltipProvider>
     );
 }

@@ -16,6 +16,8 @@ const MAX_ATTEMPTS = 5;
 const PASSWORD_MAX_AGE_DAYS = 30;
 const PASSWORD_HISTORY = 5;
 const DAY_MS = 24 * 3600 * 1000;
+/** Idle minutes before the session ends (the screen warns one minute earlier). Lower it here to try the warning. */
+const IDLE_MINUTES = 30;
 const AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
 
@@ -148,6 +150,8 @@ function me(db: Db, user: MockUser) {
     return {
         user: { id: user.id, name: user.name, username: user.username, email: user.email, avatar_url: user.avatar_url },
         security: { enabled: true, method: user.mfa_method },
+        // The mock never ends a session by itself; it only tells the screen how long idle time is allowed.
+        session: { idle_minutes: IDLE_MINUTES },
         notifications: {
             unread: db.notifications.filter((n) => !n.read).length,
             items: [...db.notifications]
