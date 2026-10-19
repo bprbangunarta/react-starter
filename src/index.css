@@ -13,7 +13,7 @@
     --color-canvas: oklch(0.975 0.003 260);
     --color-line: oklch(0.92 0.006 260);
     --color-ink: oklch(0.24 0.02 265);
-    --color-muted: oklch(0.55 0.02 265);
+    --color-muted: oklch(0.53 0.02 265);
     --color-danger: oklch(0.55 0.2 27);
 
     /*

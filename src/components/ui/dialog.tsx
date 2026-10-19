@@ -41,7 +41,8 @@ export function Modal({
     wide,
     persistent,
 }: {
-    wide?: boolean;
+    /** `true` is a wide dialog for a form; `'xl'` is for a form with several sections side by side. */
+    wide?: boolean | 'xl';
     /** For dialogs with fields: a click outside does not close it (Esc and the close button still do), so typed input is not lost by accident. */
     persistent?: boolean;
     open: boolean;
@@ -57,7 +58,7 @@ export function Modal({
             <D.Portal>
                 <D.Overlay className={overlayClass} />
                 <D.Content
-                    className={wide ? content.replace('max-w-sm', 'max-w-2xl') : content}
+                    className={wide === 'xl' ? content.replace('max-w-sm', 'max-w-4xl') : wide ? content.replace('max-w-sm', 'max-w-2xl') : content}
                     onInteractOutside={persistent ? (event) => event.preventDefault() : undefined}
                     {...restoreFocus}
                 >

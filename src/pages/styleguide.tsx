@@ -129,6 +129,7 @@ function InputExamples() {
     const [code, setCode] = useState('');
     const [amount, setAmount] = useState<number | null>(1_500_000);
     const [quantity, setQuantity] = useState<number | null>(12_500);
+    const [small, setSmall] = useState('42');
     const [phone, setPhone] = useState('081234567890');
     const [nik, setNik] = useState('');
     const [npwp, setNpwp] = useState('');
@@ -142,7 +143,7 @@ function InputExamples() {
     return (
         <Section
             title="Isian"
-            description="Field: label text-xs, tanda * merah untuk wajib, hint atau galat di bawah isian. Label dan galat otomatis terhubung ke isian lewat Field."
+            description="Field: label text-xs, tanda * merah untuk wajib, hanya galat yang tampil di bawah isian. Keterangan isian (hint) tampil sebagai tooltip pada ikon info di samping label, dan tetap terbaca oleh pembaca layar."
         >
             <SubTitle>Teks dan sandi</SubTitle>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -162,29 +163,35 @@ function InputExamples() {
 
             <SubTitle>Angka dan mata uang (format otomatis)</SubTitle>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <Field label="Nominal (Rp)" hint={`Nilai dikirim: ${amount ?? 'kosong'}`}>
+                <Field label="Nominal (Rp)" hint="Nilai yang dikirim ke API berupa angka tanpa format">
                     <CurrencyInput value={amount} onValueChange={setAmount} placeholder="0" />
                 </Field>
-                <Field label="Angka dengan pemisah ribuan" hint={`Nilai dikirim: ${quantity ?? 'kosong'}`}>
+                <Field label="Angka dengan pemisah ribuan" hint="Angka bulat dengan pemisah ribuan">
                     <CurrencyInput prefix={null} value={quantity} onValueChange={setQuantity} placeholder="0" />
                 </Field>
-                <Field label="Angka biasa">
-                    <Input type="number" className="text-right tabular-nums" defaultValue={42} />
+                <Field label="Angka kecil (4 digit)" hint="type=number dilarang; angka tanpa format memakai MaskedInput">
+                    <MaskedInput mask="9999" value={small} onValueChange={setSmall} placeholder="0000" className="text-right tabular-nums" />
                 </Field>
             </div>
+            <p className="text-xs text-muted tabular-nums">
+                Dikirim ke API: nominal = {amount ?? 'kosong'}, angka = {quantity ?? 'kosong'}, angka kecil = {small || 'kosong'}
+            </p>
 
             <SubTitle>Masking (format saat mengetik)</SubTitle>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <Field label="No. telepon" hint={`Nilai dikirim: ${phone || 'kosong'}`}>
+                <Field label="No. telepon" hint="Mask 0812-3456-7890; yang dikirim hanya angkanya">
                     <MaskedInput mask={MASKS.phone} value={phone} onValueChange={setPhone} placeholder="0812-3456-7890" />
                 </Field>
-                <Field label="NIK (16 digit)" hint={`${nik.length}/16 digit`}>
+                <Field label="NIK (16 digit)" hint="16 digit">
                     <MaskedInput mask={MASKS.nik} value={nik} onValueChange={setNik} placeholder="3171 0123 4567 8901" />
                 </Field>
-                <Field label="NPWP (15 digit)" hint={`${npwp.length}/15 digit`}>
+                <Field label="NPWP (15 digit)" hint="15 digit">
                     <MaskedInput mask={MASKS.npwp} value={npwp} onValueChange={setNpwp} placeholder="01.234.567.8-901.234" />
                 </Field>
             </div>
+            <p className="text-xs text-muted tabular-nums">
+                Dikirim ke API: telepon = {phone || 'kosong'}, NIK = {nik || 'kosong'} ({nik.length}/16), NPWP = {npwp || 'kosong'} ({npwp.length}/15)
+            </p>
 
             <SubTitle>Pilihan dan tanggal</SubTitle>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

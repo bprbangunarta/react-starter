@@ -88,14 +88,14 @@ export function DataTable<T>({
     className,
 }: Props<T>) {
     const th = (c: Column<T>) =>
-        cn('px-3 py-2 font-medium', c.align === 'right' ? 'text-right' : 'text-left', c.hideBelow && HIDE[c.hideBelow], c.narrow && 'w-10');
+        cn('px-3 py-2 font-medium whitespace-nowrap', c.align === 'right' ? 'text-right' : 'text-left', c.hideBelow && HIDE[c.hideBelow], c.narrow && 'w-10');
 
     const body = error ? (
         <ErrorState message={error} onRetry={onRetry} />
     ) : (
         <div className="relative overflow-x-auto">
             <table className={cn('w-full', dense ? 'text-xs' : 'text-sm')}>
-                <thead className="border-b border-line bg-canvas text-xs text-muted">
+                <thead className="border-b border-line bg-canvas text-xs tracking-wide text-muted uppercase">
                     <tr>
                         {columns.map((c) =>
                             c.sort && sort ? (
@@ -137,7 +137,12 @@ export function DataTable<T>({
                                           key={c.key}
                                           // Row actions must not trigger the row click.
                                           onClick={c.srOnly ? (e) => e.stopPropagation() : undefined}
-                                          className={cn('px-3 py-1.5', c.align === 'right' && 'text-right', c.hideBelow && HIDE[c.hideBelow], c.className)}
+                                          className={cn(
+                                              'px-3 py-1.5 whitespace-nowrap',
+                                              c.align === 'right' && 'text-right',
+                                              c.hideBelow && HIDE[c.hideBelow],
+                                              c.className,
+                                          )}
                                       >
                                           {c.cell(row, index)}
                                       </td>

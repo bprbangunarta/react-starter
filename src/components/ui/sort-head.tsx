@@ -24,9 +24,9 @@ export function SortHead({
         <th
             scope="col"
             aria-sort={active ? (direction === 'asc' ? 'ascending' : 'descending') : 'none'}
-            className={cn('px-3 py-2 text-left font-medium', className)}
+            className={cn('px-3 py-2 text-left font-medium whitespace-nowrap', className)}
         >
-            <button type="button" onClick={() => onSort(column)} className="inline-flex cursor-pointer items-center gap-1 hover:text-ink">
+            <button type="button" onClick={() => onSort(column)} className="inline-flex cursor-pointer items-center gap-1 uppercase hover:text-ink">
                 {children}
                 <Icon className={cn('size-3', !active && 'opacity-40')} />
             </button>

@@ -129,3 +129,19 @@ describe('focus', () => {
         expect(opener).toHaveFocus();
     });
 });
+
+describe('Modal width', () => {
+    it.each([
+        [undefined, 'max-w-sm'],
+        [true, 'max-w-2xl'],
+        ['xl' as const, 'max-w-4xl'],
+    ])('wide=%s uses %s', (wide, expected) => {
+        render(
+            <Modal open onOpenChange={() => undefined} wide={wide} title="Ubah data">
+                <DialogBody>Isi</DialogBody>
+            </Modal>,
+        );
+
+        expect(screen.getByRole('dialog')).toHaveClass(expected);
+    });
+});

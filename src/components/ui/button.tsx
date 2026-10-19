@@ -18,6 +18,8 @@ export const buttonVariants = cva(
                 default: 'h-8 px-3',
                 sm: 'h-7 px-2.5 text-xs',
                 icon: 'size-7',
+                // An icon button beside an input (copy, generate): as tall as the input (h-8), so both line up top and bottom.
+                fieldIcon: 'size-8',
             },
         },
         defaultVariants: { variant: 'primary', size: 'default' },
