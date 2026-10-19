@@ -9,10 +9,12 @@ export const buttonVariants = cva(
     {
         variants: {
             variant: {
-                primary: 'bg-primary text-white hover:bg-primary-hover',
+                // Every variant has the same 1px border box (transparent when it has no visible border), so two buttons side by side
+                // are the same size to the pixel, also when a tool scales the screen and a lone border would make one look taller.
+                primary: 'border border-transparent bg-primary text-white hover:bg-primary-hover',
                 outline: 'border border-line bg-surface text-ink hover:bg-canvas',
-                ghost: 'text-muted hover:bg-canvas hover:text-ink',
-                danger: 'bg-danger text-white hover:bg-danger/90',
+                ghost: 'border border-transparent text-muted hover:bg-canvas hover:text-ink',
+                danger: 'border border-transparent bg-danger text-white hover:bg-danger/90',
             },
             size: {
                 default: 'h-8 px-3',

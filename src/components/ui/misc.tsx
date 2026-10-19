@@ -69,8 +69,13 @@ export function PageHeader({ title, description, actions }: { title: string; des
                 <h1 className="text-base font-semibold">{title}</h1>
                 {description && <p className="text-xs text-muted">{description}</p>}
             </div>
-            {/* A grid of auto-fit columns gives the buttons of the row one width (that of the longest label), so a pair never looks uneven. */}
-            {actions && <div className="grid auto-cols-fr grid-flow-col items-center gap-2">{actions}</div>}
+            {/* One width for the buttons of the row. On a phone they fill the width in two equal columns, like the filters (a lone last button
+                spans both); from `sm` they sit at the right, each as wide as the longest label. */}
+            {actions && (
+                <div className="grid w-full grid-cols-2 items-center gap-2 sm:w-auto sm:auto-cols-fr sm:grid-flow-col sm:grid-cols-none [&>:last-child:nth-child(odd)]:col-span-2 sm:[&>:last-child:nth-child(odd)]:col-span-1">
+                    {actions}
+                </div>
+            )}
         </div>
     );
 }

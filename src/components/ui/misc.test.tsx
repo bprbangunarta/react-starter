@@ -17,7 +17,9 @@ describe('PageHeader', () => {
         );
         const row = screen.getByRole('button', { name: 'Ekspor CSV' }).parentElement;
 
-        expect(row).toHaveClass('grid', 'auto-cols-fr', 'grid-flow-col');
+        expect(row).toHaveClass('grid', 'sm:auto-cols-fr', 'sm:grid-flow-col');
+        // On a phone: the full width in two equal columns, like the filters.
+        expect(row).toHaveClass('w-full', 'grid-cols-2');
         expect(row?.children).toHaveLength(2);
     });
 

@@ -69,8 +69,9 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
   `text-base font-semibold`, keterangan `text-xs text-muted`, aksi di kanan; susunannya sudah disepakati, jangan diubah tanpa diminta.
 - **Baris teks + aksi** (header halaman/blok/dialog, baris pengaturan): `flex flex-wrap items-center justify-between gap-2`, teks
   `min-w-0`. `items-start justify-between` hanya untuk opsi `Combobox` **[mesin]**.
-- **Header halaman:** keterangan pendek, tidak mengulang data yang sudah tampil di isi halaman. Tombol di `actions` `PageHeader` berlebar sama (grid `auto-cols-fr`):
-  isi `actions` dengan tombolnya langsung (fragment), **tanpa `div` pembungkus** **[mesin]**.
+- **Header halaman:** keterangan pendek, tidak mengulang data yang sudah tampil di isi halaman. Tombol di `actions` `PageHeader` berlebar sama: di ponsel mengisi lebar penuh dalam dua kolom sama lebar seperti filter
+  (tombol terakhir yang ganjil memenuhi dua kolom), dari `sm` ke atas di kanan dengan lebar sepanjang label terpanjang. Isi `actions` dengan tombolnya langsung (fragment),
+  **tanpa `div` pembungkus** **[mesin]**. Semua varian `Button` punya kotak border 1px yang sama (transparan bila tak terlihat), jadi dua tombol bersebelahan sama besar sampai ke piksel.
 - **Daftar:** selalu punya keadaan memuat (Skeleton), kosong, dan galat; setiap aksi memberi toast (sonner) sukses/gagal.
 - **Tombol** (ikon atau tidak ditentukan oleh **tempatnya**, bukan selera):
 
