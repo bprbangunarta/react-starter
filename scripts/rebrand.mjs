@@ -4,6 +4,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
+import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
 const arg = (flag) => {
@@ -97,7 +98,7 @@ write(
 );
 done(`public/favicon.svg (${letter}, ${fill})`);
 
-const root = new URL('..', import.meta.url).pathname;
+const root = fileURLToPath(new URL('..', import.meta.url));
 const png = join(tmpdir(), 'rebrand-favicon.png');
 
 try {

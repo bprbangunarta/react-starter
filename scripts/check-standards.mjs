@@ -2,21 +2,58 @@
 //   npm run standards
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = new URL('../src', import.meta.url).pathname;
+// `fileURLToPath`, not `.pathname`: a folder name with a space or a non-ASCII letter is percent-encoded in a URL and `.pathname` would not open.
+const root = fileURLToPath(new URL('../src', import.meta.url));
 const files = [];
 
+/** A file or folder that cannot be read stops the check with a sentence, never with a stack trace nobody can act on. */
+function unreadable(path, error) {
+    console.error(`Tidak bisa membaca ${relative(process.cwd(), path)} (${error.code ?? error.message}). Periksa izin dan isi folder src, lalu ulangi.`);
+    process.exit(1);
+}
+
 (function walk(dir) {
-    for (const name of readdirSync(dir)) {
+    let names;
+
+    try {
+        names = readdirSync(dir);
+    } catch (error) {
+        unreadable(dir, error);
+    }
+
+    for (const name of names) {
         const path = join(dir, name);
 
-        if (statSync(path).isDirectory()) {
-            walk(path);
-        } else if (/\.(ts|tsx)$/.test(name)) {
-            files.push(path);
+        try {
+            if (statSync(path).isDirectory()) {
+                walk(path);
+            } else if (/\.(ts|tsx)$/.test(name)) {
+                files.push(path);
+            }
+        } catch (error) {
+            unreadable(path, error);
         }
     }
 })(root);
+
+if (files.length === 0) {
+    console.error(`Tidak ada berkas .ts atau .tsx di ${relative(process.cwd(), root)}: pemeriksaan ini tidak memeriksa apa pun, jadi dihentikan.`);
+    process.exit(1);
+}
+
+const sources = new Map(
+    files.map((file) => {
+        try {
+            return [file, readFileSync(file, 'utf8')];
+        } catch (error) {
+            return unreadable(file, error);
+        }
+    }),
+);
+
+/** Test files and test setup may use literal colours and localStorage (test data, cleanup). */
 
 /** Test files and test setup may use literal colours and localStorage (test data, cleanup). */
 const isTest = (file) => /\.test\.tsx?$|\/src\/test\//.test(file);
@@ -100,7 +137,7 @@ const rules = [
 let failures = 0;
 
 for (const file of files) {
-    const lines = readFileSync(file, 'utf8').split('\n');
+    const lines = sources.get(file).split('\n');
 
     lines.forEach((line, index) => {
         const comment = /^\s*(\/\/|\*|\/\*)/.test(line);
@@ -120,7 +157,7 @@ for (const file of files) {
 
 // Multi-line rule: buttons inside DialogFooter/CardFooter are text only (see docs/STANDARDS.md, "Tombol").
 for (const file of files) {
-    const text = readFileSync(file, 'utf8');
+    const text = sources.get(file);
 
     for (const match of text.matchAll(/<(DialogFooter|CardFooter)\b[^>]*>([\s\S]*?)<\/\1>/g)) {
         if (/<[A-Z][A-Za-z0-9]*\s*\/>/.test(match[2] ?? '')) {
@@ -134,7 +171,7 @@ for (const file of files) {
 
 // Multi-line rule: a screen that opens a Modal supplies the dialog body with DialogBody (header, body, footer; see docs/STANDARDS.md).
 for (const file of files) {
-    const text = readFileSync(file, 'utf8');
+    const text = sources.get(file);
 
     if (/<Modal\b/.test(text) && !/\bDialogBody\b/.test(text) && !file.endsWith('components/ui/dialog.tsx') && !isTest(file)) {
         failures++;

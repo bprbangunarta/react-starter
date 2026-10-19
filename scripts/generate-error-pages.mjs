@@ -2,12 +2,18 @@
 // framework to serve when the app itself cannot (maintenance, 5xx, 401/403/404/419/429).
 //   node scripts/generate-error-pages.mjs [AppName]
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+// Relative to the repository, not to the folder the command was started in; a name typed on the command line is text, never markup.
+const root = fileURLToPath(new URL('..', import.meta.url));
+const escapeHtml = (text) => text.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 
 // Name, logo letter, and colours come from the app itself, so `npm run rebrand` keeps the error pages in step.
-const brand = readFileSync('src/lib/brand.ts', 'utf8');
-const theme = readFileSync('src/index.css', 'utf8');
-const app = process.argv[2] ?? /APP_NAME = '(.*)'/.exec(brand)?.[1] ?? 'Starter Kit';
-const initial = /APP_INITIAL = '(.*)'/.exec(brand)?.[1] ?? app.charAt(0).toUpperCase();
+const brand = readFileSync(`${root}src/lib/brand.ts`, 'utf8');
+const theme = readFileSync(`${root}src/index.css`, 'utf8');
+const rawApp = process.argv[2] ?? /APP_NAME = '(.*)'/.exec(brand)?.[1] ?? 'Starter Kit';
+const app = escapeHtml(rawApp);
+const initial = escapeHtml(/APP_INITIAL = '(.*)'/.exec(brand)?.[1] ?? rawApp.charAt(0).toUpperCase());
 const token = (name, fallback) => new RegExp(`--color-${name}: (.*);`).exec(theme)?.[1] ?? fallback;
 const pages = [
     [401, 'Perlu masuk', 'Silakan masuk untuk melanjutkan.', 'Ke beranda'],
@@ -36,12 +42,12 @@ a.b{display:inline-flex;height:2rem;align-items:center;margin-top:1.5rem;padding
 a.b:hover{background:var(--primary-hover)}
 `;
 
-mkdirSync('error-pages', { recursive: true });
+mkdirSync(`${root}error-pages`, { recursive: true });
 
 for (const [code, title, description, label, reload] of pages) {
     const href = reload ? 'javascript:location.reload()' : '/';
     writeFileSync(
-        `error-pages/${code}.html`,
+        `${root}error-pages/${code}.html`,
         `<!DOCTYPE html>
 <html lang="id">
 <head>
