@@ -331,8 +331,8 @@ function InputExamples() {
 }
 
 /** A living reference of every shared component and token. Compare any new screen against it. */
-export default function Styleguide() {
-    useTitle('Panduan tampilan');
+export default function UiGuideline() {
+    useTitle('UI Guideline');
     const [modal, setModal] = useState(false);
     const [confirm, setConfirm] = useState(false);
     const [search, setSearch] = useState('');
@@ -411,7 +411,7 @@ export default function Styleguide() {
     return (
         <>
             <PageHeader
-                title="Panduan tampilan"
+                title="UI Guideline"
                 description="Acuan komponen dan token. Tampilan baru harus terlihat sama dengan ini"
                 actions={
                     <Button variant="outline" onClick={() => toast.success('Contoh toast sukses')}>

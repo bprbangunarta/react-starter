@@ -14,7 +14,7 @@ Starter Kit: antarmuka React + TypeScript + Vite + Tailwind (tampilan Compact UI
 | [docs/ai/BACKLOG.md](docs/ai/BACKLOG.md) | pekerjaan yang belum dikerjakan, alasan, usulan, prioritas | pemilik meminta merencanakan pekerjaan berikutnya |
 | [docs/API.md](docs/API.md) | kontrak endpoint, galat 422, rantai hash audit log | mengubah akses server atau menambah endpoint |
 
-Acuan lain: `/styleguide` (jalankan `npm run dev`, sidebar → Panduan; semua komponen dan contoh CRUD), `src/index.css` (token tema),
+Acuan lain: `/ui-guideline` (jalankan `npm run dev`, sidebar → UI Guideline; semua komponen dan contoh CRUD), `src/index.css` (token tema),
 `email/` (template OTP: TypeScript dan Blade), `error-pages/` (halaman error statis), `scripts/check-standards.mjs` (pemeriksa aturan).
 
 ## Perintah

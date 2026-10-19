@@ -30,13 +30,13 @@ Masuk dengan **`admin` / `password`**. Untuk mencoba kata sandi kedaluwarsa, mas
 | **Autentikasi** | Login (email atau username), keluar, penjaga halaman, sesi, halaman error layar penuh, penanda koneksi putus/pulih |
 | **MFA** | Aplikasi authenticator (TOTP **sungguhan**: kunci dibuat acak, QR dipindai Google Authenticator, kode divalidasi dengan toleransi ±30 detik), OTP email (kodenya tampil di toast karena tidak ada email), 8 kode pemulihan sekali pakai, batas 5 kode salah, jeda kirim ulang, pengaturan dan pemutusan di Profil, pengingat bila belum aktif |
 | **Audit log** | Daftar terbaru dulu dengan pencarian, filter tanggal/modul/hasil, paginasi, detail sebelum/sesudah, **ekspor CSV**, dan **verifikasi integritas rantai hash** (SHA-256) yang sungguhan. Coba ubah satu entri di `localStorage` lalu tekan "Periksa integritas": rantai terputus dan entri yang diubah terdeteksi |
-| **Isian** | `CurrencyInput` (Rp, format ribuan), `MaskedInput` (telepon, NIK, NPWP), `ColorInput`, `Textarea`, `Checkbox`, `Switch`, `RadioGroup`, `FileInput`; contoh hidup di `/styleguide` |
+| **Isian** | `CurrencyInput` (Rp, format ribuan), `MaskedInput` (telepon, NIK, NPWP), `ColorInput`, `Textarea`, `Checkbox`, `Switch`, `RadioGroup`, `FileInput`; contoh hidup di `/ui-guideline` |
 | **Kata sandi kedaluwarsa** | Setelah masuk dengan benar, bila kata sandi lebih tua dari 30 hari, layar `/password-expired` meminta kata sandi baru (3 kolom yang sama dengan Profil). Kata sandi baru tidak boleh sama dengan yang sekarang atau 5 sebelumnya; lalu lanjut ke verifikasi dua langkah atau langsung masuk |
 | **Profil** | Data akun, ganti kata sandi (validasi, batas percobaan, tercatat di audit log), pengaturan MFA |
-| **Kerangka** | Sidebar: Dashboard (placeholder) dan bagian Sistem (Panduan, Audit log), bel notifikasi (tandai dibaca), menu akun (Profil, Keluar) |
-| **Referensi** | Halaman `/styleguide` (semua komponen dan token), template email OTP, halaman error statis, aturan tampilan dan kode |
+| **Kerangka** | Sidebar: Dashboard (placeholder) dan bagian Sistem (Audit Logs, UI Guideline), bel notifikasi (tandai dibaca), menu akun (Profil, Keluar) |
+| **Referensi** | Halaman `/ui-guideline` (semua komponen dan token), template email OTP, halaman error statis, aturan tampilan dan kode |
 
-Tidak ada peran/izin dan tidak ada manajemen pengguna (sengaja dikeluarkan). Sidebar berisi Dashboard, Panduan, dan Audit log; Profil dan Keluar ada di menu akun.
+Tidak ada peran/izin dan tidak ada manajemen pengguna (sengaja dikeluarkan). Sidebar berisi Dashboard, Audit Logs, dan UI Guideline; Profil dan Keluar ada di menu akun.
 
 ## Struktur proyek
 
@@ -55,7 +55,7 @@ src/
     title.ts                 useTitle: judul tab "Halaman - <nama aplikasi>"
   auth/session.tsx           siapa yang masuk (me), notifikasi, keluar
   layouts/app-layout.tsx     sidebar, header, menu akun, pengingat MFA  (tambah menu di MENU)
-  pages/                     login, two-factor-challenge, password-expired, dashboard, profile, audit-logs, styleguide, not-found
+  pages/                     login, two-factor-challenge, password-expired, dashboard, profile, audit-logs, ui-guideline, not-found
   components/ui/             komponen dasar: button, input, field, combobox, data-table, dialog, dropdown, date-picker, currency-input,
                              masked-input, color-input, textarea, choice (checkbox/switch/radio), file-input, misc (Card, Alert, Badge, ...)
   components/                bel notifikasi, penanda jaringan, dialog konfirmasi kata sandi (reauth), kolom kata sandi bersama, error boundary
@@ -167,10 +167,10 @@ pembatasan jaringan (VPN/IP).
 7. **Tiruan (opsional):** tambahkan rute di `src/mock/server.ts` supaya halaman baru bisa dicoba tanpa backend; catat endpoint-nya
    di [API.md](docs/API.md).
 
-## Panduan tampilan, token, dan CSS acuan
+## UI Guideline, token, dan CSS acuan
 
 - **`src/index.css`** adalah CSS acuan: token warna (`oklch`), ukuran teks, kalender kompak, dan gaya dasar.
-- **`/styleguide`** (sidebar → Panduan) menampilkan semua komponen, warna, ukuran, dialog, tabel, dan email OTP. Tabelnya berupa contoh CRUD statis (Tambah, Ubah, Hapus lewat dialog form dan konfirmasi hapus) yang bisa disalin untuk halaman baru.
+- **`/ui-guideline`** (sidebar → UI Guideline) menampilkan semua komponen, warna, ukuran, dialog, tabel, dan email OTP. Tabelnya berupa contoh CRUD statis (Tambah, Ubah, Hapus lewat dialog form dan konfirmasi hapus) yang bisa disalin untuk halaman baru.
   Bandingkan layar baru dengannya.
 - **[docs/STANDARDS.md](docs/STANDARDS.md)** memuat aturan Compact UI dan tabel token (ukuran, tabel, tombol, dialog, DatePicker, Combobox).
 
@@ -194,12 +194,12 @@ const { subject, html, text } = renderLoginCodeEmail({
 // kirim lewat pengirim email Anda (nodemailer, Resend, SES, ...): subject, html, dan text sekaligus
 ```
 
-Pratinjaunya tampil di `/styleguide`. Untuk Laravel, versi Blade yang sama ada di `email/blade/` (`login-code.blade.php`,
+Pratinjaunya tampil di `/ui-guideline`. Untuk Laravel, versi Blade yang sama ada di `email/blade/` (`login-code.blade.php`,
 `login-code-text.blade.php`, dan kelas `LoginCode.php.txt`). Aturan OTP sisi server (hash, masa berlaku, batas salah) ada di [docs/API.md](docs/API.md), bagian "Aturan sisi server".
 
 ## Halaman error statis
 
-Pratinjau ketujuhnya (termasuk 503 pemeliharaan) ada di `/styleguide`.
+Pratinjau ketujuhnya (termasuk 503 pemeliharaan) ada di `/ui-guideline`.
 
 `error-pages/` berisi HTML mandiri (tanpa aset) untuk 401, 403, 404, 419, 429, 500, dan 503, untuk disajikan server web atau
 framework saat aplikasi tidak bisa menjawab (pemeliharaan, galat server). Nama, huruf logo, dan warnanya diambil dari `src/lib/brand.ts` dan

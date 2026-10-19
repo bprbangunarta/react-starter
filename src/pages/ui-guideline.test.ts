@@ -8,19 +8,19 @@ const read = (path: string) => readFileSync(new URL(`../../${path}`, import.meta
 describe('style guide', () => {
     it('lists every colour token of src/index.css', () => {
         const tokens = [...read('src/index.css').matchAll(/--color-([a-z-]+):/g)].map((match) => match[1]);
-        const guide = read('src/pages/styleguide.tsx');
+        const guide = read('src/pages/ui-guideline.tsx');
 
         expect(tokens.length).toBeGreaterThan(20);
 
         for (const token of tokens) {
-            expect(guide, `token "${token}" is missing from TOKENS in styleguide.tsx`).toContain(`['${token}', 'bg-${token}'`);
+            expect(guide, `token "${token}" is missing from TOKENS in ui-guideline.tsx`).toContain(`['${token}', 'bg-${token}'`);
         }
     });
 
     it('shows every exported UI component', () => {
         // Building blocks that are used inside other components (shown there) rather than on their own.
         const internal = new Set(['Pagination', 'Popover', 'PopoverTrigger', 'PopoverContent', 'SortHead', 'TooltipProvider']);
-        const guide = read('src/pages/styleguide.tsx');
+        const guide = read('src/pages/ui-guideline.tsx');
         const missing: string[] = [];
 
         for (const file of readdirSync(new URL('../components/ui', import.meta.url)).filter((name) => /\.tsx$/.test(name) && !name.includes('.test.'))) {
@@ -33,6 +33,6 @@ describe('style guide', () => {
             }
         }
 
-        expect(missing, 'UI components without an example in styleguide.tsx').toEqual([]);
+        expect(missing, 'UI components without an example in ui-guideline.tsx').toEqual([]);
     });
 });

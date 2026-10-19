@@ -11,7 +11,7 @@ import TwoFactorChallenge from '@/pages/two-factor-challenge';
 const Dashboard = lazy(() => import('@/pages/dashboard'));
 const AuditLogs = lazy(() => import('@/pages/audit-logs'));
 const Profile = lazy(() => import('@/pages/profile'));
-const Styleguide = lazy(() => import('@/pages/styleguide'));
+const UiGuideline = lazy(() => import('@/pages/ui-guideline'));
 
 /** Signed-in pages only: anyone else is sent to the sign-in page. */
 function RequireAuth() {
@@ -37,7 +37,7 @@ export default function App() {
                             <Route index element={<Dashboard />} />
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/audit-logs" element={<AuditLogs />} />
-                            <Route path="/styleguide" element={<Styleguide />} />
+                            <Route path="/ui-guideline" element={<UiGuideline />} />
                             <Route path="*" element={<NotFound />} />
                         </Route>
                     </Route>

@@ -88,7 +88,7 @@ const diffColumns = (log: LogRow): Column<string>[] => [
 ];
 
 export default function AuditLogsIndex() {
-    useTitle('Audit Log');
+    useTitle('Audit Logs');
     const [selected, setSelected] = useState<LogRow | null>(null);
     const [verifying, setVerifying] = useState(false);
     const [verification, setVerification] = useState<Verification | null>(null);
@@ -197,7 +197,7 @@ export default function AuditLogsIndex() {
     return (
         <>
             <PageHeader
-                title="Audit Log"
+                title="Audit Logs"
                 description="Catatan anti-rusak tentang siapa melakukan apa, kapan, dan dari mana"
                 actions={
                     <div className="flex items-center gap-2">

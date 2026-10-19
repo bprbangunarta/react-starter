@@ -63,6 +63,15 @@ const rules = [
         test: (line) => /\btype=["']?(number|tel)\b/.test(line) || /\btype:\s*['"](number|tel)['"]/.test(line),
         skip: (file) => isTest(file),
     },
+    {
+        name: 'Label menu terlalu panjang: satu atau dua kata, maksimal 15 karakter, tanpa garis miring (nama lengkap ada di judul halaman)',
+        test: (line) => {
+            const label = /\{\s*label:\s*'([^']*)',\s*to:/.exec(line)?.[1];
+
+            return label !== undefined && (label.length > 15 || label.includes('/') || label.trim().split(/\s+/).length > 2);
+        },
+        skip: (file) => !file.endsWith('layouts/menu.ts'),
+    },
     { name: 'Tipe any dilarang', test: (line) => /:\s*any\b|\bas any\b|<any>/.test(line), skip: () => false },
     { name: '@ts-ignore/@ts-nocheck dilarang: perbaiki tipenya', test: (line) => /@ts-(ignore|nocheck)/.test(line), skip: () => false, inComments: true },
     {

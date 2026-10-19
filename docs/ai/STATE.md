@@ -6,8 +6,8 @@ Diperbarui setiap selesai satu unit pekerjaan. Pegangan untuk melanjutkan di ses
 
 ## Yang sudah ada
 
-- **Layar:** login, verifikasi dua langkah, kata sandi kedaluwarsa, Dashboard (placeholder), Profil (data akun, kata sandi, MFA), Audit Log (filter, detail, ekspor CSV, verifikasi rantai), Panduan (`/styleguide`), 404, penanda koneksi, dialog konfirmasi kata sandi (reauth).
-- **Komponen UI** di `src/components/ui`, semuanya punya contoh di Panduan (dijaga tes): Button, Input/Field, CurrencyInput, MaskedInput, ColorInput, Textarea, Checkbox/Switch/RadioGroup, FileInput, Combobox, DatePicker, DataTable (+ paginasi), Dialog, Dropdown, Tabs, Tip, Card (header/body/footer), Alert, Badge.
+- **Layar:** login, verifikasi dua langkah, kata sandi kedaluwarsa, Dashboard (placeholder), Profil (data akun, kata sandi, MFA), Audit Logs (filter, detail, ekspor CSV, verifikasi rantai), UI Guideline (`/ui-guideline`), 404, penanda koneksi, dialog konfirmasi kata sandi (reauth).
+- **Komponen UI** di `src/components/ui`, semuanya punya contoh di UI Guideline (dijaga tes): Button, Input/Field, CurrencyInput, MaskedInput, ColorInput, Textarea, Checkbox/Switch/RadioGroup, FileInput, Combobox, DatePicker, DataTable (+ paginasi), Dialog, Dropdown, Tabs, Tip, Card (header/body/footer), Alert, Badge.
 - **Warna:** satu keluarga status (`success`/`warning`/`info`/`danger` × base/soft/line/ink), kontras WCAG dijaga tes, toast memakai token yang sama.
 - **Merek:** `src/lib/brand.ts` + `npm run rebrand` (nama, warna, favicon, email, halaman error). Anti-crawl lewat `ALLOW_INDEXING` (bawaan tertutup).
 - **Produksi:** halaman dimuat per rute (bundel awal ±130 kB gzip), Docker multi-tahap + nginx (gzip, CSP, header keamanan), CI GitHub Actions.

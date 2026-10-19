@@ -21,7 +21,7 @@ konfigurasi di `eslint.config.js`), dan pemeriksa aturan rumah `npm run standard
 
 - **Kode berbahasa Inggris:** nama berkas, komponen, fungsi, variabel, tipe, kolom data, URL/endpoint, komentar, pesan commit.
 - **Hanya teks layar berbahasa Indonesia:** label, judul, galat, toast, isi email. Pesan validasi backend sudah Indonesia; jangan ditulis ulang.
-- URL dan endpoint berbahasa Inggris tetapi **sepadan dengan judul layar** (layar "Audit Log" → `/audit-logs`).
+- URL dan endpoint berbahasa Inggris tetapi **sepadan dengan judul layar** (layar "Audit Logs" → `/audit-logs`).
 - `strict` aktif. **Tanpa `any`, `as any`, `@ts-ignore`, `@ts-nocheck`** **[mesin]**; pakai `unknown` lalu persempit. Tipe respons API didefinisikan dan dipakai ulang.
 - Ekspor bawaan hanya untuk halaman, layout, dan `App` **[mesin]**; lainnya ekspor bernama. Tanpa `console.log`/`debugger` **[mesin]** (`console.error` boleh).
 - Halaman di `src/pages`, komponen bersama di `src/components`, komponen dasar di `src/components/ui`, logika bersama di `src/lib`.
@@ -59,8 +59,8 @@ konfigurasi di `eslint.config.js`), dan pemeriksa aturan rumah `npm run standard
 <a id="tampilan"></a>
 ## 3. Tampilan (Compact UI)
 
-Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acuan hidupnya adalah halaman `/styleguide`
-(sidebar → Panduan): tampilan baru harus terlihat sama. Perubahan pola memperbaiki komponen bersama dan diterapkan ke semua halaman.
+Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acuan hidupnya adalah halaman `/ui-guideline`
+(sidebar → UI Guideline): tampilan baru harus terlihat sama. Perubahan pola memperbaiki komponen bersama dan diterapkan ke semua halaman.
 
 - **Pakai ulang** `src/components/ui` (Button, Input, Field, Combobox, DatePicker, Modal/ConfirmDialog, Dropdown, Tabs, Tip, Card,
   EmptyState, ErrorState, Skeleton, PageHeader). Jangan pakai kontrol native atau berukuran lain.
@@ -88,10 +88,10 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
 - **Kartu (header, body, footer)** disusun seperti dialog: `CardHeader` (judul `text-sm font-semibold`, keterangan opsional, aksi/badge di kanan,
   garis bawah), `CardBody` (isi, `p-3`), dan `CardFooter` (garis atas) **hanya bila kartu punya tombol** kirim/batal. Kartu tanpa tombol tidak punya footer.
   Tombol di footer: batal paling kiri, konfirmasi paling kanan, **teks saja**; hint boleh di kiri. Jangan menaruh tombol Simpan di dalam body
-  atau membuat judul kartu dengan `<h2>` buatan sendiri. Contoh: kartu Kata sandi di Profil dan bagian "Kartu" di `/styleguide`.
+  atau membuat judul kartu dengan `<h2>` buatan sendiri. Contoh: kartu Kata sandi di Profil dan bagian "Kartu" di `/ui-guideline`.
 - **Form:** grid 2–4 kolom dalam `Card` per seksi (judul `text-sm font-semibold`), `Field` dengan label `text-xs`, galat `text-xs text-danger`
   di bawah isian, tanda `*` merah untuk wajib.
-- **Jenis isian** (semua ada contohnya di `/styleguide`, bagian Isian):
+- **Jenis isian** (semua ada contohnya di `/ui-guideline`, bagian Isian):
   - **Uang dan angka besar:** `CurrencyInput` (teks, hanya angka, format `1.000.000` otomatis, awalan `Rp`; `prefix={null}` untuk angka biasa).
     Nilainya **number** (`1000000`); ke API dikirim angka itu, tidak pernah teks berformat. `type="number"` hanya untuk angka kecil tanpa format.
   - **Format tetap** (telepon, NIK, NPWP, kode): `MaskedInput` dengan `mask` dari `lib/mask.ts` (`9` angka, `a` huruf, `*` huruf/angka, `h` hex;
@@ -188,8 +188,8 @@ Vitest + Testing Library (jsdom); berkas tes `*.test.ts(x)` diletakkan di sebela
 - **Wajib dites:** logika murni (`lib/`), komponen isian yang punya perilaku (format, mask, kursor), perilaku aksesibilitas yang mudah rusak (label terhubung ke isian,
   `aria-describedby`), dan alur server tiruan yang mengandung aturan (kata sandi kedaluwarsa, riwayat kata sandi).
 - **Cara mengetes komponen:** lewat perilaku yang terlihat pengguna (`userEvent.type`, `getByLabelText`, `toHaveValue`), bukan detail implementasi (state, nama kelas).
-- **Panduan harus lengkap:** tes `pages/styleguide.test.ts` gagal bila ada token warna di `src/index.css` yang tidak ada di daftar token Panduan. Tes yang sama juga gagal bila ada komponen di `components/ui` yang
-  tidak punya contoh di `/styleguide` (kecuali blok bangunan internal yang tercantum di tes).
+- **UI Guideline harus lengkap:** tes `pages/ui-guideline.test.ts` gagal bila ada token warna di `src/index.css` yang tidak ada di daftar token UI Guideline. Tes yang sama juga gagal bila ada komponen di `components/ui` yang
+  tidak punya contoh di `/ui-guideline` (kecuali blok bangunan internal yang tercantum di tes).
 - Jangan membuat tes yang bergantung pada waktu nyata atau jaringan; tes menyentuh `localStorage` hanya lewat server tiruan (dibersihkan otomatis tiap tes).
 
 <a id="selesai"></a>

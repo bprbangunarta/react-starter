@@ -1,9 +1,10 @@
-import { ChevronDown, LayoutDashboard, LogOut, Menu, Palette, ScrollText, ShieldAlert, UserRound, X } from 'lucide-react';
+import { ChevronDown, LogOut, Menu, ShieldAlert, UserRound, X } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Dialog } from 'radix-ui';
-import { Suspense, useEffect, useState } from 'react';
-import { Link, NavLink, Outlet, useNavigate } from 'react-router';
+import { Suspense, useEffect, useId, useState } from 'react';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 import { useSession } from '@/auth/session';
+import { Avatar } from '@/components/avatar';
 import { NetworkStatus } from '@/components/network-status';
 import { NotificationBell } from '@/components/notification-bell';
 import { ReauthDialog } from '@/components/reauth-dialog';
@@ -12,20 +13,10 @@ import { overlayClass, useRestoreFocus } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/misc';
 import { DropdownContent, DropdownItem, DropdownLabel, DropdownMenu, DropdownSeparator, DropdownTrigger } from '@/components/ui/dropdown';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { MENU } from '@/layouts/menu';
+import type { MenuLinkItem } from '@/layouts/menu';
 import { APP_INITIAL, APP_NAME } from '@/lib/brand';
 import { cn } from '@/lib/utils';
-
-/** The sidebar. Add an entry here for every page the product gets. */
-const MENU: { label?: string; items: { label: string; to: string; icon: LucideIcon; end?: boolean }[] }[] = [
-    { items: [{ label: 'Dashboard', to: '/', icon: LayoutDashboard, end: true }] },
-    {
-        label: 'Sistem',
-        items: [
-            { label: 'Panduan', to: '/styleguide', icon: Palette },
-            { label: 'Audit log', to: '/audit-logs', icon: ScrollText },
-        ],
-    },
-];
 
 function Brand({ onNavigate }: { onNavigate?: () => void }) {
     return (
@@ -36,29 +27,72 @@ function Brand({ onNavigate }: { onNavigate?: () => void }) {
     );
 }
 
+const rowClass =
+    'flex h-8 w-full items-center gap-2 rounded-md px-2.5 text-sm font-medium text-muted transition-colors hover:bg-canvas hover:text-ink [&_svg]:size-4';
+
+export function MenuLink({ item, onNavigate }: { item: MenuLinkItem; onNavigate: () => void }) {
+    return (
+        <NavLink
+            to={item.to}
+            end={item.end}
+            onClick={onNavigate}
+            className={({ isActive }) =>
+                cn(rowClass, !item.icon && 'px-3', isActive && 'bg-primary-soft text-primary hover:bg-primary-soft hover:text-primary')
+            }
+        >
+            {item.icon ? <item.icon /> : <span aria-hidden className="size-1 shrink-0 rounded-full bg-current opacity-60" />}
+            {item.label}
+        </NavLink>
+    );
+}
+
+/** A parent entry with its submenu. It is open while one of its pages is shown, until the person closes it; otherwise closed until opened. */
+export function SubMenu({ label, icon: Icon, children, onNavigate }: { label: string; icon: LucideIcon; children: MenuLinkItem[]; onNavigate: () => void }) {
+    const { pathname } = useLocation();
+    const id = useId();
+    const holdsCurrentPage = children.some((child) => pathname === child.to || pathname.startsWith(`${child.to}/`));
+    const [toggled, setToggled] = useState<boolean | null>(null);
+    const open = toggled ?? holdsCurrentPage;
+
+    return (
+        <div className="flex flex-col gap-0.5">
+            <button
+                type="button"
+                aria-expanded={open}
+                aria-controls={id}
+                onClick={() => setToggled(!open)}
+                className={cn(rowClass, 'cursor-pointer', holdsCurrentPage && 'text-ink')}
+            >
+                <Icon />
+                {label}
+                <ChevronDown className={cn('ml-auto transition-transform', open && 'rotate-180')} />
+            </button>
+            {open && (
+                <div id={id} className="ml-[1.125rem] flex flex-col gap-0.5 border-l border-line">
+                    {children.map((child) => (
+                        <MenuLink key={child.to} item={child} onNavigate={onNavigate} />
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
 function Sidebar({ onNavigate }: { onNavigate: () => void }) {
     return (
         <nav className="flex flex-col gap-0.5 overflow-y-auto p-2" aria-label="Menu utama">
             {MENU.map((section, index) => (
                 <div key={section.label ?? index} className="flex flex-col gap-0.5">
                     {section.label && <p className="mt-2 px-2.5 pb-0.5 text-2xs font-semibold tracking-wide text-muted/80 uppercase">{section.label}</p>}
-                    {section.items.map((item) => (
-                        <NavLink
-                            key={item.to}
-                            to={item.to}
-                            end={item.end}
-                            onClick={onNavigate}
-                            className={({ isActive }) =>
-                                cn(
-                                    'flex h-8 items-center gap-2 rounded-md px-2.5 text-sm font-medium text-muted transition-colors hover:bg-canvas hover:text-ink [&_svg]:size-4',
-                                    isActive && 'bg-primary-soft text-primary hover:bg-primary-soft hover:text-primary',
-                                )
-                            }
-                        >
-                            <item.icon />
-                            {item.label}
-                        </NavLink>
-                    ))}
+                    {section.items.map((item) =>
+                        'children' in item ? (
+                            <SubMenu key={item.label} label={item.label} icon={item.icon} onNavigate={onNavigate}>
+                                {item.children}
+                            </SubMenu>
+                        ) : (
+                            <MenuLink key={item.to} item={item} onNavigate={onNavigate} />
+                        ),
+                    )}
                 </div>
             ))}
         </nav>
@@ -134,9 +168,7 @@ export default function AppLayout() {
                             <DropdownMenu>
                                 <DropdownTrigger asChild>
                                     <button type="button" className="flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1 hover:bg-canvas">
-                                        <span className="flex size-6 items-center justify-center rounded-full bg-primary-soft text-xs font-semibold text-primary">
-                                            {me.user.name.charAt(0).toUpperCase()}
-                                        </span>
+                                        <Avatar name={me.user.name} src={me.user.avatar_url} className="size-6 text-xs" />
                                         <span className="hidden text-sm font-medium sm:block">{me.user.name}</span>
                                         <ChevronDown className="size-3.5 text-muted" />
                                     </button>
