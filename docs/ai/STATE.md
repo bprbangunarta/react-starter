@@ -6,7 +6,7 @@ Diperbarui setiap selesai satu unit pekerjaan. Pegangan untuk melanjutkan di ses
 
 ## Yang sudah ada
 
-- **Layar:** login, verifikasi dua langkah, kata sandi kedaluwarsa, Dashboard (placeholder), Profil (data akun, foto profil, kata sandi, MFA), Audit Logs (filter, detail, ekspor CSV, verifikasi rantai), UI Guideline (`/ui-guideline`), 404, penanda koneksi, dialog konfirmasi kata sandi (reauth).
+- **Layar:** login, verifikasi dua langkah, kata sandi kedaluwarsa, Dashboard (placeholder), Profil (data akun, foto profil, kata sandi, MFA), Audit Logs (filter, detail, ekspor CSV, verifikasi rantai), UI Guideline (`/ui-guideline`), File Manage (`/file-manage`, contoh pengelola berkas dengan data di memori), 404, penanda koneksi, dialog konfirmasi kata sandi (reauth).
 - **Komponen UI** di `src/components/ui`, semuanya punya contoh di UI Guideline (dijaga tes): Button, Input/InputGroup/Field, CurrencyInput, MaskedInput, FilteredInput, charts (Donut/Column/Bar), ColorInput, Textarea, Checkbox/Switch/RadioGroup, FileInput, Combobox, MultiCombobox, DatePicker, DateRangePicker, TimePicker, TagInput, Slider, Progress, Stepper, Accordion, Breadcrumb, Drawer, DataTable (+ paginasi), Dialog, Dropdown, Tabs, Tip, Card (header/body/footer), Alert, Badge.
 - **Sesi dan profil:** `IdleTimeout` (peringatan lalu keluar otomatis), foto profil (unggah/ganti/hapus), kata sandi kedaluwarsa. **Menu:** `layouts/menu.ts` (satu daftar, submenu, label singkat, tes nama menu).
 - **Warna:** satu keluarga status (`success`/`warning`/`info`/`danger` × base/soft/line/ink), kontras WCAG dijaga tes, toast memakai token yang sama.

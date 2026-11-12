@@ -1,4 +1,4 @@
-import { LayoutDashboard, Palette, ScrollText } from 'lucide-react';
+import { FolderOpen, LayoutDashboard, Palette, ScrollText } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 export type MenuLinkItem = {
@@ -28,6 +28,7 @@ export const MENU: { label?: string; items: MenuItem[] }[] = [
         items: [
             { label: 'Audit Logs', to: '/audit-logs', icon: ScrollText },
             { label: 'UI Guideline', to: '/ui-guideline', icon: Palette },
+            { label: 'File Manage', to: '/file-manage', icon: FolderOpen },
         ],
     },
 ];

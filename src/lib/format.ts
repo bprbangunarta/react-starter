@@ -53,3 +53,25 @@ const rupiahFormat = new Intl.NumberFormat('id-ID', {
 export function rupiah(value: number | string | null | undefined): string {
     return value === null || value === undefined || value === '' ? '–' : rupiahFormat.format(Number(value));
 }
+
+/** File size for people: "512 B", "48 KB", "2,4 MB" (decimal comma, one decimal from MB up). */
+export function formatBytes(bytes: number): string {
+    if (bytes < 1024) {
+        return `${bytes} B`;
+    }
+
+    if (bytes < 1024 * 1024) {
+        return `${Math.round(bytes / 1024)} KB`;
+    }
+
+    const units = ['MB', 'GB', 'TB'];
+    let value = bytes / (1024 * 1024);
+    let unit = 0;
+
+    while (value >= 1024 && unit < units.length - 1) {
+        value /= 1024;
+        unit += 1;
+    }
+
+    return `${value.toFixed(1).replace('.', ',')} ${units[unit]}`;
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatDate, formatDateTime, formatNumber, formatRelative, rupiah } from '@/lib/format';
+import { formatBytes, formatDate, formatDateTime, formatNumber, formatRelative, rupiah } from '@/lib/format';
 
 describe('format', () => {
     it('formats whole rupiah with Indonesian separators', () => {
@@ -36,5 +36,14 @@ describe('format', () => {
         expect(formatDateTime('salah')).toBe('–');
         expect(formatDate(new Date('tidak jelas'))).toBe('–');
         expect(formatRelative('salah')).toBe('–');
+    });
+});
+
+describe('formatBytes', () => {
+    it('writes sizes the way people read them', () => {
+        expect(formatBytes(512)).toBe('512 B');
+        expect(formatBytes(48 * 1024)).toBe('48 KB');
+        expect(formatBytes(2.4 * 1024 * 1024)).toBe('2,4 MB');
+        expect(formatBytes(1536 * 1024 * 1024)).toBe('1,5 GB');
     });
 });

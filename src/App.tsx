@@ -13,6 +13,7 @@ const Dashboard = lazy(() => import('@/pages/dashboard'));
 const AuditLogs = lazy(() => import('@/pages/audit-logs'));
 const Profile = lazy(() => import('@/pages/profile'));
 const UiGuideline = lazy(() => import('@/pages/ui-guideline'));
+const FileManage = lazy(() => import('@/pages/file-manage'));
 
 /** Signed-in pages only: anyone else is sent to the sign-in page. */
 function RequireAuth() {
@@ -39,6 +40,7 @@ export default function App() {
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/audit-logs" element={<AuditLogs />} />
                             <Route path="/ui-guideline" element={<UiGuideline />} />
+                            <Route path="/file-manage" element={<FileManage />} />
                         </Route>
                     </Route>
                     <Route path="/ui-guideline/errors/:status" element={<ErrorPreview />} />

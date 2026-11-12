@@ -48,7 +48,7 @@ describe('sidebar', () => {
     it('follows the order work is done in, with short labels', () => {
         renderLayout();
 
-        expect(menu()).toEqual(['Dashboard', 'Sistem', 'Audit Logs', 'UI Guideline']);
+        expect(menu()).toEqual(['Dashboard', 'Sistem', 'Audit Logs', 'UI Guideline', 'File Manage']);
     });
 
     it('marks the page being shown', () => {
