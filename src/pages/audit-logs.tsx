@@ -2,7 +2,7 @@ import { AlertTriangle, CheckCircle2, Download, Eye, ScrollText, ShieldCheck, X 
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
-import { DatePicker } from '@/components/ui/date-picker';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { DialogBody, Modal } from '@/components/ui/dialog';
 import { FilterBar, SearchInput } from '@/components/ui/filter-bar';
 import { DataTable } from '@/components/ui/data-table';
@@ -241,22 +241,14 @@ export default function AuditLogsIndex() {
                     <FilterBar
                         search={<SearchInput value={search} onChange={onSearch} placeholder="Cari pengguna, kejadian, data, IP…" label="Cari audit log" />}
                     >
-                        <div className="w-full sm:w-36">
-                            <DatePicker
-                                value={filters.from ?? ''}
+                        <div className="w-full sm:w-60">
+                            <DateRangePicker
+                                value={{ from: filters.from ?? '', to: filters.to ?? '' }}
                                 min={MIN_DATE}
-                                placeholder="Dari"
-                                aria-label="Tanggal dari"
-                                onChange={(v) => visit({ from: iso(v) })}
-                            />
-                        </div>
-                        <div className="w-full sm:w-36">
-                            <DatePicker
-                                value={filters.to ?? ''}
-                                min={MIN_DATE}
-                                placeholder="Sampai"
-                                aria-label="Tanggal sampai"
-                                onChange={(v) => visit({ to: iso(v) })}
+                                clearable
+                                placeholder="Rentang tanggal"
+                                aria-label="Rentang tanggal"
+                                onChange={(span) => visit({ from: iso(span.from), to: iso(span.to) })}
                             />
                         </div>
                         <Combobox
