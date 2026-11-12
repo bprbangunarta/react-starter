@@ -9,7 +9,6 @@ Hapus barisnya bila sudah dikerjakan dan pindahkan ringkasannya ke tabel "Prakti
 |---|---|---|---|
 | Memilih layanan pemantauan galat | Butuh layanan pihak ketiga dan kebijakan data; satu pintu keluarnya sudah ada (`reportError`, `setErrorReporter` di `src/lib/report.ts`) | Pasang Sentry atau sejenisnya lewat `setErrorReporter`; jangan kirim rahasia | T |
 | Pemecahan vendor chunk | Bundel awal 419 kB masih di bawah peringatan | Pisahkan React/Radix/date-fns di `build.rolldownOptions.output` bila bertambah | R |
-| Mode gelap | Token warna belum punya varian gelap | Duplikasi tangga token di `@media (prefers-color-scheme: dark)`; tes kontras sudah ada | R |
 | Multi-bahasa (i18n) | Aplikasi satu bahasa (Indonesia); teks layar masih literal | Pindahkan teks ke kamus bila butuh bahasa kedua | R |
 | PWA / offline | Dasbor admin butuh data langsung; offline tidak bermakna | Hanya bila ada kebutuhan khusus (instal di perangkat) | R |
 | Regresi visual (tangkapan layar Playwright) | `/ui-guideline` sudah jadi acuan hidup; Playwright sudah ada untuk tes alur | Bandingkan tangkapan layar UI Guideline di CI (`toHaveScreenshot`) | R |

@@ -40,6 +40,9 @@ pekerjaan tertunda di [BACKLOG](BACKLOG.md), kondisi terkini di [STATE](STATE.md
 
 ## Keputusan teknis yang tidak terlihat dari kode
 
+- **Lisensi MIT** (pemilik, 2026-11-13), pemegang hak cipta `bprbangunarta`. Rilis lama v1.0.0 dan v1.0.1 dihapus dan v1.0.0 dirilis ulang dari awal atas permintaan pemilik; jangan membuat v1.0.1 untuk isi yang sama.
+- **Tema gelap** memakai nama token yang sama; pilihan tema disimpan di `localStorage` (satu pengecualian aturan penyimpanan, bukan rahasia). Teks di atas isian primary memakai `text-on-primary`, bukan `text-white`.
+
 - **`overrides` minimatch:** `package.json` memaksa `minimatch ^11.0.8` hanya untuk `@typescript-eslint/typescript-estree` (peringatan `npm audit` moderat); jangan dijadikan override global, ESLint sendiri butuh minimatch lama. Hapus setelah `typescript-eslint` merilis versi yang memperbaikinya.
 - **ESLint 9, bukan 10:** `eslint-plugin-jsx-a11y` belum mendukung ESLint 10. Naikkan hanya bila plugin itu sudah mendukung.
 - Aturan ESLint `react-hooks/set-state-in-effect` dan `jsx-a11y/no-autofocus` sengaja dimatikan (alasan ada di `eslint.config.js`); jangan diaktifkan ulang tanpa alasan.
@@ -48,6 +51,8 @@ pekerjaan tertunda di [BACKLOG](BACKLOG.md), kondisi terkini di [STATE](STATE.md
 - Mock menyimpan kata sandi sebagai teks **hanya untuk demo**; backend asli wajib hash.
 
 ## Jebakan yang sudah diketahui
+
+- Skrip yang merapikan impor (pernah dipakai untuk membuang impor tak terpakai) menghapus impor efek samping seperti `import 'react-day-picker/style.css'`; akibatnya kalender tampil tanpa gaya. Periksa `git diff` untuk baris `-import '` setelah merapikan impor dengan skrip.
 
 - Vite 8 butuh Node 20.19+ atau 22.12+. `tsconfig.json` hanya memuat tipe `vite/client`: tes yang membaca berkas memakai `// @vitest-environment node` dan `/// <reference types="node" />`.
 - Dialog yang dibuka lewat state (tanpa `Dialog.Trigger` Radix) kehilangan pengembalian fokus: selalu pakai `useRestoreFocus` (sudah di `Modal`, `ConfirmDialog`, laci). Uji fokus di browser harus memakai `activeElement`, bukan event `focus` (jendela pane tidak fokus OS).

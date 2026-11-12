@@ -24,7 +24,7 @@ export function Checkbox({ label, description, className, ...props }: React.Comp
         <div className={cn('flex items-start gap-2', className)}>
             <C.Root id={id} className={cn(box, 'mt-px rounded')} {...props}>
                 <C.Indicator>
-                    <Check className="size-3 text-white" strokeWidth={3} />
+                    <Check className="size-3 text-on-primary" strokeWidth={3} />
                 </C.Indicator>
             </C.Root>
             <Label htmlFor={id} label={label} description={description} />
@@ -64,7 +64,7 @@ export function RadioGroup({ options, className, ...props }: React.ComponentProp
                 return (
                     <div key={option.value} className="flex items-start gap-2">
                         <R.Item id={id} value={option.value} disabled={option.disabled} className={cn(box, 'mt-px rounded-full')}>
-                            <R.Indicator className="size-1.5 rounded-full bg-white" />
+                            <R.Indicator className="size-1.5 rounded-full bg-on-primary" />
                         </R.Item>
                         <Label htmlFor={id} label={option.label} description={option.description} />
                     </div>

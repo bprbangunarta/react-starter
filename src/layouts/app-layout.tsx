@@ -8,6 +8,7 @@ import { Avatar } from '@/components/avatar';
 import { IdleTimeout } from '@/components/idle-timeout';
 import { NetworkStatus } from '@/components/network-status';
 import { NotificationBell } from '@/components/notification-bell';
+import { ThemeMenu } from '@/components/theme-menu';
 import { ReauthDialog } from '@/components/reauth-dialog';
 import { Button } from '@/components/ui/button';
 import { overlayClass, useRestoreFocus } from '@/components/ui/dialog';
@@ -22,7 +23,7 @@ import { cn } from '@/lib/utils';
 function Brand({ onNavigate }: { onNavigate?: () => void }) {
     return (
         <Link to="/" onClick={onNavigate} className="flex items-center gap-2 text-sm font-semibold">
-            <span className="flex size-6 items-center justify-center rounded bg-primary text-xs font-bold text-white">{APP_INITIAL}</span>
+            <span className="flex size-6 items-center justify-center rounded bg-primary text-xs font-bold text-on-primary">{APP_INITIAL}</span>
             {APP_NAME}
         </Link>
     );
@@ -166,6 +167,7 @@ export default function AppLayout() {
                         </Button>
                         <div className="hidden lg:block" />
                         <div className="flex items-center gap-1">
+                            <ThemeMenu />
                             <NotificationBell />
                             <DropdownMenu>
                                 <DropdownTrigger asChild>

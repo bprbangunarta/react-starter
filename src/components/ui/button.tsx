@@ -10,10 +10,10 @@ export const buttonVariants = cva(
         variants: {
             variant: {
                 // All variants share a 1px border box (transparent when invisible) so neighbouring buttons match to the pixel.
-                primary: 'border border-transparent bg-primary text-white hover:bg-primary-hover',
+                primary: 'border border-transparent bg-primary text-on-primary hover:bg-primary-hover',
                 outline: 'border border-line bg-surface text-ink hover:bg-canvas',
                 ghost: 'border border-transparent text-muted hover:bg-canvas hover:text-ink',
-                danger: 'border border-transparent bg-danger text-white hover:bg-danger/90',
+                danger: 'border border-transparent bg-danger text-on-primary hover:bg-danger/90',
             },
             size: {
                 default: 'h-8 px-3',

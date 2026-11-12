@@ -4,6 +4,7 @@ import { CalendarRange } from 'lucide-react';
 import { useState } from 'react';
 import { DayPicker } from 'react-day-picker';
 import type { DateRange } from 'react-day-picker';
+import 'react-day-picker/style.css';
 import { ClearButton } from '@/components/ui/clear-button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { controlClass } from '@/components/ui/input';

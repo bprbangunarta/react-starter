@@ -23,7 +23,7 @@ export function Stepper({ steps, current, 'aria-label': ariaLabel = 'Langkah' }:
                             <span
                                 className={cn(
                                     'flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-medium',
-                                    done && 'border-primary bg-primary text-white',
+                                    done && 'border-primary bg-primary text-on-primary',
                                     active && 'border-primary bg-primary-soft text-primary',
                                     !done && !active && 'border-line bg-surface text-muted',
                                 )}

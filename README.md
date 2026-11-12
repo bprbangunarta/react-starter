@@ -36,6 +36,7 @@ Masuk dengan **`admin` / `password`**. Untuk mencoba kata sandi kedaluwarsa, mas
 | **Isian** | `CurrencyInput` (Rp, format ribuan), `MaskedInput` (telepon, NIK, NPWP), `FilteredInput` (huruf dan karakter terbatas), `InputGroup` (isian + tombol di sampingnya), `ColorInput`, `Textarea` (penghitung di label), `Checkbox`, `Switch`, `RadioGroup`, `Combobox`, `MultiCombobox`, `DatePicker`, `DateRangePicker`, `TimePicker`, `TagInput`, `Slider`, `FileInput`; contoh hidup di `/ui-guideline` |
 | **Unggah berkas** | `FileUploader`: dropzone dengan antrean, dua unggahan serentak, progres per berkas, batalkan, coba lagi; `http.upload` (XHR, progres dan pembatalan) |
 | **Navigasi dan umpan balik** | `Breadcrumb`, `Stepper`, `Progress`, `Accordion`, `Drawer`, `Tabs`, `Dropdown`, `Tooltip`, toast; gerak halus yang mati bila `prefers-reduced-motion` |
+| **Tema** | Terang dan gelap (token yang sama, kontras dites di keduanya); bawaannya mengikuti sistem, pilihan lewat tombol Tema di header disimpan di peramban dan diterapkan sebelum halaman tergambar tanpa kedip |
 | **File Manage** | Halaman contoh pengelola berkas (`/file-manage`): folder, tampilan kotak atau daftar, unggah, ubah nama, hapus, rincian di laci (data demo di memori) |
 | **Kata sandi kedaluwarsa** | Setelah masuk dengan benar, bila kata sandi lebih tua dari 30 hari, layar `/password-expired` meminta kata sandi baru (3 kolom yang sama dengan Profil). Kata sandi baru tidak boleh sama dengan yang sekarang atau 5 sebelumnya; lalu lanjut ke verifikasi dua langkah atau langsung masuk |
 | **Profil** | Data akun, foto profil (unggah, ganti, hapus), ganti kata sandi (validasi, batas percobaan, tercatat di audit log), pengaturan MFA |
@@ -257,7 +258,7 @@ git tag -a vX.Y.Z -m "vX.Y.Z" && git push && git push --tags
 gh release create vX.Y.Z --title "vX.Y.Z" --notes-file <(sed -n '/^## \[X.Y.Z\]/,/^## \[/p' CHANGELOG.md | sed '$d')
 ```
 
-Proyek ini `private` dan berlisensi `UNLICENSED` (internal); ubah `license` di `package.json` bila akan dibuka.
+Berlisensi MIT ([LICENSE](LICENSE)). `private: true` di `package.json` hanya mencegah publikasi tidak sengaja ke npm.
 
 ## Pemecahan masalah
 

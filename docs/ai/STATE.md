@@ -2,7 +2,7 @@
 
 Diperbarui setiap selesai satu unit pekerjaan. Pegangan untuk melanjutkan di sesi baru; keputusan jangka panjang ada di [MEMORY](MEMORY.md), pekerjaan tertunda di [BACKLOG](BACKLOG.md).
 
-**Diperbarui:** 2026-11-13 (rilis v1.0.1) · **Cabang:** `main` · **Verifikasi terakhir:** `npm run check` lolos (tsc, ESLint, Prettier, pemeriksa standar, 223 tes Vitest), `npm run build` lolos, CI GitHub Actions hijau, 0 kerentanan `npm audit`. Audit dialog dan lapisan mengambang (dialog, laci, popover, dropdown, tooltip: peran, nama, Esc, fokus kembali, klik luar, layar pendek, urutan lapisan) lolos. Audit penutup sebelumnya: 5 rute × 3 lebar layar (375/768/822) tanpa luapan, tanpa kontrol tanpa nama, tanpa id ganda; langkah di README (melepas mock, rebrand) disimulasikan di salinan dan lolos.
+**Diperbarui:** 2026-11-13 (rilis v1.0.0, diulang dari awal) · **Cabang:** `main` · **Verifikasi terakhir:** `npm run check` lolos (tsc, ESLint, Prettier, pemeriksa standar, 253 tes Vitest), `npm run build` lolos, CI GitHub Actions hijau, 0 kerentanan `npm audit`. Audit dialog dan lapisan mengambang (dialog, laci, popover, dropdown, tooltip: peran, nama, Esc, fokus kembali, klik luar, layar pendek, urutan lapisan) lolos. Audit penutup sebelumnya: 5 rute × 3 lebar layar (375/768/822) tanpa luapan, tanpa kontrol tanpa nama, tanpa id ganda; langkah di README (melepas mock, rebrand) disimulasikan di salinan dan lolos.
 
 ## Yang sudah ada
 
@@ -17,10 +17,15 @@ Diperbarui setiap selesai satu unit pekerjaan. Pegangan untuk melanjutkan di ses
 - **Server tiruan** `src/mock/` lengkap sesuai `docs/API.md`; akun demo `admin` dan `kadaluarsa` (password `password`).
 - **Dokumen:** `README.md`, `AGENTS.md`, `CLAUDE.md`, `docs/STANDARDS.md`, `docs/API.md`, `docs/ai/*`.
 
-## Verifikasi pascarilis v1.0.0 (v1.0.1)
+## Verifikasi sebelum rilis
 
 Diperiksa dengan Docker (image dibuat, `HEALTHCHECK` healthy, unggahan 5 MB lolos dan 9 MB 413, tanpa pelanggaran CSP), ukuran 1280/768/375px pada halaman utama dan dialog/laci/kalender baru, papan ketik (Playwright), dan tiga mesin peramban (Chromium, Firefox, WebKit).
-Menemukan satu bug nyata: `Combobox` tanpa kolom cari tidak bisa dioperasikan dengan papan ketik (diperbaiki). Docker Desktop tidak berjalan di awal; saya menyalakannya untuk uji ini.
+Menemukan dua bug nyata: `Combobox` tanpa kolom cari tidak bisa dioperasikan dengan papan ketik, dan `DateRangePicker` tampil tanpa gaya di Audit Logs karena skrip perapi impor menghapus `import 'react-day-picker/style.css'` (diperbaiki; pemeriksa standar kini menjaganya). Docker Desktop tidak berjalan di awal; saya menyalakannya untuk uji ini.
+
+## Tema gelap, lisensi, rilis ulang (2026-11-13)
+
+Tema gelap (token `--color-*` bernilai gelap di `index.css`, `lib/theme.ts`, `public/theme-init.js`, `ThemeMenu`, `on-primary` menggantikan `text-white`), lisensi MIT (`LICENSE`), PR Dependabot diselesaikan (versi Actions dan nginx 1.31 sudah diterapkan).
+Rilis v1.0.0 dan v1.0.1 lama dihapus (rilis dan tag) atas permintaan pemilik, lalu v1.0.0 dirilis ulang dari awal dengan `CHANGELOG.md` tunggal.
 
 ## Rilis v1.0.0 (2026-11-13)
 

@@ -30,7 +30,7 @@ function Column({ label, items, current, onPick }: { label: string; items: numbe
                         onClick={() => onPick(n)}
                         className={cn(
                             'h-7 w-full cursor-pointer rounded text-sm hover:bg-canvas focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none',
-                            n === current && 'bg-primary text-white hover:bg-primary',
+                            n === current && 'bg-primary text-on-primary hover:bg-primary',
                         )}
                     >
                         {pad(n)}

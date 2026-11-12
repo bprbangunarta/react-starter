@@ -174,6 +174,7 @@ Ganti warna utama dan merek lewat `npm run rebrand` (lihat README).
 | `--font-sans` | Instrument Sans, lalu font sistem | seluruh teks |
 | `--color-primary` / `-hover` / `-soft` | `oklch(0.45 0.16 265)` / `oklch(0.4 0.16 265)` / `oklch(0.96 0.02 265)` | tombol utama, tautan, menu aktif, fokus / disorot / latar lembut (menu aktif, area tarik berkas) |
 | `--color-surface` | `#ffffff` | kartu, sidebar, header, dialog, dropdown |
+| `--color-on-primary` | `#ffffff` | teks dan ikon di atas isian primary atau danger (tombol, centang, lencana): **bukan** `text-white` |
 | `--color-canvas` | `oklch(0.975 0.003 260)` | latar halaman, header tabel, hover |
 | `--color-line` | `oklch(0.92 0.006 260)` | semua garis dan batas |
 | `--color-ink` / `--color-muted` | `oklch(0.24 0.02 265)` / `oklch(0.55 0.02 265)` | teks utama / label, hint, header tabel |
@@ -181,6 +182,15 @@ Ganti warna utama dan merek lewat `npm run rebrand` (lihat README).
 | `--color-{success,warning,info,danger}` + `-soft` / `-line` / `-ink` | tangga seragam: soft L 0.97, line L 0.88, ink L 0.42–0.45; hue 155 / 80 / 250 / 27 | status: badge, `Alert`, toast, indikator jaringan |
 | `--color-chart-1` … `-5` | lima rona berbobot setara, tiap warnanya ≥ 3:1 terhadap `surface` | seri grafik (tanpa arti status) |
 | `--text-2xs` / `--text-xs` / `--text-sm` | `0.6875rem` / `0.75rem` / `0.8125rem` | badge, waktu, label seksi, penghitung / label dan hint / isi, sel tabel, tombol |
+
+**Tema gelap.** Nama token sama; nilai gelapnya ada di `index.css` (blok `:root[data-theme='dark']` dan salinannya di `@media (prefers-color-scheme: dark)`, harus identik **[tes]**).
+Bawaannya mengikuti sistem; `lib/theme.ts` menyimpan pilihan Terang/Gelap/Ikuti sistem (preferensi, bukan rahasia, jadi satu-satunya pengecualian aturan `localStorage` selain mock) dan `public/theme-init.js`
+menerapkannya sebelum halaman tergambar (skrip biasa karena CSP hanya mengizinkan `'self'`). Aturan menulis tampilan:
+
+- hanya token (tak ada warna tertulis, tak ada `text-white`/`bg-white` untuk UI; putih murni hanya untuk yang memang harus putih, mis. bingkai kode QR dan pratinjau email);
+- isian solid primary/danger memakai `text-on-primary`; tooltip `bg-ink text-surface`;
+- token baru wajib punya nilai terang **dan** gelap, dan lolos tes kontras kedua tema (`index.contrast.test.ts`: teks 4.5:1, ikon dan grafik 3:1);
+- `npm run rebrand` mengubah primary di kedua tema; halaman error statis mengikuti tema sistem.
 
 | Elemen | Aturan |
 |---|---|

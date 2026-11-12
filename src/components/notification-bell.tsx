@@ -52,7 +52,7 @@ export function NotificationBell() {
                 <Button variant="ghost" size="icon" aria-label={`Notifikasi${unread ? ` (${unread} belum dibaca)` : ''}`} className="relative">
                     <Bell />
                     {unread > 0 && (
-                        <span className="absolute -top-0.5 -right-0.5 flex min-w-4 items-center justify-center rounded-full bg-danger px-1 text-2xs leading-4 font-semibold text-white">
+                        <span className="absolute -top-0.5 -right-0.5 flex min-w-4 items-center justify-center rounded-full bg-danger px-1 text-2xs leading-4 font-semibold text-on-primary">
                             {unread > 9 ? '9+' : unread}
                         </span>
                     )}

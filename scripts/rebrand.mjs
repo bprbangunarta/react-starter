@@ -66,10 +66,17 @@ if (name) {
 
 if (color) {
     const { L, C, H, luminance } = hexToOklch(color);
-    const css = read('src/index.css')
-        .replace(/--color-primary: .*;/, `--color-primary: ${oklch(L, C, H)};`)
-        .replace(/--color-primary-hover: .*;/, `--color-primary-hover: ${oklch(Math.max(L - 0.05, 0), C, H)};`)
-        .replace(/--color-primary-soft: .*;/, `--color-primary-soft: ${oklch(0.96, Math.min(C, 0.02), H)};`);
+    // The first occurrence of a token is the light theme; the later ones are the dark theme (forced block and system media query).
+    const setToken = (css, token, light, dark) => {
+        let seen = 0;
+
+        return css.replace(new RegExp(`--color-${token}: [^;]*;`, 'g'), () => `--color-${token}: ${seen++ === 0 ? light : dark};`);
+    };
+    let css = read('src/index.css');
+
+    css = setToken(css, 'primary', oklch(L, C, H), oklch(0.72, Math.min(C, 0.14), H));
+    css = setToken(css, 'primary-hover', oklch(Math.max(L - 0.05, 0), C, H), oklch(0.78, Math.min(C, 0.13), H));
+    css = setToken(css, 'primary-soft', oklch(0.96, Math.min(C, 0.02), H), oklch(0.28, Math.min(C, 0.06), H));
     write('src/index.css', css);
     done(`warna utama ${color} -> token primary di src/index.css`);
 

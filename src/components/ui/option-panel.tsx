@@ -115,7 +115,7 @@ export function OptionPanel({ nav, listId, label, searchable, isSelected, onPick
                                 <span
                                     className={cn(
                                         'mt-0.5 flex size-3.5 shrink-0 items-center justify-center rounded border',
-                                        selected ? 'border-primary bg-primary text-white' : 'border-line',
+                                        selected ? 'border-primary bg-primary text-on-primary' : 'border-line',
                                     )}
                                 >
                                     {selected && <Check className="size-3" />}

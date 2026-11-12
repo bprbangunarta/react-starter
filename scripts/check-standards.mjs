@@ -128,7 +128,8 @@ const rules = [
     {
         name: 'localStorage/sessionStorage dilarang: rahasia tidak boleh disimpan di peramban',
         test: (line) => /\b(localStorage|sessionStorage)\b/.test(line),
-        skip: (file) => file.includes('/mock/') || isTest(file),
+        // lib/theme.ts keeps the light/dark choice, a preference and not a secret.
+        skip: (file) => file.includes('/mock/') || file.endsWith('lib/theme.ts') || isTest(file),
     },
     {
         name: 'Ekspor bawaan hanya untuk halaman, layout, dan App',
@@ -217,6 +218,17 @@ for (const file of files) {
             run = 0;
         }
     });
+}
+
+// Multi-line rule: a file that draws a calendar must import its stylesheet itself; without it the calendar shows unstyled (a lazy page may
+// load without any other calendar having brought the CSS along).
+for (const file of files) {
+    const text = sources.get(file);
+
+    if (/from 'react-day-picker'/.test(text) && !/import 'react-day-picker\/style\.css'/.test(text) && !isTest(file)) {
+        failures++;
+        console.error(`${relative(process.cwd(), file)}  Kalender tanpa import 'react-day-picker/style.css' di berkas yang sama`);
+    }
 }
 
 if (failures > 0) {

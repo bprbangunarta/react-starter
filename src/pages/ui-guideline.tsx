@@ -5,6 +5,7 @@ import { renderLoginCodeEmail } from '../../email/login-code';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ILLUSTRATIONS, Illustration } from '@/components/illustrations';
 import type { IllustrationName } from '@/components/illustrations';
+import { ThemeMenu } from '@/components/theme-menu';
 import { MenuLink, SubMenu } from '@/layouts/app-layout';
 import { ERROR_PAGES as ERROR_SCREENS } from '@/lib/error-pages';
 import { BarChart, ColumnChart, DonutChart } from '@/components/ui/chart';
@@ -32,6 +33,7 @@ const TOKENS = [
     ['primary-hover', 'bg-primary-hover', 'Tombol utama saat disorot'],
     ['primary-soft', 'bg-primary-soft', 'Latar lembut warna utama (item menu aktif, area tarik berkas)'],
     ['surface', 'bg-surface', 'Kartu, sidebar, header, dialog'],
+    ['on-primary', 'bg-on-primary', 'Teks dan ikon di atas isian primary atau danger'],
     ['canvas', 'bg-canvas', 'Latar halaman, header tabel, hover'],
     ['line', 'bg-line', 'Garis pemisah dan batas'],
     ['ink', 'bg-ink', 'Teks utama'],
@@ -186,6 +188,16 @@ export default function UiGuideline() {
                             <SubTitle>BarChart</SubTitle>
                             <BarChart label="Contoh batang" items={CHART_BARS} />
                         </div>
+                    </div>
+                </Section>
+
+                <Section
+                    title="Tema terang dan gelap"
+                    description="Nama token sama di kedua tema, jadi tampilan tidak berubah per layar. Bawaannya mengikuti sistem; pilihan Terang, Gelap, atau Ikuti sistem disimpan di peramban. Teks di atas isian primary atau danger memakai on-primary, bukan putih."
+                >
+                    <div className="flex items-center gap-2">
+                        <ThemeMenu />
+                        <span className="text-xs text-muted">Ganti tema di sini atau di header, lalu lihat semua contoh di halaman ini ikut berubah.</span>
                     </div>
                 </Section>
 
