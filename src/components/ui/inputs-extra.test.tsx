@@ -78,6 +78,33 @@ describe('DateRangePicker', () => {
     });
 });
 
+describe('DateRangePicker draft', () => {
+    it('reports only a complete range: a start day alone is thrown away when the calendar closes', async () => {
+        const user = userEvent.setup();
+        const changes: DateSpan[] = [];
+        render(<DateRangePicker aria-label="Periode" value={{ from: '', to: '' }} onChange={(span) => changes.push(span)} max={new Date(2026, 5, 30)} />);
+        const cell = (n: string) =>
+            screen
+                .getAllByRole('gridcell')
+                .find((d) => d.textContent === n)
+                ?.querySelector('button') as HTMLElement;
+
+        await user.click(screen.getByRole('button', { name: 'Periode' }));
+        await user.click(cell('10'));
+        expect(changes).toEqual([]);
+        expect(screen.getByRole('button', { name: 'Periode' })).toHaveTextContent('– …');
+
+        await user.keyboard('{Escape}');
+        expect(changes).toEqual([]);
+        expect(screen.getByRole('button', { name: 'Periode' })).toHaveTextContent('Pilih rentang tanggal');
+
+        await user.click(screen.getByRole('button', { name: 'Periode' }));
+        await user.click(cell('10'));
+        await user.click(cell('12'));
+        expect(changes).toEqual([{ from: '2026-06-10', to: '2026-06-12' }]);
+    });
+});
+
 describe('Breadcrumb', () => {
     it('links the parents and marks the last crumb as the current page', () => {
         render(

@@ -27,7 +27,10 @@ type Props = {
     'aria-label'?: string;
 };
 
-/** One calendar for a date range. Click the start day, then the end day. */
+/**
+ * One calendar for a date range. Click the start day, then the end day. onChange fires only for a complete range (or when cleared):
+ * a start day alone is a draft that closing the calendar throws away, so a filter does not run on half a range.
+ */
 export function DateRangePicker({
     value,
     onChange,
@@ -42,8 +45,11 @@ export function DateRangePicker({
     const [open, setOpen] = useState(false);
     // Day under the pointer, used to shade a preview of the range.
     const [hover, setHover] = useState<Date | undefined>(undefined);
-    const from = value.from ? parseISO(value.from) : undefined;
-    const to = value.to ? parseISO(value.to) : undefined;
+    // The start day picked so far, while the end day is still to come.
+    const [draft, setDraft] = useState<DateSpan | null>(null);
+    const shown = draft ?? value;
+    const from = shown.from ? parseISO(shown.from) : undefined;
+    const to = shown.to ? parseISO(shown.to) : undefined;
     const label = from ? (to ? `${formatDate(from)} – ${formatDate(to)}` : `${formatDate(from)} – …`) : undefined;
 
     return (
@@ -52,6 +58,7 @@ export function DateRangePicker({
             onOpenChange={(next) => {
                 setOpen(next);
                 setHover(undefined);
+                setDraft(null);
             }}
         >
             <div className="relative">
@@ -72,7 +79,15 @@ export function DateRangePicker({
                         <CalendarRange className="size-3.5 shrink-0 text-muted" />
                     </button>
                 </PopoverTrigger>
-                {clearable && label && <ClearButton label="Hapus rentang tanggal" onClick={() => onChange({ from: '', to: '' })} />}
+                {clearable && label && (
+                    <ClearButton
+                        label="Hapus rentang tanggal"
+                        onClick={() => {
+                            setDraft(null);
+                            onChange({ from: '', to: '' });
+                        }}
+                    />
+                )}
             </div>
             <PopoverContent aria-label={ariaLabel ?? placeholder} className="w-fit p-1.5">
                 <DayPicker
@@ -94,12 +109,13 @@ export function DateRangePicker({
                         // A first click, a click after a finished range, or a click before the start begins a new range.
                         // The same day twice is a one-day range.
                         if (!from || to || day < from) {
-                            onChange({ from: iso, to: '' });
+                            setDraft({ from: iso, to: '' });
 
                             return;
                         }
 
-                        onChange({ from: value.from, to: iso });
+                        onChange({ from: shown.from, to: iso });
+                        setDraft(null);
                         setHover(undefined);
                         setOpen(false);
                     }}

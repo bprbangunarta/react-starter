@@ -2,6 +2,12 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/), versi mengikuti [SemVer](https://semver.org/lang/id/).
 
+## [Belum dirilis]
+
+### Diperbaiki
+
+- `DateRangePicker` tidak lagi memanggil `onChange` setelah klik tanggal awal saja: filter Audit Logs dulu langsung berjalan dengan setengah rentang. Rentang baru dilaporkan saat tanggal akhir dipilih; tanggal awal saja dibuang bila kalender ditutup.
+
 ## [1.0.0] - 2026-11-13
 
 Rilis pertama yang siap dipakai sebagai kerangka proyek. Berlisensi MIT.
