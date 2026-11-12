@@ -153,3 +153,125 @@ describe('http.upload (mock)', () => {
         vi.useRealTimers();
     });
 });
+
+/** A stand-in for XMLHttpRequest the test drives by hand. */
+class FakeRequest {
+    static last: FakeRequest;
+    upload: { onprogress?: (event: { lengthComputable: boolean; loaded: number; total: number }) => void } = {};
+    onload?: () => void;
+    onerror?: () => void;
+    onabort?: () => void;
+    status = 0;
+    responseText = '';
+    withCredentials = false;
+    headers: Record<string, string> = {};
+    opened: [string, string] | null = null;
+    sent: FormData | null = null;
+    aborted = false;
+
+    constructor() {
+        FakeRequest.last = this;
+    }
+
+    open(method: string, url: string) {
+        this.opened = [method, url];
+    }
+
+    setRequestHeader(name: string, value: string) {
+        this.headers[name] = value;
+    }
+
+    send(body: FormData) {
+        this.sent = body;
+    }
+
+    abort() {
+        this.aborted = true;
+        this.onabort?.();
+    }
+
+    reply(status: number, body: unknown) {
+        this.status = status;
+        this.responseText = JSON.stringify(body);
+        this.onload?.();
+    }
+}
+
+describe('http.upload (real backend)', () => {
+    async function load() {
+        vi.resetModules();
+        vi.stubEnv('VITE_USE_MOCK', 'false');
+        vi.stubGlobal('XMLHttpRequest', FakeRequest);
+        const { HttpError, http, MAINTENANCE_EVENT } = await import('@/lib/http');
+
+        return { HttpError, http, MAINTENANCE_EVENT };
+    }
+
+    afterEach(() => {
+        vi.unstubAllGlobals();
+        vi.unstubAllEnvs();
+    });
+
+    it('posts the file as multipart with cookies, reports progress and resolves with the body', async () => {
+        const { http } = await load();
+        const seen: number[] = [];
+        const done = http.upload('/files', new File(['abc'], 'a.txt'), { field: 'document', data: { folder: '7' }, onProgress: (p) => seen.push(p) });
+        const request = FakeRequest.last;
+
+        request.upload.onprogress?.({ lengthComputable: true, loaded: 1, total: 4 });
+        request.upload.onprogress?.({ lengthComputable: true, loaded: 4, total: 4 });
+        request.reply(200, { message: 'ok' });
+
+        await expect(done).resolves.toEqual({ message: 'ok' });
+        expect(request.opened).toEqual(['POST', '/api/files']);
+        expect(request.withCredentials).toBe(true);
+        expect(request.sent?.get('folder')).toBe('7');
+        expect(request.sent?.get('document')).toBeInstanceOf(File);
+        expect(seen).toEqual([25, 100]);
+    });
+
+    it('turns a 422 into an HttpError with the messages per field', async () => {
+        const { HttpError, http } = await load();
+        const done = http.upload('/files', new File(['x'], 'a.txt'));
+
+        FakeRequest.last.reply(422, { message: 'Berkas ditolak.', errors: { file: ['Terlalu besar.'] } });
+
+        const error: unknown = await done.catch((e: unknown) => e);
+
+        expect(error).toBeInstanceOf(HttpError);
+        expect(error).toMatchObject({ status: 422, message: 'Berkas ditolak.', errors: { file: ['Terlalu besar.'] } });
+    });
+
+    it('announces maintenance on a 503', async () => {
+        const { http, MAINTENANCE_EVENT } = await load();
+        const heard = vi.fn();
+        window.addEventListener(MAINTENANCE_EVENT, heard);
+        const done = http.upload('/files', new File(['x'], 'a.txt'));
+
+        FakeRequest.last.reply(503, { message: 'Pemeliharaan.' });
+        await done.catch(() => undefined);
+
+        expect(heard).toHaveBeenCalledTimes(1);
+        window.removeEventListener(MAINTENANCE_EVENT, heard);
+    });
+
+    it('reports a lost connection as status 0', async () => {
+        const { http } = await load();
+        const done = http.upload('/files', new File(['x'], 'a.txt'));
+
+        FakeRequest.last.onerror?.();
+
+        await expect(done).rejects.toMatchObject({ status: 0 });
+    });
+
+    it('aborts the request when the signal fires', async () => {
+        const { http } = await load();
+        const controller = new AbortController();
+        const done = http.upload('/files', new File(['x'], 'a.txt'), { signal: controller.signal });
+
+        controller.abort();
+
+        await expect(done).rejects.toMatchObject({ name: 'AbortError' });
+        expect(FakeRequest.last.aborted).toBe(true);
+    });
+});

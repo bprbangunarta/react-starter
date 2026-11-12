@@ -18,7 +18,8 @@ npm run test         # hanya tes (Vitest); npm run test:watch untuk mode pantau
 npm run format       # merapikan kode dengan Prettier
 npm run build        # check + vite build ke dist/ + anggaran ukuran bundel
 npm run preview      # menjalankan hasil build
-npm run test:e2e     # tes ujung ke ujung (Playwright) terhadap hasil build; sekali: npx playwright install chromium
+npm run test:e2e     # tes ujung ke ujung (Playwright, Chromium) terhadap hasil build; sekali: npx playwright install chromium
+npm run test:e2e:all # juga Firefox dan WebKit (yang dipakai CI); sekali: npx playwright install firefox webkit
 ```
 
 Masuk dengan **`admin` / `password`**. Untuk mencoba kata sandi kedaluwarsa, masuk dengan **`kadaluarsa` / `password`** (kata sandinya dibuat 45 hari lalu; batasnya 30 hari). Data tiruan (pengguna, audit log, notifikasi, sesi) disimpan di `localStorage` pada kunci

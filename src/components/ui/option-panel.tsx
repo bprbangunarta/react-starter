@@ -66,11 +66,9 @@ export function OptionPanel({ nav, listId, label, searchable, isSelected, onPick
             onWheel={(e) => e.stopPropagation()}
             onTouchMove={(e) => e.stopPropagation()}
             onOpenAutoFocus={(e) => {
-                if (!searchable) {
-                    return;
-                }
+                // Focus goes to the search box, or to the list itself so the arrow keys work without one.
                 e.preventDefault();
-                (e.currentTarget as HTMLElement).querySelector('input')?.focus();
+                (searchable ? (e.currentTarget as HTMLElement).querySelector('input') : list.current)?.focus();
             }}
         >
             {searchable && (

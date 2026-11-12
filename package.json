@@ -1,7 +1,7 @@
 {
   "name": "starterkit",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Admin UI starter: React, TypeScript, Vite and Tailwind with sign-in, two-factor, audit log and a mock API.",
   "license": "UNLICENSED",
   "repository": {
@@ -27,7 +27,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "git config core.hooksPath .githooks || true",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test --project=chromium",
+    "test:e2e:all": "playwright test"
   },
   "dependencies": {
     "@fontsource-variable/instrument-sans": "^5.2.0",

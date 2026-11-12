@@ -256,7 +256,7 @@ Vitest + Testing Library (jsdom); berkas tes `*.test.ts(x)` diletakkan di sebela
   tidak punya contoh di `/ui-guideline` (kecuali blok bangunan internal yang tercantum di tes).
 - **Aksesibilitas:** `src/a11y.test.tsx` menjalankan axe pada halaman masuk, 404, File Manage, dan UI Guideline (tanpa kontras: jsdom tidak punya warna, kontras dijaga `index.contrast.test.ts`). Halaman baru yang berarti ditambahkan ke sana.
   Combobox tanpa `Field` wajib punya `aria-label` (atau placeholder sebagai cadangan): nama combobox tidak diambil dari teksnya.
-- **Ujung ke ujung:** `e2e/*.e2e.ts` (Playwright) berjalan terhadap hasil build dengan server tiruan: `npm run test:e2e`. Tambahkan skenario bila alur utama baru muncul. Tidak ikut `npm run check` (butuh peramban), tetapi jalan di CI.
+- **Ujung ke ujung:** `e2e/*.e2e.ts` (Playwright) berjalan terhadap hasil build dengan server tiruan: `npm run test:e2e` (Chromium) atau `npm run test:e2e:all` (juga Firefox dan WebKit, seperti CI). Skenario papan ketik (`keyboard.e2e.ts`) ikut menjaga fokus kembali setelah dialog, laci, dan menu. Tambahkan skenario bila alur utama baru muncul. Tidak ikut `npm run check` (butuh peramban), tetapi jalan di CI.
 - Jangan membuat tes yang bergantung pada waktu nyata atau jaringan; tes menyentuh `localStorage` hanya lewat server tiruan (dibersihkan otomatis tiap tes).
 
 <a id="selesai"></a>

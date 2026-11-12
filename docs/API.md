@@ -106,3 +106,8 @@ Ini kewajiban backend; layar tidak menegakkannya sendiri dan tidak boleh menggan
 - OTP email berlaku 10 menit, maksimal 5 kali salah, ada jeda kirim ulang dan batas per jam, disimpan sebagai hash; 8 kode pemulihan sekali pakai (hash).
 - Audit log tidak punya jalur ubah/hapus; verifikasi rantai juga dijalankan terjadwal di server.
 - Kejadian di bagian Audit log di atas dicatat di server, tanpa rahasia (kata sandi, kode, kunci).
+
+## Galat di sisi klien
+
+Galat yang lolos di peramban (render, janji tertolak) tidak dikirim ke server secara bawaan; `reportError` di `src/lib/report.ts` hanya menulis ke konsol. Bila produk ingin
+mencatatnya (layanan pemantauan atau endpoint sendiri), pasang lewat `setErrorReporter`; jangan menyertakan kata sandi, token, atau kode OTP.

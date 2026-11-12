@@ -2,6 +2,22 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/), versi mengikuti [SemVer](https://semver.org/lang/id/).
 
+## [1.0.1] - 2026-11-13
+
+### Diperbaiki
+
+- `Combobox` tanpa kolom cari (`searchable={false}`) tidak bisa dioperasikan dengan papan ketik; fokus kini masuk ke daftarnya saat dibuka.
+
+### Ditambahkan
+
+- Tes ujung ke ujung untuk papan ketik (laci, menu aksi, accordion, combobox) dan untuk Firefox dan WebKit (`npm run test:e2e:all`, dipakai CI).
+- Tes jalur peladen nyata `http.upload` (progres, 422, 503, putus koneksi, pembatalan).
+
+### Diverifikasi
+
+- Build image Docker, `HEALTHCHECK` (healthy), unggahan 5 MB lewat nginx lolos dan 9 MB ditolak 413, tanpa pelanggaran CSP di halaman utama.
+- Tanpa luapan horizontal, kontrol tanpa nama, atau id ganda di 1280, 768, dan 375px pada Dashboard, Audit Logs, File Manage, dan UI Guideline; dialog unggah, laci, dan kalender rentang muat di semua lebar.
+
 ## [1.0.0] - 2026-11-13
 
 Rilis pertama yang siap dipakai sebagai kerangka proyek.
