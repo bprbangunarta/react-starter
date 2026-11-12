@@ -39,12 +39,20 @@ export function DateRangePicker({
     'aria-label': ariaLabel,
 }: Props) {
     const [open, setOpen] = useState(false);
+    // The day under the pointer while the period has a start but no end: the days between are shaded as a preview.
+    const [hover, setHover] = useState<Date | undefined>(undefined);
     const from = value.from ? parseISO(value.from) : undefined;
     const to = value.to ? parseISO(value.to) : undefined;
     const label = from ? (to ? `${formatDate(from)} – ${formatDate(to)}` : `${formatDate(from)} – …`) : undefined;
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover
+            open={open}
+            onOpenChange={(next) => {
+                setOpen(next);
+                setHover(undefined);
+            }}
+        >
             <div className="relative">
                 <PopoverTrigger asChild>
                     <button
@@ -77,6 +85,10 @@ export function DateRangePicker({
             <PopoverContent aria-label={ariaLabel ?? placeholder} className="w-fit p-1.5">
                 <DayPicker
                     mode="range"
+                    onDayMouseEnter={(day) => setHover(day)}
+                    onDayMouseLeave={() => setHover(undefined)}
+                    modifiers={from && !to && hover && hover > from ? { preview: { after: from, before: hover }, previewEnd: hover } : undefined}
+                    modifiersClassNames={{ preview: 'rdp-preview', previewEnd: 'rdp-preview-end' }}
                     locale={idLocale}
                     captionLayout="dropdown"
                     startMonth={min}
@@ -96,6 +108,7 @@ export function DateRangePicker({
                         }
 
                         onChange({ from: value.from, to: iso });
+                        setHover(undefined);
                         setOpen(false);
                     }}
                     className="compact-calendar"

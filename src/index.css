@@ -91,6 +91,7 @@ html [data-sonner-toaster][data-sonner-theme] {
     --rdp-day_button-width: 26px;
     --rdp-day_button-border-radius: 6px;
     --rdp-selected-border: 0;
+    --rdp-accent-background-color: var(--color-primary-soft);
     --rdp-nav_button-height: 1.5rem;
     --rdp-nav_button-width: 1.5rem;
     --rdp-nav-height: 1.75rem;
@@ -121,6 +122,18 @@ html [data-sonner-toaster][data-sonner-theme] {
 .compact-calendar .rdp-chevron {
     width: 12px;
     height: 12px;
+}
+.compact-calendar .rdp-selected:not(.rdp-range_middle) .rdp-day_button {
+    background: var(--color-primary);
+    color: var(--color-surface);
+}
+/* DateRangePicker: days between the start and the pointer, shaded before the end day is clicked. */
+.compact-calendar .rdp-preview:not(.rdp-selected),
+.compact-calendar .rdp-preview-end:not(.rdp-selected) {
+    background: var(--color-primary-soft);
+}
+.compact-calendar .rdp-preview-end:not(.rdp-selected) .rdp-day_button {
+    border: 1px solid var(--color-primary);
 }
 .compact-calendar .rdp-today:not(.rdp-selected) {
     color: var(--color-primary);
