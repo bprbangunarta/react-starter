@@ -16,7 +16,7 @@ const LEVEL_ICONS = {
     warning: { icon: AlertTriangle, className: 'text-warning', label: 'Peringatan' },
 } as const;
 
-/** The notification level as a small icon in the status colour (base token of the shared ladder), named in text for a screen reader. */
+/** Notification level as a small icon in the status colour, named in text for screen readers. */
 function LevelIcon({ level }: { level: keyof typeof LEVEL_ICONS }) {
     const { icon: Icon, className, label } = LEVEL_ICONS[level];
 
@@ -28,7 +28,7 @@ function LevelIcon({ level }: { level: keyof typeof LEVEL_ICONS }) {
     );
 }
 
-/** A link is followed only when it is a path inside this application; anything else already stored is shown as plain text. */
+/** Only paths inside this app are followed; anything else stored is shown as plain text. */
 export function isInternalPath(url: string | null): url is string {
     return url !== null && /^\/(?![/\\])/.test(url);
 }

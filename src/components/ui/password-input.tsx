@@ -4,7 +4,7 @@ import type { ComponentProps } from 'react';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
-/** Password field with an eye button that reveals / hides what was typed. */
+/** Password field with a show/hide button. */
 export function PasswordInput({ className, ...props }: Omit<ComponentProps<typeof Input>, 'type'>) {
     const [visible, setVisible] = useState(false);
 

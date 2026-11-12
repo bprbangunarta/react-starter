@@ -1,7 +1,7 @@
 import { APP_INITIAL, APP_NAME } from '@/lib/brand';
 import { cn } from '@/lib/utils';
 
-/** The logo letter and the app name, for the screens outside the app shell (sign-in, error). */
+/** Logo letter and app name, for screens outside the app shell. */
 export function BrandMark({ className }: { className?: string }) {
     return (
         <div className={cn('flex items-center gap-2', className)}>

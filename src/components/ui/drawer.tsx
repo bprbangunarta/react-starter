@@ -5,10 +5,7 @@ import { Button } from '@/components/ui/button';
 import { overlayClass, useRestoreFocus } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
-/**
- * A panel that slides in from the side: details of a row, or a long form that should keep the page visible behind it.
- * Same three parts as a dialog: header (title), body (`DrawerBody`), and an optional footer (`DialogFooter`).
- */
+/** Side panel for row details or a long form. Header, DrawerBody and an optional DialogFooter. */
 export function Drawer({
     open,
     onOpenChange,
@@ -55,7 +52,7 @@ export function Drawer({
     );
 }
 
-/** Scrolling content of a `Drawer`. */
+/** Scrollable content of a Drawer. */
 export function DrawerBody({ className, ...props }: React.ComponentProps<'div'>) {
     return <div className={cn('min-h-0 flex-1 overflow-y-auto overscroll-contain p-4', className)} {...props} />;
 }

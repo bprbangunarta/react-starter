@@ -124,7 +124,7 @@ describe('DataTable sorting', () => {
 });
 
 describe('DataTable on a narrow screen', () => {
-    it('never hides a column: every header and cell stays, and the table scrolls sideways inside its card', () => {
+    it('never hides a column; the table scrolls sideways', () => {
         const { container } = render(<DataTable empty={{ icon: null, title: 'Kosong' }} rows={rows} rowKey={(r) => r.id} columns={columns} />);
 
         expect(screen.getAllByRole('columnheader')).toHaveLength(3);

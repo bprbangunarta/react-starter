@@ -16,7 +16,7 @@ function Label({ htmlFor, label, description }: { htmlFor: string; label: ReactN
     );
 }
 
-/** Checkbox with its label (click the label to toggle). */
+/** Checkbox. Clicking the label toggles it. */
 export function Checkbox({ label, description, className, ...props }: React.ComponentProps<typeof C.Root> & { label: ReactNode; description?: string }) {
     const id = useId();
 
@@ -32,7 +32,7 @@ export function Checkbox({ label, description, className, ...props }: React.Comp
     );
 }
 
-/** On/off switch for settings that apply at once; use a Checkbox for choices that wait for a Save button. */
+/** Switch for settings that apply immediately. Use a Checkbox when a Save button is needed. */
 export function Switch({ label, description, className, ...props }: React.ComponentProps<typeof S.Root> & { label: ReactNode; description?: string }) {
     const id = useId();
 
@@ -52,7 +52,7 @@ export function Switch({ label, description, className, ...props }: React.Compon
 
 export type RadioOption = { value: string; label: ReactNode; description?: string; disabled?: boolean };
 
-/** Single choice from a few visible options (up to about 5; use Combobox for more). */
+/** Radio group for up to about 5 options. Use Combobox for more. */
 export function RadioGroup({ options, className, ...props }: React.ComponentProps<typeof R.Root> & { options: readonly RadioOption[] }) {
     const group = useId();
 

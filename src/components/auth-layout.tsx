@@ -6,9 +6,8 @@ import { NetworkStatus } from '@/components/network-status';
 import { useTitle } from '@/lib/title';
 
 /**
- * The frame of the screens a person sees before the app shell (sign-in, second factor, expired password), built phone first:
- * on a phone a tinted header with the brand and an illustration, and the form on a rounded "sheet" that rises over it; from `lg` two
- * columns, the illustration on the left and the form centred on the right. The heading and the words are the screen's own.
+ * Frame for the screens before the app shell (sign-in, second factor, expired password), phone first.
+ * On a phone: tinted header with brand and illustration, form on a rounded sheet over it. From lg: two columns, illustration left, form right.
  */
 export function AuthLayout({
     title,
@@ -20,7 +19,7 @@ export function AuthLayout({
     title: string;
     description: ReactNode;
     illustration: IllustrationName;
-    /** The browser tab title when it differs from the heading. */
+    /** Browser tab title when it differs from the heading. */
     pageTitle?: string;
     children: ReactNode;
 }) {

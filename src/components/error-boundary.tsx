@@ -5,7 +5,7 @@ import { ErrorPage } from '@/components/error-page';
 type Props = { children: ReactNode };
 type State = { failed: boolean };
 
-/** Catches render errors so one broken screen does not blank the whole app. */
+/** Catches render errors so one broken screen doesn't blank the app. */
 export class ErrorBoundary extends Component<Props, State> {
     state: State = { failed: false };
 

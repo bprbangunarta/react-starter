@@ -1,9 +1,9 @@
-/** Input masks. Mask tokens: `9` digit, `a` letter, `*` letter or digit, `h` hex digit; any other character is a literal. */
+/** Input masks. Tokens: 9 digit, a letter, * letter or digit, h hex digit. Anything else is a literal. */
 const TOKENS: Record<string, RegExp> = { '9': /\d/, a: /[a-zA-Z]/, '*': /[a-zA-Z0-9]/, h: /[0-9a-fA-F]/ };
 
 export type Masked = { raw: string; masked: string };
 
-/** Fill `mask` with the data characters found in `input` (literals the user typed are ignored; wrong characters are dropped). */
+/** Fills mask with the data characters found in input (typed literals are ignored, wrong characters dropped). */
 export function applyMask(input: string, mask: string): Masked {
     const candidates = [...input.replace(/[^a-zA-Z0-9]/g, '')];
     let raw = '';
@@ -40,12 +40,12 @@ export function applyMask(input: string, mask: string): Masked {
     return { raw, masked };
 }
 
-/** How many data characters (not literals) sit before `caret` in `text`. */
+/** Number of data characters (not literals) before caret in text. */
 export function dataBefore(text: string, caret: number, isData: (char: string) => boolean): number {
     return [...text.slice(0, caret)].filter(isData).length;
 }
 
-/** The caret index in `text` just after its `count`-th data character. */
+/** Caret index in text just after its count-th data character. */
 export function caretAfter(text: string, count: number, isData: (char: string) => boolean): number {
     if (count <= 0) {
         return 0;

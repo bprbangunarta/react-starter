@@ -2,7 +2,7 @@ import { ChevronDown } from 'lucide-react';
 import { Accordion as A } from 'radix-ui';
 import { cn } from '@/lib/utils';
 
-/** Sections that fold open and shut (settings, FAQ). `type="single"` keeps one open; `type="multiple"` allows several. */
+/** Foldable sections. type="single" keeps one open, "multiple" allows several. */
 export const Accordion = A.Root;
 
 export function AccordionItem({ className, ...props }: React.ComponentProps<typeof A.Item>) {

@@ -3,8 +3,8 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 /**
- * One-time code field. The constraints travel with the validation: digits only, 6 characters, numeric
- * keyboard and browser/OS autofill of SMS/email codes. With `recovery` it accepts a recovery code instead.
+ * One-time code field: digits only, 6 characters, numeric keyboard and autofill.
+ * With `recovery` it takes a recovery code instead.
  */
 export function CodeInput({
     recovery = false,

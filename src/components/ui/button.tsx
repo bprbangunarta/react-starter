@@ -9,8 +9,7 @@ export const buttonVariants = cva(
     {
         variants: {
             variant: {
-                // Every variant has the same 1px border box (transparent when it has no visible border), so two buttons side by side
-                // are the same size to the pixel, also when a tool scales the screen and a lone border would make one look taller.
+                // All variants share a 1px border box (transparent when invisible) so neighbouring buttons match to the pixel.
                 primary: 'border border-transparent bg-primary text-white hover:bg-primary-hover',
                 outline: 'border border-line bg-surface text-ink hover:bg-canvas',
                 ghost: 'border border-transparent text-muted hover:bg-canvas hover:text-ink',
@@ -20,7 +19,7 @@ export const buttonVariants = cva(
                 default: 'h-8 px-3',
                 sm: 'h-7 px-2.5 text-xs',
                 icon: 'size-7',
-                // An icon button beside an input (copy, generate): as tall as the input (h-8), so both line up top and bottom.
+                // As tall as the input (h-8), for buttons next to a field.
                 fieldIcon: 'size-8',
             },
         },

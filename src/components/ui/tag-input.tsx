@@ -10,12 +10,12 @@ type Props = {
     invalid?: boolean;
     id?: string;
     'aria-describedby'?: string;
-    /** Accessible name when there is no visible `Field` label. */
+    /** For controls without a visible label. */
     'aria-label'?: string;
     className?: string;
 };
 
-/** Free-form list of short values (labels, email recipients). Enter or a comma adds the typed text; Backspace on an empty box removes the last one. */
+/** Free list of short values. Enter or comma adds, Backspace on an empty input removes the last one. */
 export function TagInput({
     value,
     onChange,
@@ -42,7 +42,7 @@ export function TagInput({
     };
 
     return (
-        // The wrapper only forwards a click to the input; the input itself is the focusable control.
+        // The wrapper only forwards clicks; the input is the real control.
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div
             data-invalid={invalid || undefined}
@@ -88,7 +88,7 @@ export function TagInput({
                 }}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {
-                        // Enter adds a tag; it must not submit the surrounding form.
+                        // Enter adds a tag instead of submitting the form.
                         e.preventDefault();
                         add(draft);
                     } else if (e.key === 'Backspace' && draft === '' && value.length > 0) {

@@ -9,10 +9,10 @@ type Props = {
     id?: string;
     value: File[];
     onValueChange: (files: File[]) => void;
-    /** Same as the native `accept`, e.g. ".pdf,.jpg,image/*". */
+    /** Same as the native accept, e.g. ".pdf,.jpg,image/*". */
     accept?: string;
     multiple?: boolean;
-    /** Largest file in bytes; bigger files are refused and reported through `onReject`. */
+    /** Largest file in bytes. Bigger files go to onReject. */
     maxBytes?: number;
     onReject?: (message: string) => void;
     disabled?: boolean;
@@ -21,7 +21,7 @@ type Props = {
     'aria-describedby'?: string;
 };
 
-/** Click-or-drop file chooser with the chosen files listed (and removable) below it. Uploading is up to the screen. */
+/** Click or drop files; the chosen files are listed below. Uploading is up to the screen. */
 export function FileInput({ id, value, onValueChange, accept, multiple, maxBytes, onReject, disabled, className, ...aria }: Props) {
     const generated = useId();
     const input = useRef<HTMLInputElement>(null);

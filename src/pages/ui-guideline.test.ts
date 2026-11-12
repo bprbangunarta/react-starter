@@ -5,10 +5,16 @@ import { describe, expect, it } from 'vitest';
 
 const read = (path: string) => readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8');
 
+// The page and the example files next to it.
+const guideSource = () =>
+    [read('src/pages/ui-guideline.tsx'), ...readdirSync(new URL('./ui-guideline', import.meta.url)).map((name) => read(`src/pages/ui-guideline/${name}`))].join(
+        '\n',
+    );
+
 describe('style guide', () => {
     it('lists every colour token of src/index.css', () => {
         const tokens = [...read('src/index.css').matchAll(/--color-([a-z-]+):/g)].map((match) => match[1]);
-        const guide = read('src/pages/ui-guideline.tsx');
+        const guide = guideSource();
 
         expect(tokens.length).toBeGreaterThan(20);
 
@@ -19,8 +25,8 @@ describe('style guide', () => {
 
     it('shows every exported UI component', () => {
         // Building blocks that are used inside other components (shown there) rather than on their own.
-        const internal = new Set(['Pagination', 'Popover', 'PopoverTrigger', 'PopoverContent', 'SortHead', 'TooltipProvider']);
-        const guide = read('src/pages/ui-guideline.tsx');
+        const internal = new Set(['ClearButton', 'OptionPanel', 'Pagination', 'Popover', 'PopoverTrigger', 'PopoverContent', 'SortHead', 'TooltipProvider']);
+        const guide = guideSource();
         const missing: string[] = [];
 
         for (const file of readdirSync(new URL('../components/ui', import.meta.url)).filter((name) => /\.tsx$/.test(name) && !name.includes('.test.'))) {

@@ -47,7 +47,7 @@ export function MenuLink({ item, onNavigate }: { item: MenuLinkItem; onNavigate:
     );
 }
 
-/** A parent entry with its submenu. It is open while one of its pages is shown, until the person closes it; otherwise closed until opened. */
+/** Parent entry with its submenu: open while one of its pages is shown, until the user closes it. */
 export function SubMenu({ label, icon: Icon, children, onNavigate }: { label: string; icon: LucideIcon; children: MenuLinkItem[]; onNavigate: () => void }) {
     const { pathname } = useLocation();
     const id = useId();
@@ -100,7 +100,7 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
     );
 }
 
-/** The frame of every signed-in page: sidebar, top bar (notifications, account menu), reminder to turn on two-factor. */
+/** Frame of every signed-in page: sidebar, top bar (notifications, account menu), two-factor reminder. */
 export default function AppLayout() {
     const { me, signOut } = useSession();
     const navigate = useNavigate();
@@ -108,7 +108,7 @@ export default function AppLayout() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const restoreFocus = useRestoreFocus(mobileOpen);
 
-    // The drawer is for small screens: close it when the window grows past the desktop breakpoint, so its scroll lock does not linger.
+    // Close the mobile drawer when the window grows past lg, so its scroll lock doesn't linger.
     useEffect(() => {
         const desktop = window.matchMedia('(min-width: 1024px)');
         const close = () => desktop.matches && setMobileOpen(false);

@@ -38,18 +38,18 @@ import { cn } from '@/lib/utils';
 
 type Item = {
     id: string;
-    /** Id of the folder it sits in; `null` is the top level. */
+    /** Folder it sits in. null is the top level. */
     parent: string | null;
     type: 'folder' | 'file';
     name: string;
-    /** Bytes; 0 for a folder. */
+    /** Bytes. 0 for folders. */
     size: number;
     /** ISO date. */
     modified: string;
 };
 
 const MB = 1024 * 1024;
-/** Demo storage limit (100 MB): the bar below the header fills as files are uploaded. */
+/** Demo storage limit (100 MB). The bar fills as files are uploaded. */
 const QUOTA = 100 * MB;
 
 const INITIAL_ITEMS: Item[] = [
@@ -76,7 +76,7 @@ const KINDS: { match: RegExp; label: string; icon: LucideIcon }[] = [
     { match: /\.(zip|rar|7z|tar|gz)$/i, label: 'Arsip', icon: FileArchive },
 ];
 
-/** Kind label and icon of an item, from its type or the extension of its name. */
+/** Label and icon from the type or the file extension. */
 function kindOf(item: Item): { label: string; icon: LucideIcon } {
     if (item.type === 'folder') {
         return { label: 'Folder', icon: Folder };
@@ -85,7 +85,7 @@ function kindOf(item: Item): { label: string; icon: LucideIcon } {
     return KINDS.find((k) => k.match.test(item.name)) ?? { label: 'Berkas', icon: File };
 }
 
-/** The name, or the name with " (2)", " (3)"… before the extension when the folder already has one like it. */
+/** The name, or with " (2)", " (3)"... before the extension when the folder already has it. */
 function uniqueName(name: string, taken: string[]): string {
     const used = new Set(taken.map((n) => n.toLowerCase()));
 
@@ -127,7 +127,7 @@ export default function FileManage() {
     const folder = items.find((i) => i.id === requested && i.type === 'folder') ?? null;
     const currentId = folder?.id ?? null;
 
-    // The chain of folders from the top level down to `item` (inclusive).
+    // Folders from the top level down to item, inclusive.
     const trailOf = (item: Item | null): Item[] => {
         const trail: Item[] = [];
 
@@ -143,7 +143,7 @@ export default function FileManage() {
         setParams({ folder: item.id });
     };
 
-    // Breadcrumb: File Manage → … → current folder; the parents link back through the `folder` address parameter.
+    // Breadcrumb: File Manage > ... > current folder. Parents link back through the folder URL parameter.
     const trail = trailOf(folder);
     const crumbs = [
         { label: 'File Manage', to: trail.length > 0 ? '/file-manage' : undefined },
@@ -157,7 +157,7 @@ export default function FileManage() {
         modified: (a, b) => a.modified.localeCompare(b.modified),
     };
     const direction = order.direction === 'asc' ? 1 : -1;
-    // Folders always come first, then the chosen order.
+    // Folders first, then the chosen order.
     const visible = items
         .filter((i) => i.parent === currentId && i.name.toLowerCase().includes(search.trim().toLowerCase()))
         .sort((a, b) => (a.type === b.type ? (compare[order.sort]?.(a, b) ?? 0) * direction : a.type === 'folder' ? -1 : 1));
@@ -208,7 +208,7 @@ export default function FileManage() {
         }
     };
 
-    // Each file joins the folder the moment the server has it, so the list fills while others are still going up.
+    // Each file joins the folder as soon as the server has it.
     const addUploaded = (file: File) => {
         setItems((all) => {
             const taken = all.filter((i) => i.parent === currentId).map((i) => i.name);
@@ -233,7 +233,7 @@ export default function FileManage() {
             return;
         }
 
-        // A folder takes everything inside it along.
+        // A folder takes its contents with it.
         const gone = new Set<string>([removing.id]);
 
         for (let grew = true; grew;) {

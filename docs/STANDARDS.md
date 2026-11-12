@@ -24,6 +24,12 @@ konfigurasi di `eslint.config.js`), dan pemeriksa aturan rumah `npm run standard
 - URL dan endpoint berbahasa Inggris tetapi **sepadan dengan judul layar** (layar "Audit Logs" → `/audit-logs`).
 - `strict` aktif. **Tanpa `any`, `as any`, `@ts-ignore`, `@ts-nocheck`** **[mesin]**; pakai `unknown` lalu persempit. Tipe respons API didefinisikan dan dipakai ulang.
 - Ekspor bawaan hanya untuk halaman, layout, dan `App` **[mesin]**; lainnya ekspor bernama. Tanpa `console.log`/`debugger` **[mesin]** (`console.error` boleh).
+- **Komentar:** tulis seperti orang yang menjelaskan ke rekan, bukan dokumentasi. Jelaskan **mengapa** (jebakan, keputusan, batasan), bukan apa yang sudah terbaca dari kodenya.
+  Satu atau dua baris; JSDoc hanya untuk komponen/ekspor yang perilakunya tidak terlihat dari namanya, dan untuk prop yang butuh satuan atau format. Jangan mengulang tipe,
+  jangan memakai tanda — atau → **[mesin]**, dan blok komentar tidak lebih dari 8 baris berturut-turut **[mesin]** (yang lebih panjang masuk `docs/`).
+- **Nama prop nilai:** komponen yang meneruskan prop `<input>` bawaan memakai `onValueChange(nilai)` (karena `onChange` sudah milik event native: `MaskedInput`, `FilteredInput`,
+  `CurrencyInput`, `CodeInput`, `ColorInput`); komponen berbasis popover atau daftar memakai `onChange(nilai)` (`Combobox`, `DatePicker`, `TimePicker`, `TagInput`). `Slider` dan
+  `FileInput` mengikuti `onValueChange` karena nilainya berupa daftar.
 - Halaman di `src/pages`, komponen bersama di `src/components`, komponen dasar di `src/components/ui`, logika bersama di `src/lib`.
   Cek komponen yang ada sebelum membuat yang baru.
 - **Semua akses server lewat `src/lib/http.ts`** (`http.get/post/put/delete`), formulir lewat `useForm`, data bacaan lewat `useResource`.

@@ -10,24 +10,24 @@ export type Column<T> = {
     key: string;
     header: ReactNode;
     cell: (row: T, index: number) => ReactNode;
-    /** Server-side sort field; gives the header a sort button. */
+    /** Sort key sent to the server. Adds a sort button to the header. */
     sort?: string;
     align?: 'left' | 'right';
-    /** Extra classes for the body cells. */
+    /** Extra classes for body cells. */
     className?: string;
-    /** Hide the label visually (e.g. a column of row actions), keeping it for screen readers. */
+    /** Hide the header text but keep it for screen readers (action columns). */
     srOnly?: boolean;
-    /** Narrow column (row actions). */
+    /** Narrow column, for row actions. */
     narrow?: boolean;
 };
 
-// A column is never hidden on a narrow screen: a wide table scrolls sideways inside its card (`overflow-x-auto`, cells do not wrap).
+// Columns are never hidden on small screens; wide tables scroll sideways inside the card.
 
 type Props<T> = {
     columns: Column<T>[];
     rows: T[];
     rowKey: (row: T) => string | number;
-    /** Usually a <FilterBar>; rendered above the table inside the card. */
+    /** Usually a FilterBar, shown above the table. */
     toolbar?: ReactNode;
     loading?: boolean;
     error?: string | null;
@@ -52,18 +52,17 @@ type Props<T> = {
     };
     onRowClick?: (row: T) => void;
     rowClassName?: (row: T) => string | undefined;
-    /** Render without the surrounding card (for a table inside another card). */
+    /** Render without the card, for a table inside another card. */
     bare?: boolean;
-    /** Smaller text for dense secondary tables. */
+    /** Smaller text, for secondary tables. */
     dense?: boolean;
-    /** Classes for the surrounding card (e.g. a max width for short lists). */
+    /** Classes for the card. */
     className?: string;
 };
 
 /**
- * The one table of the app: card, toolbar, header (sortable on demand), loading skeleton, empty and error
- * states, optional row click, and pagination. The scroll wrapper is `relative` on purpose: absolutely
- * positioned content (e.g. `sr-only` labels) must stay inside it, or the whole page scrolls sideways on phones.
+ * The app's one table: toolbar, sortable header, skeleton, empty and error states, row click, pagination.
+ * Keep the scroll wrapper relative, or absolute children (sr-only) widen the page on phones.
  */
 export function DataTable<T>({
     columns,
@@ -82,8 +81,8 @@ export function DataTable<T>({
     dense = false,
     className,
 }: Props<T>) {
-    // Sorting is all or nothing while developing: a column with `sort` needs the table's `sort` prop (or its header silently stays plain),
-    // and in a table that sorts every column with data has a `sort` key (only a column of row actions, `srOnly`, may go without).
+    // Sorting is all or nothing: if any column has `sort`, the table needs a `sort` prop and every data column needs a key.
+    // Only action columns (srOnly) can skip it. Warns in development.
     const sortable = columns.some((c) => c.sort);
     const unsortable = columns
         .filter((c) => !c.sort && !c.srOnly)
@@ -151,7 +150,7 @@ export function DataTable<T>({
                                           key={c.key}
                                           // Row actions must not trigger the row click.
                                           onClick={c.srOnly ? (e) => e.stopPropagation() : undefined}
-                                          // Tight rows: the icon button of a row's actions (26px) sets the row height, so its cell gets the least padding.
+                                          // The 26px icon button sets the row height, so its cell gets the least padding.
                                           className={cn(
                                               'px-3 whitespace-nowrap',
                                               c.srOnly ? 'py-0.5' : 'py-1',

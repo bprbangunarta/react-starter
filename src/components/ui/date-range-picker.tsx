@@ -1,16 +1,16 @@
 import { format, parseISO } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
-import { CalendarRange, X } from 'lucide-react';
+import { CalendarRange } from 'lucide-react';
 import { useState } from 'react';
 import { DayPicker } from 'react-day-picker';
 import type { DateRange } from 'react-day-picker';
-import 'react-day-picker/style.css';
+import { ClearButton } from '@/components/ui/clear-button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { controlClass } from '@/components/ui/input';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
-/** Both ends are ISO `YYYY-MM-DD` strings, or empty when not chosen. */
+/** ISO dates (YYYY-MM-DD), empty when not set. */
 export type DateSpan = { from: string; to: string };
 
 type Props = {
@@ -22,11 +22,11 @@ type Props = {
     invalid?: boolean;
     id?: string;
     placeholder?: string;
-    /** Accessible name when there is no visible `Field` label (e.g. a toolbar filter). */
+    /** For controls without a visible label. */
     'aria-label'?: string;
 };
 
-/** One calendar for a from–to period (a filter by date). Click the first day, then the last; the list closes on the second click. */
+/** One calendar for a date range. Click the start day, then the end day. */
 export function DateRangePicker({
     value,
     onChange,
@@ -39,7 +39,7 @@ export function DateRangePicker({
     'aria-label': ariaLabel,
 }: Props) {
     const [open, setOpen] = useState(false);
-    // The day under the pointer while the period has a start but no end: the days between are shaded as a preview.
+    // Day under the pointer, used to shade a preview of the range.
     const [hover, setHover] = useState<Date | undefined>(undefined);
     const from = value.from ? parseISO(value.from) : undefined;
     const to = value.to ? parseISO(value.to) : undefined;
@@ -71,16 +71,7 @@ export function DateRangePicker({
                         <CalendarRange className="size-3.5 shrink-0 text-muted" />
                     </button>
                 </PopoverTrigger>
-                {clearable && label && (
-                    <button
-                        type="button"
-                        aria-label="Hapus rentang tanggal"
-                        className="absolute top-1/2 right-7 -translate-y-1/2 rounded p-0.5 text-muted hover:text-ink"
-                        onClick={() => onChange({ from: '', to: '' })}
-                    >
-                        <X className="size-3" />
-                    </button>
-                )}
+                {clearable && label && <ClearButton label="Hapus rentang tanggal" onClick={() => onChange({ from: '', to: '' })} />}
             </div>
             <PopoverContent aria-label={ariaLabel ?? placeholder} className="w-fit p-1.5">
                 <DayPicker
@@ -99,8 +90,8 @@ export function DateRangePicker({
                     onSelect={(_range, day) => {
                         const iso = format(day, 'yyyy-MM-dd');
 
-                        // The first click, or a click after a finished period, starts a new one; the next click on or after it ends it
-                        // (the same day twice is a one-day period).
+                        // A first click, a click after a finished range, or a click before the start begins a new range.
+                        // The same day twice is a one-day range.
                         if (!from || to || day < from) {
                             onChange({ from: iso, to: '' });
 

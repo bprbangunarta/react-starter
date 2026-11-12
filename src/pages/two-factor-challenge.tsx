@@ -41,7 +41,7 @@ export default function TwoFactorChallenge() {
         return <Navigate to="/" replace />;
     }
 
-    // Nobody is waiting for a second factor (the session ended): back to the sign-in page.
+    // Nobody is waiting for a second factor (session ended): back to sign-in.
     if (error) {
         return <Navigate to="/login" replace />;
     }
@@ -81,7 +81,7 @@ export default function TwoFactorChallenge() {
                     noValidate
                     onSubmit={(e) => {
                         e.preventDefault();
-                        // The code is sent with the flag that says whether it is a recovery code.
+                        // The recovery flag tells the server how to read the code.
                         void (async () => {
                             form.clearErrors();
 

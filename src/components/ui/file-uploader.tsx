@@ -6,7 +6,7 @@ import { Tip, TooltipProvider } from '@/components/ui/tooltip';
 import { formatBytes } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
-/** What the screen gives for each file: how to send it. Report progress as 0–100 and stop when `signal` aborts (`http.upload` does both). */
+/** How to send one file. Report progress as 0-100 and stop when signal aborts; http.upload does both. */
 export type UploadFn = (file: File, context: { onProgress: (percent: number) => void; signal: AbortSignal }) => Promise<unknown>;
 
 type Status = 'queued' | 'uploading' | 'done' | 'error';
@@ -15,19 +15,19 @@ type Entry = { id: string; file: File; status: Status; progress: number; error?:
 
 type Props = {
     upload: UploadFn;
-    /** Same as the native `accept`, e.g. ".pdf,image/*". Checked again here because a dropped file ignores the native one. */
+    /** Same as the native accept. Checked again here because dropped files skip the native check. */
     accept?: string;
-    /** Largest file in bytes; bigger files are refused and reported through `onReject`. */
+    /** Largest file in bytes. */
     maxBytes?: number;
-    /** Most files the list may hold at once. */
+    /** Most files in the list at once. */
     maxFiles?: number;
-    /** Files sent at the same time (default 2); the rest wait their turn. */
+    /** Parallel uploads, default 2. */
     concurrency?: number;
-    /** A short line under the call to action, e.g. "PDF atau gambar, maksimal 5 MB". */
+    /** Hint under the call to action. */
     description?: string;
-    /** Called once for each file the server accepted. */
+    /** Called for each file the server accepted. */
     onUploaded?: (file: File) => void;
-    /** Called with a sentence when files are refused (type, size, count); usually shown as a toast. */
+    /** Called with a message when files are refused, usually shown as a toast. */
     onReject?: (message: string) => void;
     disabled?: boolean;
     id?: string;
@@ -36,7 +36,7 @@ type Props = {
     'aria-describedby'?: string;
 };
 
-/** Does the file match an `accept` list like ".pdf,image/*,application/zip"? */
+/** Matches a file against an accept list like ".pdf,image/*". */
 function accepted(file: File, accept?: string): boolean {
     const tokens = (accept ?? '')
         .split(',')
@@ -53,7 +53,7 @@ function accepted(file: File, accept?: string): boolean {
     return tokens.some((t) => (t.startsWith('.') ? name.endsWith(t) : t.endsWith('/*') ? type.startsWith(t.slice(0, -1)) : type === t));
 }
 
-/** A small picture of an image file, or a document icon for anything else. */
+/** Image preview, or a document icon. */
 function Thumb({ file }: { file: File }) {
     const [url, setUrl] = useState<string | null>(null);
 
@@ -78,10 +78,8 @@ function Thumb({ file }: { file: File }) {
 }
 
 /**
- * Drop zone with an upload queue: choose or drop several files and each one is sent at once, a few at a time, with its own progress bar,
- * a way to cancel, and a "Coba lagi" when it fails. The screen only says how to send a file (`upload`); the list, the progress, the checks,
- * and the messages are here. Leaving the screen cancels what is still going up. Use `FileInput` instead when the files are sent later
- * together with a form.
+ * Dropzone with an upload queue: files start right away, two at a time, each with progress, cancel and retry.
+ * The screen only passes `upload`. Leaving the screen cancels running uploads. Use FileInput when files are sent with a form.
  */
 export function FileUploader({
     upload,
@@ -103,7 +101,7 @@ export function FileUploader({
     const [entries, setEntries] = useState<Entry[]>([]);
     const controllers = useRef(new Map<string, AbortController>());
     const counter = useRef(0);
-    // The latest props for the effect below, which must not restart when a screen passes new function instances.
+    // The effect below should not restart when the parent passes new function instances.
     const latest = useRef({ upload, onUploaded });
     useEffect(() => {
         latest.current = { upload, onUploaded };
@@ -149,10 +147,10 @@ export function FileUploader({
         }
     };
 
-    // Start waiting files while fewer than `concurrency` are going up.
+    // Start queued files while fewer than `concurrency` are running.
     useEffect(() => {
         const active = entries.filter((e) => e.status === 'uploading').length;
-        // A file already handed to `upload` is in `controllers` (React may run this effect twice in development).
+        // Started files are in `controllers` (the effect can run twice in development).
         const waiting = entries.filter((e) => e.status === 'queued' && !controllers.current.has(e.id)).slice(0, Math.max(0, concurrency - active));
 
         for (const entry of waiting) {
@@ -168,7 +166,7 @@ export function FileUploader({
                     latest.current.onUploaded?.(entry.file);
                 })
                 .catch((error: unknown) => {
-                    // A cancelled file is removed by `drop`; anything else stays in the list with its reason and a retry.
+                    // A cancelled file is removed by drop(). Other failures stay in the list with a retry button.
                     if (!controller.signal.aborted) {
                         patch(entry.id, { status: 'error', error: error instanceof Error && error.message ? error.message : 'Unggahan gagal.' });
                     }
@@ -177,7 +175,7 @@ export function FileUploader({
         }
     }, [entries, concurrency]);
 
-    // Leaving the screen stops what is still going up.
+    // Cancel running uploads on unmount.
     useEffect(() => {
         const running = controllers.current;
 

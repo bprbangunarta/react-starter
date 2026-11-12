@@ -23,7 +23,7 @@ describe('ErrorPage', () => {
         expect(document.body.textContent).not.toMatch(/service unavailable/i);
     });
 
-    it('offers a way out: reload for what may pass, home for a page that is not there, sign-in for a missing session', () => {
+    it('offers reload, home or sign-in depending on the error', () => {
         const { unmount } = render(<ErrorPage status={503} />);
         expect(screen.getByRole('button', { name: 'Coba lagi' })).toBeInTheDocument();
         unmount();

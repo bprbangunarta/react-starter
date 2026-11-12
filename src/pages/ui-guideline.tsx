@@ -1,54 +1,30 @@
-import { Copy, Database, Dices, Download, Inbox, Info, LayoutDashboard, MoreHorizontal, Pencil, Plus, Save, Search, Trash2 } from 'lucide-react';
+import { Copy, Database, Download, Inbox, Info, LayoutDashboard, MoreHorizontal, Pencil, Plus, Save, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import type { ReactNode } from 'react';
 import { toast } from 'sonner';
 import { renderLoginCodeEmail } from '../../email/login-code';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { CodeInput } from '@/components/ui/code-input';
 import { ILLUSTRATIONS, Illustration } from '@/components/illustrations';
 import type { IllustrationName } from '@/components/illustrations';
 import { MenuLink, SubMenu } from '@/layouts/app-layout';
 import { ERROR_PAGES as ERROR_SCREENS } from '@/lib/error-pages';
 import { BarChart, ColumnChart, DonutChart } from '@/components/ui/chart';
-import { Checkbox, RadioGroup, Switch } from '@/components/ui/choice';
-import { ColorInput } from '@/components/ui/color-input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
-import { Combobox } from '@/components/ui/combobox';
-import { DateRangePicker } from '@/components/ui/date-range-picker';
-import type { DateSpan } from '@/components/ui/date-range-picker';
 import { Drawer, DrawerBody } from '@/components/ui/drawer';
 import { Progress } from '@/components/ui/progress';
-import { Slider } from '@/components/ui/slider';
 import { Stepper } from '@/components/ui/stepper';
-import { TagInput } from '@/components/ui/tag-input';
-import { TimePicker } from '@/components/ui/time-picker';
-import { MultiCombobox } from '@/components/ui/multi-combobox';
-import { CurrencyInput } from '@/components/ui/currency-input';
-import { DataTable } from '@/components/ui/data-table';
-import type { Column } from '@/components/ui/data-table';
-import { DatePicker } from '@/components/ui/date-picker';
 import { DropdownContent, DropdownItem, DropdownLabel, DropdownMenu, DropdownSeparator, DropdownTrigger } from '@/components/ui/dropdown';
 import { ConfirmDialog, DialogBody, DialogFooter, Modal } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
-import { FileInput } from '@/components/ui/file-input';
-import { FileUploader } from '@/components/ui/file-uploader';
-import { FilterBar, SearchInput } from '@/components/ui/filter-bar';
-import { CODE_CHARACTER, FilteredInput, NAME_CHARACTER } from '@/components/ui/filtered-input';
-import { Input, InputGroup } from '@/components/ui/input';
-import { MaskedInput } from '@/components/ui/masked-input';
+import { Input } from '@/components/ui/input';
 import { Alert, Badge, Card, CardBody, CardFooter, CardHeader, EmptyState, ErrorState, PageHeader, Skeleton } from '@/components/ui/misc';
-import type { BadgeTone } from '@/components/ui/misc';
-import { PasswordInput } from '@/components/ui/password-input';
-import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tip } from '@/components/ui/tooltip';
 import { APP_NAME } from '@/lib/brand';
-import { rupiah } from '@/lib/format';
-import { http } from '@/lib/http';
-import { MASKS } from '@/lib/mask';
-import { generatePassword } from '@/lib/password';
 import { useTitle } from '@/lib/title';
+import { InputExamples } from '@/pages/ui-guideline/inputs';
+import { Section, SubTitle } from '@/pages/ui-guideline/parts';
+import { TONES, TableExample } from '@/pages/ui-guideline/table';
 
 /** Every `--color-*` token of src/index.css (a test keeps this list complete). Class names are written out so Tailwind can see them. */
 const TOKENS = [
@@ -139,273 +115,6 @@ const CHART_BARS = [
     { label: 'Belum diisi', count: 5 },
 ];
 
-const TONES: BadgeTone[] = ['neutral', 'info', 'success', 'warning', 'danger'];
-
-type Row = { id: number; name: string; status: BadgeTone; amount: number };
-type Draft = { id: number | null; name: string; status: BadgeTone; amount: string };
-const EMPTY_DRAFT: Draft = { id: null, name: '', status: 'success', amount: '' };
-const NAMES = ['Alfa', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa', 'Lambda', 'Sigma'];
-const STATUSES: BadgeTone[] = ['success', 'warning', 'danger', 'info', 'neutral'];
-const INITIAL_ROWS: Row[] = NAMES.map((name, index) => ({
-    id: index + 1,
-    name: `Proyek ${name}`,
-    status: STATUSES[index % STATUSES.length] ?? 'neutral',
-    amount: 870_000 + ((index * 3_730_000) % 12_000_000),
-}));
-
-function Section({ title, description, children }: { title: string; description?: string; children: ReactNode }) {
-    return (
-        <Card>
-            <CardHeader title={title} description={description} />
-            <CardBody className="flex flex-col gap-3">{children}</CardBody>
-        </Card>
-    );
-}
-
-function SubTitle({ children }: { children: ReactNode }) {
-    return <h3 className="text-xs font-semibold text-muted uppercase tracking-wide">{children}</h3>;
-}
-
-/** Every kind of input the app uses, each with its own state. Money, phone, and other formatted fields send the raw value to the API. */
-function InputExamples() {
-    const [select, setSelect] = useState<string | null>('b');
-    const [multi, setMulti] = useState<string[]>(['a', 'c']);
-    const [date, setDate] = useState('');
-    const [period, setPeriod] = useState<DateSpan>({ from: '', to: '' });
-    const [time, setTime] = useState('');
-    const [tags, setTags] = useState<string[]>(['laporan', 'bulanan']);
-    const [level, setLevel] = useState([40]);
-    const [band, setBand] = useState([20, 70]);
-    const [code, setCode] = useState('');
-    const [amount, setAmount] = useState<number | null>(1_500_000);
-    const [quantity, setQuantity] = useState<number | null>(12_500);
-    const [small, setSmall] = useState('42');
-    const [person, setPerson] = useState('');
-    const [codeText, setCodeText] = useState('');
-    const [secret, setSecret] = useState('');
-    const [phone, setPhone] = useState('081234567890');
-    const [nik, setNik] = useState('');
-    const [npwp, setNpwp] = useState('');
-    const [color, setColor] = useState('');
-    const [note, setNote] = useState('');
-    const [agree, setAgree] = useState(true);
-    const [notify, setNotify] = useState(true);
-    const [channel, setChannel] = useState('email');
-    const [files, setFiles] = useState<File[]>([]);
-
-    return (
-        <Section
-            title="Isian"
-            description="Field: label text-xs, tanda * merah untuk wajib, hanya galat yang tampil di bawah isian. Keterangan isian (hint) tampil sebagai tooltip pada ikon info di samping label, dan tetap terbaca oleh pembaca layar."
-        >
-            <SubTitle>Teks dan sandi</SubTitle>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <Field label="Teks" required hint="Contoh hint">
-                    <Input maxLength={100} placeholder="Ketik sesuatu" />
-                </Field>
-                <Field label="Dengan galat" error="Kolom ini wajib diisi.">
-                    <Input />
-                </Field>
-                <Field label="Kata sandi">
-                    <PasswordInput placeholder="********" />
-                </Field>
-                <Field label="Kode verifikasi">
-                    <CodeInput value={code} onValueChange={setCode} placeholder="••••••" />
-                </Field>
-            </div>
-
-            <SubTitle>Angka dan mata uang (format otomatis)</SubTitle>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <Field label="Nominal (Rp)" hint="Nilai yang dikirim ke API berupa angka tanpa format">
-                    <CurrencyInput value={amount} onValueChange={setAmount} placeholder="0" />
-                </Field>
-                <Field label="Angka dengan pemisah ribuan" hint="Angka bulat dengan pemisah ribuan">
-                    <CurrencyInput prefix={null} value={quantity} onValueChange={setQuantity} placeholder="0" />
-                </Field>
-                <Field label="Angka kecil (4 digit)" hint="Angka tanpa format memakai MaskedInput, bukan input angka bawaan peramban">
-                    <MaskedInput mask="9999" value={small} onValueChange={setSmall} placeholder="0000" className="text-right tabular-nums" />
-                </Field>
-            </div>
-            <p className="text-xs text-muted tabular-nums">
-                Dikirim ke API: nominal = {amount ?? 'kosong'}, angka = {quantity ?? 'kosong'}, angka kecil = {small || 'kosong'}
-            </p>
-
-            <SubTitle>Masking (format saat mengetik)</SubTitle>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <Field label="No. telepon" hint="Mask 0812-3456-7890; yang dikirim hanya angkanya">
-                    <MaskedInput mask={MASKS.phone} value={phone} onValueChange={setPhone} placeholder="0812-3456-7890" />
-                </Field>
-                <Field label="NIK (16 digit)" hint="16 digit">
-                    <MaskedInput mask={MASKS.nik} value={nik} onValueChange={setNik} placeholder="3171 0123 4567 8901" />
-                </Field>
-                <Field label="NPWP (15 digit)" hint="15 digit">
-                    <MaskedInput mask={MASKS.npwp} value={npwp} onValueChange={setNpwp} placeholder="01.234.567.8-901.234" />
-                </Field>
-            </div>
-            <p className="text-xs text-muted tabular-nums">
-                Dikirim ke API: telepon = {phone || 'kosong'}, NIK = {nik || 'kosong'} ({nik.length}/16), NPWP = {npwp || 'kosong'} ({npwp.length}/15)
-            </p>
-
-            <SubTitle>Karakter dibatasi dan tombol di samping isian</SubTitle>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <Field label="Nama (hanya huruf)" hint="Karakter lain tidak pernah masuk, diketik maupun ditempel">
-                    <FilteredInput allowed={NAME_CHARACTER} maxLength={60} value={person} onValueChange={setPerson} placeholder="Rina Wulandari" />
-                </Field>
-                <Field label="Kode (huruf, angka, strip)" hint="Aturan yang sama dengan server, diperiksa lagi di sana">
-                    <FilteredInput allowed={CODE_CHARACTER} maxLength={10} value={codeText} onValueChange={setCodeText} placeholder="KC-01" />
-                </Field>
-                <Field label="Kata sandi acak" className="sm:col-span-2" hint="Tombol di samping isian memakai size=fieldIcon: setinggi isian">
-                    <InputGroup>
-                        <Input
-                            maxLength={64}
-                            value={secret}
-                            autoComplete="off"
-                            spellCheck={false}
-                            className="font-mono"
-                            placeholder="Ketik atau buat acak"
-                            onChange={(e) => setSecret(e.target.value)}
-                        />
-                        <Tip label="Buat kata sandi acak">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="fieldIcon"
-                                aria-label="Buat kata sandi acak"
-                                onClick={() => setSecret(generatePassword())}
-                            >
-                                <Dices />
-                            </Button>
-                        </Tip>
-                        <Tip label="Salin kata sandi">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="fieldIcon"
-                                aria-label="Salin kata sandi"
-                                disabled={secret === ''}
-                                onClick={() => {
-                                    void navigator.clipboard.writeText(secret);
-                                    toast.success('Kata sandi disalin.');
-                                }}
-                            >
-                                <Copy />
-                            </Button>
-                        </Tip>
-                    </InputGroup>
-                </Field>
-            </div>
-
-            <SubTitle>Pilihan dan tanggal</SubTitle>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <Field label="Pilihan (Combobox)">
-                    <Combobox
-                        options={[
-                            { value: 'a', label: 'Opsi A' },
-                            { value: 'b', label: 'Opsi B', description: 'Pembeda pilihan yang mirip' },
-                            { value: 'c', label: 'Opsi C' },
-                        ]}
-                        value={select}
-                        onChange={setSelect}
-                        clearable
-                    />
-                </Field>
-                <Field label="Pilihan ganda (MultiCombobox)">
-                    <MultiCombobox
-                        options={[
-                            { value: 'a', label: 'Opsi A' },
-                            { value: 'b', label: 'Opsi B', description: 'Pembeda pilihan yang mirip' },
-                            { value: 'c', label: 'Opsi C' },
-                            { value: 'd', label: 'Opsi D' },
-                        ]}
-                        value={multi}
-                        onChange={setMulti}
-                        clearable
-                    />
-                </Field>
-                <Field label="Tanggal">
-                    <DatePicker value={date} onChange={setDate} placeholder="Pilih tanggal" />
-                </Field>
-                <Field label="Warna" hint="Pemilih warna, kode hex, dan warna siap pakai" className="sm:col-span-2">
-                    <ColorInput value={color} onValueChange={setColor} />
-                </Field>
-            </div>
-
-            <SubTitle>Rentang tanggal, jam, tag, dan slider</SubTitle>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <Field label="Rentang tanggal (DateRangePicker)">
-                    <DateRangePicker value={period} onChange={setPeriod} clearable />
-                </Field>
-                <Field label="Jam (TimePicker)">
-                    <TimePicker value={time} onChange={setTime} />
-                </Field>
-                <Field label="Tag (TagInput)" hint="Enter atau koma menambah; Backspace menghapus yang terakhir" className="sm:col-span-2">
-                    <TagInput value={tags} onChange={setTags} maxTags={6} />
-                </Field>
-                <Field label={`Slider: ${level[0] ?? 0}%`}>
-                    <Slider aria-label="Tingkat" value={level} onValueChange={setLevel} />
-                </Field>
-                <Field label={`Slider rentang: ${band[0] ?? 0}–${band[1] ?? 0}`}>
-                    <Slider labels={['Dari', 'Sampai']} value={band} onValueChange={setBand} />
-                </Field>
-            </div>
-
-            <SubTitle>Teks panjang, centang, sakelar, dan radio</SubTitle>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <Field label="Catatan" hint="Penghitung muncul di kanan label bila ada maxLength" className="sm:col-span-2">
-                    <Textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={200} placeholder="Tulis catatan…" />
-                </Field>
-                <div className="flex flex-col gap-3">
-                    <Checkbox
-                        checked={agree}
-                        onCheckedChange={(v) => setAgree(v === true)}
-                        label="Saya setuju dengan ketentuan"
-                        description="Pilihan yang menunggu tombol Simpan."
-                    />
-                    <Switch checked={notify} onCheckedChange={setNotify} label="Notifikasi email" description="Berlaku seketika." />
-                </div>
-                <Field label="Kirim kode lewat">
-                    <RadioGroup
-                        aria-label="Kirim kode lewat"
-                        value={channel}
-                        onValueChange={setChannel}
-                        options={[
-                            { value: 'email', label: 'Email' },
-                            { value: 'sms', label: 'SMS', description: 'Tarif operator berlaku' },
-                            { value: 'wa', label: 'WhatsApp', disabled: true },
-                        ]}
-                    />
-                </Field>
-            </div>
-
-            <SubTitle>Berkas</SubTitle>
-            <Field label="Lampiran" hint="PDF atau gambar, maksimal 2 MB" className="max-w-md">
-                <FileInput value={files} onValueChange={setFiles} multiple accept=".pdf,image/*" maxBytes={2 * 1024 * 1024} onReject={(m) => toast.error(m)} />
-            </Field>
-
-            <SubTitle>Unggah banyak berkas (dropzone, antrean, progres)</SubTitle>
-            <Field
-                label="Dokumen"
-                hint="Berkas langsung diunggah, dua sekaligus; yang lain menunggu giliran. Nama berkas yang memuat kata gagal sengaja ditolak untuk mencoba tombol coba lagi."
-                className="max-w-xl"
-            >
-                <FileUploader
-                    accept=".pdf,image/*"
-                    description="PDF atau gambar · maksimal 5 MB per berkas · sampai 8 berkas"
-                    maxBytes={5 * 1024 * 1024}
-                    maxFiles={8}
-                    upload={(file, context) =>
-                        file.name.toLowerCase().includes('gagal')
-                            ? new Promise((_, reject) => window.setTimeout(() => reject(new Error('Server menolak berkas ini (contoh galat).')), 900))
-                            : http.upload('/files', file, context)
-                    }
-                    onUploaded={(file) => toast.success(`${file.name} terunggah`)}
-                    onReject={(m) => toast.error(m)}
-                />
-            </Field>
-        </Section>
-    );
-}
-
 /** A living reference of every shared component and token. Compare any new screen against it. */
 export default function UiGuideline() {
     useTitle('UI Guideline');
@@ -413,88 +122,7 @@ export default function UiGuideline() {
     const [confirm, setConfirm] = useState(false);
     const [drawer, setDrawer] = useState(false);
     const [step, setStep] = useState(1);
-    const [search, setSearch] = useState('');
-    const [status, setStatus] = useState<string | null>(null);
-    const [rows, setRows] = useState<Row[]>(INITIAL_ROWS);
-    const [draft, setDraft] = useState<Draft | null>(null);
-    const [nameError, setNameError] = useState<string | undefined>();
-    const [removing, setRemoving] = useState<Row | null>(null);
     const email = renderLoginCodeEmail({ appName: APP_NAME, code: '482915', minutes: 10, name: 'Rina Wulandari', sentAt: '1 Oktober 2026, 21:16 WIB' });
-
-    const [page, setPage] = useState(1);
-    const [perPage, setPerPage] = useState(5);
-    // Sorting: clicking a header sorts by it (ascending first); clicking the active one flips the direction. Here it runs on the rows in
-    // memory; in a list paged by the server it is the server that sorts, with the same keys in a whitelist (see docs/STANDARDS.md).
-    const [order, setOrder] = useState<{ sort: string; direction: 'asc' | 'desc' }>({ sort: 'name', direction: 'asc' });
-    const compare: Record<string, (a: Row, b: Row) => number> = {
-        name: (a, b) => a.name.localeCompare(b.name, 'id'),
-        status: (a, b) => TONES.indexOf(a.status) - TONES.indexOf(b.status),
-        amount: (a, b) => a.amount - b.amount,
-    };
-    const matching = rows
-        .filter((r) => r.name.toLowerCase().includes(search.trim().toLowerCase()) && (status === null || r.status === status))
-        .sort((a, b) => (compare[order.sort]?.(a, b) ?? 0) * (order.direction === 'asc' ? 1 : -1));
-    const lastPage = Math.max(1, Math.ceil(matching.length / perPage));
-    const current = Math.min(page, lastPage);
-    const visible = matching.slice((current - 1) * perPage, current * perPage);
-
-    const openDraft = (next: Draft) => {
-        setNameError(undefined);
-        setDraft(next);
-    };
-
-    const save = () => {
-        if (!draft) {
-            return;
-        }
-
-        if (draft.name.trim() === '') {
-            setNameError('Nama wajib diisi.');
-
-            return;
-        }
-
-        const next = { name: draft.name.trim(), status: draft.status, amount: Number(draft.amount) || 0 };
-        setRows((all) =>
-            draft.id === null
-                ? [...all, { id: Math.max(0, ...all.map((r) => r.id)) + 1, ...next }]
-                : all.map((r) => (r.id === draft.id ? { ...r, ...next } : r)),
-        );
-        toast.success(draft.id === null ? 'Data ditambahkan' : 'Perubahan tersimpan');
-        setDraft(null);
-    };
-
-    const columns: Column<Row>[] = [
-        { key: 'name', header: 'Nama', className: 'font-medium', cell: (r) => r.name, sort: 'name' },
-        { key: 'status', header: 'Status', cell: (r) => <Badge tone={r.status}>{r.status}</Badge>, sort: 'status' },
-        { key: 'amount', header: 'Nilai', align: 'right', className: 'tabular-nums', cell: (r) => rupiah(r.amount), sort: 'amount' },
-        {
-            key: 'actions',
-            header: 'Aksi',
-            srOnly: true,
-            narrow: true,
-            align: 'right',
-            cell: (r) => (
-                <div className="flex justify-end gap-1">
-                    <Tip label="Ubah">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label={`Ubah ${r.name}`}
-                            onClick={() => openDraft({ id: r.id, name: r.name, status: r.status, amount: String(r.amount) })}
-                        >
-                            <Pencil />
-                        </Button>
-                    </Tip>
-                    <Tip label="Hapus">
-                        <Button variant="ghost" size="icon" aria-label={`Hapus ${r.name}`} onClick={() => setRemoving(r)}>
-                            <Trash2 />
-                        </Button>
-                    </Tip>
-                </div>
-            ),
-        },
-    ];
 
     return (
         <>
@@ -645,60 +273,7 @@ export default function UiGuideline() {
                     </div>
                 </Section>
 
-                <div>
-                    <div className="mb-2 flex items-center justify-between gap-2">
-                        <div>
-                            <h2 className="text-sm font-semibold">Tabel (DataTable) dan contoh CRUD</h2>
-                            <p className="text-xs text-muted">
-                                Data statis di memori: Tambah, Ubah, dan Hapus membuka dialog lalu mengubah tabel. Muat ulang halaman untuk mengembalikan.
-                            </p>
-                        </div>
-                        <Button size="sm" onClick={() => openDraft(EMPTY_DRAFT)}>
-                            <Plus />
-                            Tambah
-                        </Button>
-                    </div>
-                    <DataTable
-                        rows={visible}
-                        rowKey={(r) => r.id}
-                        columns={columns}
-                        onRowClick={(r) => openDraft({ id: r.id, name: r.name, status: r.status, amount: String(r.amount) })}
-                        toolbar={
-                            <FilterBar search={<SearchInput value={search} onChange={setSearch} placeholder="Cari…" label="Cari contoh" />}>
-                                <Combobox
-                                    className="w-full sm:w-36"
-                                    clearable
-                                    searchable={false}
-                                    placeholder="Status"
-                                    options={TONES.map((t) => ({ value: t, label: t }))}
-                                    value={status}
-                                    onChange={setStatus}
-                                />
-                            </FilterBar>
-                        }
-                        sort={{
-                            ...order,
-                            onSort: (column) => setOrder((o) => ({ sort: column, direction: o.sort === column && o.direction === 'asc' ? 'desc' : 'asc' })),
-                        }}
-                        pagination={{
-                            meta: {
-                                current_page: current,
-                                last_page: lastPage,
-                                from: matching.length === 0 ? 0 : (current - 1) * perPage + 1,
-                                to: Math.min(matching.length, current * perPage),
-                                total: matching.length,
-                            },
-                            perPage,
-                            options: [5, 10],
-                            onPage: setPage,
-                            onPerPage: (value) => {
-                                setPerPage(value);
-                                setPage(1);
-                            },
-                        }}
-                        empty={{ icon: <Inbox />, title: 'Tidak ada data' }}
-                    />
-                </div>
+                <TableExample />
 
                 <Section
                     title="Kartu: header, body, footer"
@@ -889,68 +464,6 @@ export default function UiGuideline() {
                     <pre className="max-h-56 overflow-auto rounded-md bg-canvas p-3 text-xs whitespace-pre-wrap">{email.text}</pre>
                 </Section>
             </div>
-
-            <Modal
-                persistent
-                open={draft !== null}
-                onOpenChange={(next) => !next && setDraft(null)}
-                title={draft?.id === null ? 'Tambah data' : 'Ubah data'}
-                description="Isi lalu simpan. Galat validasi tampil di bawah kolom."
-            >
-                {draft && (
-                    <form
-                        noValidate
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            save();
-                        }}
-                    >
-                        <DialogBody className="grid gap-3">
-                            <Field label="Nama" required error={nameError}>
-                                <Input
-                                    autoFocus
-                                    maxLength={60}
-                                    value={draft.name}
-                                    onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-                                    aria-invalid={!!nameError}
-                                />
-                            </Field>
-                            <Field label="Status">
-                                <Combobox
-                                    searchable={false}
-                                    options={TONES.map((t) => ({ value: t, label: t }))}
-                                    value={draft.status}
-                                    onChange={(v) => setDraft({ ...draft, status: (v ?? 'neutral') as BadgeTone })}
-                                />
-                            </Field>
-                            <Field label="Nilai (Rp)">
-                                <Input
-                                    inputMode="numeric"
-                                    value={draft.amount}
-                                    onChange={(e) => setDraft({ ...draft, amount: e.target.value.replace(/\D/g, '') })}
-                                />
-                            </Field>
-                        </DialogBody>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setDraft(null)}>
-                                Batal
-                            </Button>
-                            <Button type="submit">Simpan</Button>
-                        </DialogFooter>
-                    </form>
-                )}
-            </Modal>
-            <ConfirmDialog
-                open={removing !== null}
-                onOpenChange={(next) => !next && setRemoving(null)}
-                title="Hapus data?"
-                description={`"${removing?.name ?? ''}" akan dihapus dari contoh ini.`}
-                onConfirm={() => {
-                    setRows((all) => all.filter((r) => r.id !== removing?.id));
-                    setRemoving(null);
-                    toast.success('Dihapus');
-                }}
-            />
 
             <Modal persistent open={modal} onOpenChange={setModal} title="Contoh dialog" description="Dialog kecil untuk tambah atau ubah data.">
                 <DialogBody>

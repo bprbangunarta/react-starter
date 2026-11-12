@@ -1,12 +1,12 @@
 import { MaskedInput } from '@/components/ui/masked-input';
 import { cn } from '@/lib/utils';
 
-/** Starting palette; pass `swatches` to replace it, or `false` to hide it. */
+/** Default swatches. Pass swatches to replace them, or false to hide them. */
 const DEFAULT_SWATCHES = ['#33479f', '#0f766e', '#15803d', '#b45309', '#b91c1c', '#7e22ce', '#334155'];
 
 type Props = {
     id?: string;
-    /** `#rrggbb` (lowercase), or '' when empty. A partial value (while typing) is kept as typed. */
+    /** #rrggbb in lowercase, or empty. A partial value is kept while typing. */
     value: string;
     onValueChange: (value: string) => void;
     swatches?: readonly string[] | false;
@@ -18,7 +18,7 @@ type Props = {
 
 const FULL = /^#[0-9a-f]{6}$/;
 
-/** Colour picker: native picker, hex field (`#rrggbb`, masked), and optional swatches. */
+/** Native picker, hex field and optional swatches. */
 export function ColorInput({ id, value, onValueChange, swatches = DEFAULT_SWATCHES, disabled, className, ...aria }: Props) {
     return (
         <div className={cn('flex flex-col gap-2', className)}>

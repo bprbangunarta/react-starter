@@ -21,7 +21,7 @@ export type Me = {
     user: AuthUser;
     security: { enabled: boolean; method: 'totp' | 'email' | null };
     notifications: Notifications;
-    /** How many idle minutes the server allows before the session ends (the idle timer in `IdleTimeout`). */
+    /** Minutes of idle time the server allows (used by IdleTimeout). */
     session: { idle_minutes: number };
 };
 
@@ -29,7 +29,7 @@ type SessionValue = {
     me: Me | null;
     /** True until the first answer about who is signed in. */
     loading: boolean;
-    /** Ask the server again who is signed in (after signing in, changing the security settings, ...). */
+    /** Ask the server again who is signed in. */
     refresh: () => Promise<Me | null>;
     setNotifications: (notifications: Notifications) => void;
     signOut: () => Promise<void>;

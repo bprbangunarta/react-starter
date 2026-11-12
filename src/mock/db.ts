@@ -1,15 +1,15 @@
-/** The pretend database: one JSON document in localStorage, so a reload keeps what was done. Clear it from the browser to start over. */
+/** The fake database: one JSON document in localStorage, so a reload keeps your changes. Clear it in the browser to start over. */
 export type MockUser = {
     id: number;
     name: string;
     username: string;
     email: string;
     password: string;
-    /** A data URL of the profile photo (the mock keeps it in localStorage), or null. */
+    /** Profile photo as a data URL (the mock keeps it in localStorage), or null. */
     avatar_url: string | null;
-    /** When the password was last set (ISO); the policy compares it with today. */
+    /** When the password was last set (ISO). The policy compares it with today. */
     password_changed_at: string;
-    /** Earlier passwords that may not be reused. The mock keeps them as text; a real backend keeps hashes only. */
+    /** Earlier passwords that can't be reused. The mock stores them as text; a real backend stores hashes. */
     password_history: string[];
     mfa_method: 'totp' | 'email' | null;
     mfa_secret: string | null;
@@ -55,7 +55,7 @@ export type Session = {
     userId: number | null;
     /** Signed in with the password, waiting for the second factor. */
     pendingUserId: number | null;
-    /** Signed in with the password, but it is older than the policy allows: waiting for a new one. */
+    /** Password is older than the policy allows: waiting for a new one. */
     expiredUserId: number | null;
     attempts: number;
     emailCode: string | null;
@@ -94,11 +94,11 @@ export function saveDb(db: Db): void {
     try {
         localStorage.setItem(KEY, JSON.stringify(db));
     } catch {
-        // Storage full or blocked: the session still works from memory.
+        // Storage full or blocked: the session keeps working from memory.
     }
 }
 
-/** Forget the stored database, so the next call starts from the seed again (tests use it to stay independent of each other). */
+/** Forget the stored database so the next call starts from the seed (tests use it to stay independent). */
 export function resetDb(): void {
     cache = null;
     localStorage.removeItem(KEY);

@@ -77,7 +77,7 @@ describe('Modal closing', () => {
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
-    it('stays open on a click outside when persistent (dialogs with fields), but still closes on Escape', async () => {
+    it('ignores outside clicks when persistent, but still closes on Escape', async () => {
         render(<Controlled persistent />);
         await userEvent.click(document.querySelector('.overlay-fade[data-state="open"]') as HTMLElement);
         expect(screen.getByRole('dialog')).toBeInTheDocument();

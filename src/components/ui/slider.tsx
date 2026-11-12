@@ -2,22 +2,22 @@ import { Slider as S } from 'radix-ui';
 import { cn } from '@/lib/utils';
 
 type Props = {
-    /** One number for a single value, two for a range (from–to). */
+    /** One value, or two for a range. */
     value: number[];
     onValueChange: (value: number[]) => void;
     min?: number;
     max?: number;
     step?: number;
     disabled?: boolean;
-    /** Accessible name of a single-value slider. */
+    /** Name of a single slider. */
     'aria-label'?: string;
-    /** One accessible name per thumb for a range, e.g. `['Dari', 'Sampai']` (takes the place of `aria-label`). */
+    /** One name per thumb for a range, e.g. ['Dari', 'Sampai']. */
     labels?: string[];
     id?: string;
     className?: string;
 };
 
-/** Pick a number (or a range) by dragging, when the exact value matters less than the rough one. Use `CurrencyInput` for exact amounts. */
+/** Number or range by dragging, for rough values. Use CurrencyInput for exact amounts. */
 export function Slider({ value, onValueChange, min = 0, max = 100, step = 1, disabled, 'aria-label': ariaLabel, labels, id, className }: Props) {
     const names = labels ?? value.map(() => ariaLabel);
 

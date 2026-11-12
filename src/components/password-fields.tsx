@@ -6,8 +6,8 @@ export type PasswordData = { current_password: string; password: string; passwor
 export const EMPTY_PASSWORD: PasswordData = { current_password: '', password: '', password_confirmation: '' };
 
 /**
- * The three password fields (current, new, confirmation) shared by Profile and the expired-password screen. The server rules
- * (minimum length, not the same as the previous passwords) come back as 422 messages under the matching field.
+ * The three password fields (current, new, confirmation) shared by Profile and the expired-password screen.
+ * Server rules come back as 422 messages under the matching field.
  */
 export function PasswordFields({ form, stacked = false }: { form: ReturnType<typeof useForm<PasswordData>>; stacked?: boolean }) {
     return (

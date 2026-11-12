@@ -26,7 +26,7 @@ describe('AuthLayout', () => {
         expect(document.title).toBe('Verifikasi - Starter Kit');
     });
 
-    it('is built phone first: a header with the illustration, the form on a rounded sheet, two columns only from lg', () => {
+    it('is phone first: illustration header, form sheet, two columns from lg', () => {
         const { container } = render(
             <AuthLayout title="Masuk" description="x" illustration="login">
                 <p>isi</p>

@@ -8,14 +8,14 @@ import NotFound from '@/pages/not-found';
 import PasswordExpired from '@/pages/password-expired';
 import TwoFactorChallenge from '@/pages/two-factor-challenge';
 
-// Signed-in pages load on demand, so the sign-in screens stay small and heavy ones (QR code, style guide, email preview) are split off.
+// Signed-in pages are lazy loaded, so the sign-in screens stay small.
 const Dashboard = lazy(() => import('@/pages/dashboard'));
 const AuditLogs = lazy(() => import('@/pages/audit-logs'));
 const Profile = lazy(() => import('@/pages/profile'));
 const UiGuideline = lazy(() => import('@/pages/ui-guideline'));
 const FileManage = lazy(() => import('@/pages/file-manage'));
 
-/** Signed-in pages only: anyone else is sent to the sign-in page. */
+/** Signed-in pages only. Everyone else goes to the sign-in page. */
 function RequireAuth() {
     const { me, loading } = useSession();
 

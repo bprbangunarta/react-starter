@@ -1,6 +1,6 @@
 /**
- * The pretend backend. Each route below is what a real backend has to offer (see docs/API.md); the screens never know the
- * difference. Delete this folder and set USE_MOCK to false in `lib/http.ts` once the real API answers the same URLs.
+ * The fake backend. Each route is what a real backend has to offer (docs/API.md); screens can't tell the difference.
+ * Delete this folder and set USE_MOCK to false in lib/http.ts once the real API answers the same URLs.
  */
 import { HttpError } from '@/lib/http';
 import type { Method, Params } from '@/lib/http';
@@ -12,11 +12,11 @@ import type { AuditEntry, Db, MockNotification, MockUser } from '@/mock/db';
 
 const EMAIL_COOLDOWN_S = 20;
 const MAX_ATTEMPTS = 5;
-/** Password policy: a password is valid for this many days, and the new one may not equal the last PASSWORD_HISTORY ones. */
+/** Passwords are valid for this many days, and a new one can't equal the last PASSWORD_HISTORY ones. */
 const PASSWORD_MAX_AGE_DAYS = 30;
 const PASSWORD_HISTORY = 5;
 const DAY_MS = 24 * 3600 * 1000;
-/** Idle minutes before the session ends (the screen warns one minute earlier). Lower it here to try the warning. */
+/** Idle minutes before the session ends (the screen warns a minute earlier). Lower it to try the warning. */
 const IDLE_MINUTES = 30;
 const AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
@@ -105,7 +105,7 @@ function currentUser(db: Db): MockUser {
 
 const passwordExpired = (user: MockUser): boolean => Date.now() - Date.parse(user.password_changed_at) > PASSWORD_MAX_AGE_DAYS * DAY_MS;
 
-/** The rules a new password must meet, as 422 messages under the field they belong to. */
+/** Rules for a new password, as 422 messages under the field they belong to. */
 function checkNewPassword(user: MockUser, body: Body): string {
     const password = str(body.password);
 
@@ -150,7 +150,7 @@ function me(db: Db, user: MockUser) {
     return {
         user: { id: user.id, name: user.name, username: user.username, email: user.email, avatar_url: user.avatar_url },
         security: { enabled: true, method: user.mfa_method },
-        // The mock never ends a session by itself; it only tells the screen how long idle time is allowed.
+        // The mock never ends a session itself; it only tells the screen how much idle time is allowed.
         session: { idle_minutes: IDLE_MINUTES },
         notifications: {
             unread: db.notifications.filter((n) => !n.read).length,
@@ -179,7 +179,7 @@ function csv(rows: string[][]): string {
     return rows.map((r) => r.map(cell).join(',')).join('\n');
 }
 
-/** After the password step passed: ask for the second factor, or sign in. */
+/** After the password step: ask for the second factor, or sign in. */
 async function finishPasswordStep(db: Db, user: MockUser): Promise<unknown> {
     const s = db.session;
 
@@ -677,7 +677,7 @@ async function route(method: Method, url: string, body: Body, params: Params): P
 
     // --- notifications
     if (method === 'POST' && url === '/notifications/read-all') {
-        // `up_to`: only what the person saw (the newest id in the list) is marked, so a notification that arrived meanwhile stays unread.
+        // up_to is the newest id the user saw, so anything that arrived since stays unread.
         const upTo = typeof body.up_to === 'number' ? body.up_to : Infinity;
         db.notifications.filter((n) => n.id <= upTo).forEach((n) => (n.read = true));
         saveDb(db);
@@ -703,7 +703,7 @@ async function route(method: Method, url: string, body: Body, params: Params): P
         const term = str(params.search).toLowerCase();
         const from = str(params.from);
         const to = str(params.to);
-        // Sort keys are a whitelist (anything else falls back to time); `direction` is `asc`, or the default `desc`. Ties keep the chain order.
+        // Sort keys are a whitelist (anything else sorts by time). Direction is asc or the default desc. Ties keep chain order.
         const sorters: Record<string, (e: AuditEntry) => string | number> = {
             time: (e) => e.id,
             host: (e) => e.ip ?? '',
@@ -788,7 +788,7 @@ async function route(method: Method, url: string, body: Body, params: Params): P
     throw new HttpError(404, 'Halaman tidak ditemukan.');
 }
 
-/** Answers one request like a server would: after a short delay, with JSON, or an HttpError. */
+/** Answers a request like a server: after a short delay, with JSON or an HttpError. */
 export async function handleMock(method: Method, url: string, data: unknown, params: Params): Promise<unknown> {
     await wait(180 + Math.random() * 220);
 
@@ -796,6 +796,6 @@ export async function handleMock(method: Method, url: string, data: unknown, par
         throw new HttpError(0, 'Server tidak dapat dihubungi. Periksa koneksi Anda lalu coba lagi.');
     }
 
-    // A FormData body (an upload) reaches the routes as a plain object whose file is a `File`.
+    // FormData (uploads) reaches the routes as a plain object holding the File.
     return route(method, url, data instanceof FormData ? Object.fromEntries(data.entries()) : ((data ?? {}) as Body), params);
 }

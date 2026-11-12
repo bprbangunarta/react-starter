@@ -1,7 +1,9 @@
-import { Check, ChevronsUpDown, X } from 'lucide-react';
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import type { Option } from '@/components/ui/combobox';
+import { ChevronsUpDown } from 'lucide-react';
+import { useId, useMemo, useState } from 'react';
+import { ClearButton } from '@/components/ui/clear-button';
+import { Popover, PopoverTrigger } from '@/components/ui/popover';
+import { OptionPanel, useOptionNav } from '@/components/ui/option-panel';
+import type { Option } from '@/components/ui/option-panel';
 import { controlClass } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
@@ -10,7 +12,7 @@ type Props = {
     value: (string | number)[];
     onChange: (value: string[]) => void;
     placeholder?: string;
-    /** Accessible name when there is no visible `Field` label (e.g. a toolbar filter). */
+    /** For controls without a visible label. */
     'aria-label'?: string;
     searchable?: boolean;
     clearable?: boolean;
@@ -19,10 +21,7 @@ type Props = {
     className?: string;
 };
 
-/**
- * Dropdown that selects several options; the list stays open while choosing.
- * The trigger lists the chosen labels (or a count when they do not fit), and `clearable` removes them all.
- */
+/** Combobox that picks several options. The list stays open while choosing. */
 export function MultiCombobox({
     options,
     value,
@@ -36,53 +35,27 @@ export function MultiCombobox({
     className,
 }: Props) {
     const [open, setOpen] = useState(false);
-    const [query, setQuery] = useState('');
-    const [active, setActive] = useState(0);
-    const list = useRef<HTMLUListElement>(null);
     const listId = useId();
 
     const chosen = useMemo(() => new Set(value.map(String)), [value]);
     const selected = options.filter((o) => chosen.has(String(o.value)));
     const summary = selected.length > 2 ? `${selected.length} dipilih` : selected.map((o) => o.label).join(', ');
-    const filtered = useMemo(
-        () => options.filter((o) => `${o.label} ${o.description ?? ''}`.toLowerCase().includes(query.trim().toLowerCase())),
-        [options, query],
-    );
-
-    // Keyboard navigation must keep the highlighted option in view.
-    useEffect(() => {
-        if (open) {
-            (list.current?.children[active] as HTMLElement | undefined)?.scrollIntoView({ block: 'nearest' });
-        }
-    }, [active, open, filtered]);
 
     const toggle = (option: Option) => {
         const key = String(option.value);
 
-        // Keep the order of `options`, not the order of clicking.
+        // The result follows the order of options, not the order of clicks.
         onChange(options.filter((o) => (String(o.value) === key ? !chosen.has(key) : chosen.has(String(o.value)))).map((o) => String(o.value)));
     };
-
-    const onKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            setActive((i) => Math.min(i + 1, filtered.length - 1));
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            setActive((i) => Math.max(i - 1, 0));
-        } else if (e.key === 'Enter' && filtered[active]) {
-            e.preventDefault();
-            toggle(filtered[active]);
-        }
-    };
+    const nav = useOptionNav(options, open, toggle);
 
     return (
         <Popover
             open={open}
             onOpenChange={(next) => {
                 setOpen(next);
-                setQuery('');
-                setActive(0);
+                nav.setQuery('');
+                nav.setActive(0);
             }}
         >
             <div className={cn('relative', className)}>
@@ -102,84 +75,17 @@ export function MultiCombobox({
                         <ChevronsUpDown className="size-3.5 shrink-0 text-muted" />
                     </button>
                 </PopoverTrigger>
-                {clearable && selected.length > 0 && (
-                    <button
-                        type="button"
-                        aria-label="Hapus semua pilihan"
-                        className="absolute top-1/2 right-7 -translate-y-1/2 rounded p-0.5 text-muted hover:text-ink"
-                        onClick={() => onChange([])}
-                    >
-                        <X className="size-3" />
-                    </button>
-                )}
+                {clearable && selected.length > 0 && <ClearButton label="Hapus semua pilihan" onClick={() => onChange([])} />}
             </div>
-            <PopoverContent
-                aria-label={ariaLabel ?? placeholder}
-                className="w-max max-w-[min(36rem,calc(100vw-2rem))] min-w-(--radix-popover-trigger-width) p-1"
-                // Inside a dialog the page scroll lock swallows wheel/touch scrolling of portaled content; keep it for the list.
-                onWheel={(e) => e.stopPropagation()}
-                onTouchMove={(e) => e.stopPropagation()}
-                onOpenAutoFocus={(e) => {
-                    if (!searchable) {
-                        return;
-                    }
-                    e.preventDefault();
-                    (e.currentTarget as HTMLElement).querySelector('input')?.focus();
-                }}
-            >
-                {searchable && (
-                    <input
-                        value={query}
-                        onChange={(e) => {
-                            setQuery(e.target.value);
-                            setActive(0);
-                        }}
-                        onKeyDown={onKeyDown}
-                        placeholder="Cari…"
-                        className="mb-1 h-7 w-full rounded border border-line px-2 text-sm focus:border-primary focus:outline-none"
-                    />
-                )}
-                <ul
-                    ref={list}
-                    id={listId}
-                    role="listbox"
-                    aria-multiselectable="true"
-                    className="max-h-56 overflow-auto overscroll-contain"
-                    onKeyDown={onKeyDown}
-                    tabIndex={-1}
-                >
-                    {filtered.length === 0 && <li className="px-2 py-2 text-center text-xs text-muted">Tidak ada hasil</li>}
-                    {filtered.map((option, index) => {
-                        const isSelected = chosen.has(String(option.value));
-
-                        return (
-                            // Keyboard selection is handled on the list (Arrow/Enter); this handler is the pointer path.
-                            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-                            <li
-                                key={option.value}
-                                role="option"
-                                aria-selected={isSelected}
-                                onMouseEnter={() => setActive(index)}
-                                onClick={() => toggle(option)}
-                                className={cn('flex cursor-pointer items-start gap-2 rounded px-2 py-1.5 text-sm', index === active && 'bg-canvas')}
-                            >
-                                <span
-                                    className={cn(
-                                        'mt-0.5 flex size-3.5 shrink-0 items-center justify-center rounded border',
-                                        isSelected ? 'border-primary bg-primary text-white' : 'border-line',
-                                    )}
-                                >
-                                    {isSelected && <Check className="size-3" />}
-                                </span>
-                                <span className="min-w-0 break-words">
-                                    {option.label}
-                                    {option.description && <span className="block text-xs text-muted">{option.description}</span>}
-                                </span>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </PopoverContent>
+            <OptionPanel
+                nav={nav}
+                listId={listId}
+                label={ariaLabel ?? placeholder}
+                searchable={searchable}
+                isSelected={(o) => chosen.has(String(o.value))}
+                onPick={toggle}
+                multiple
+            />
         </Popover>
     );
 }

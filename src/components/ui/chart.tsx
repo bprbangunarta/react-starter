@@ -4,31 +4,28 @@ import { cn } from '@/lib/utils';
 
 export type ChartItem = { label: string; count: number };
 
-/** Five series colours (index.css, `chart-1` to `chart-5`). Class names are written out so Tailwind can see them. */
+/** Series colours chart-1 to chart-5. Written out in full so Tailwind can see the class names. */
 const FILL = ['bg-chart-1', 'bg-chart-2', 'bg-chart-3', 'bg-chart-4', 'bg-chart-5'] as const;
 const STROKE = ['stroke-chart-1', 'stroke-chart-2', 'stroke-chart-3', 'stroke-chart-4', 'stroke-chart-5'] as const;
 const OTHER = 'Lainnya';
-/** The tallest column, in rem; the count above it takes the rest of the 8 rem the column area is given. */
+/** Height of the tallest column in rem. The count above it uses the rest of the 8rem area. */
 const COLUMN_MAX_REM = 6;
 
-/** One share of the whole, rounded in this one place so every chart rounds the same way. */
+/** Share of the whole, rounded here so every chart rounds the same way. */
 export function share(count: number, total: number): number {
     return total === 0 ? 0 : Math.round((count / total) * 100);
 }
 
 const sum = (items: ChartItem[]) => items.reduce((all, item) => all + item.count, 0);
 
-/** The text a part is read by, so the picture, the tooltip, and the list say the same thing. */
+/** Text for one part, shared by the picture, the tooltip and the list. */
 const reading = (item: ChartItem, total: number) => `${formatNumber(item.count)} (${share(item.count, total)}%)`;
 
 function NoData() {
     return <p className="py-6 text-center text-xs text-muted">Belum ada data.</p>;
 }
 
-/**
- * Horizontal bars, one per part, for labels too long to sit under a column (office, position). The number is always written; the bar is a
- * picture of it. A long list scrolls inside its card and is reachable by keyboard.
- */
+/** Horizontal bars for labels too long to fit under a column. The number is always shown. */
 export function BarChart({ label, items, className }: { label: string; items: ChartItem[]; className?: string }) {
     const total = sum(items);
 
@@ -39,7 +36,7 @@ export function BarChart({ label, items, className }: { label: string; items: Ch
     return (
         <ul
             aria-label={label}
-            // A scrollable region must be reachable by keyboard (WCAG 2.1.1), so this list is focusable on purpose.
+            // Scrollable regions need to be focusable (WCAG 2.1.1).
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
             tabIndex={0}
             className={cn(
@@ -64,10 +61,7 @@ export function BarChart({ label, items, className }: { label: string; items: Ch
     );
 }
 
-/**
- * Columns for parts that have an order (tenure, age bands). The tallest column fills the area, so the shape shows the spread; the count
- * is written on top of each column and the label below. A tooltip repeats the reading with its share for a pointer.
- */
+/** Columns for ordered parts (tenure, age bands). Count on top, label below. */
 export function ColumnChart({ label, items }: { label: string; items: ChartItem[] }) {
     const total = sum(items);
     const tallest = Math.max(...items.map((item) => item.count), 1);
@@ -96,7 +90,7 @@ export function ColumnChart({ label, items }: { label: string; items: ChartItem[
     );
 }
 
-/** The first four parts keep their own colour; whatever is left is added together as "Lainnya", so a donut never has more than five slices. */
+/** The first four parts keep their colour, the rest are summed as "Lainnya" (five slices at most). */
 function slices(items: ChartItem[]): ChartItem[] {
     const parts = items.filter((item) => item.count > 0);
 
@@ -109,10 +103,7 @@ function slices(items: ChartItem[]): ChartItem[] {
     return [...parts.slice(0, FILL.length - 1), { label: OTHER, count: sum(rest) }];
 }
 
-/**
- * A ring for few parts that make up a whole (status, gender). The legend beside it is the readable version: colour swatch, label, and the
- * number with its share. The ring is a picture of the same numbers and is hidden from a screen reader.
- */
+/** Donut for a few parts of a whole. The legend carries the numbers; the ring is hidden from screen readers. */
 export function DonutChart({ label, items, centerLabel }: { label: string; items: ChartItem[]; centerLabel: string }) {
     const total = sum(items);
     const parts = slices(items);

@@ -10,7 +10,7 @@ export type PageMeta = {
     total: number;
 };
 
-/** Page numbers to display, with `null` marking a gap. */
+/** Page numbers to show. null is a gap. */
 function pageWindow(current: number, last: number): (number | null)[] {
     const pages = new Set([1, last, current - 1, current, current + 1].filter((p) => p >= 1 && p <= last));
     const sorted = [...pages].sort((a, b) => a - b);

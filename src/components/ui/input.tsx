@@ -11,16 +11,15 @@ export function Input({ className, ...props }: React.ComponentProps<'input'>) {
 type GroupProps = {
     children: React.ReactNode;
     className?: string;
-    // Passed down by `Field` (label `for`, description, invalid) and given to the control, the first child.
+    // From Field: label for, description, invalid.
     id?: string;
     'aria-describedby'?: string;
     'aria-invalid'?: boolean;
 };
 
 /**
- * A control with buttons beside it (generate, copy). Put it inside `Field` like any control: the first child is the control and receives
- * the `id`, `aria-describedby`, and `aria-invalid` that `Field` passes, so the label and the error stay wired to it. The buttons use
- * `size="fieldIcon"` to be as tall as the control.
+ * A control with buttons next to it. The first child is the control and gets the id and aria props from Field.
+ * Buttons use size="fieldIcon".
  */
 export function InputGroup({ children, className, ...wiring }: GroupProps) {
     const [control, ...actions] = React.Children.toArray(children);

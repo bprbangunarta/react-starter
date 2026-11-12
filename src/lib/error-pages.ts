@@ -1,21 +1,18 @@
 import type { IllustrationName } from '@/components/illustrations';
 
-/** What a person can do next on an error screen: go to the start page, sign in, or try again (reload). */
+/** What to offer next on an error screen: home, sign in, or retry (reload). */
 export type ErrorAction = 'home' | 'login' | 'retry';
 
 export type ErrorPageSpec = {
     status: number;
-    /** The headline: says what happened in words (never the bare number, "Service Unavailable", or a code). */
+    /** Headline in words, not the bare number or "Service Unavailable". */
     title: string;
     description: string;
     illustration: IllustrationName;
     action: ErrorAction;
 };
 
-/**
- * The one place for the words and pictures of the error screens. The app (`ErrorPage`) and the static pages in `error-pages/`
- * (`npm run error-pages`) both read this list, so they always say the same thing. A status with its own wording is added here.
- */
+/** Words and pictures of the error screens, in one place. The app (ErrorPage) and the static pages in error-pages/ both read this list. */
 export const ERROR_PAGES: readonly ErrorPageSpec[] = [
     {
         status: 401,

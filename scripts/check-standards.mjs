@@ -4,11 +4,11 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// `fileURLToPath`, not `.pathname`: a folder name with a space or a non-ASCII letter is percent-encoded in a URL and `.pathname` would not open.
+// fileURLToPath, not .pathname: a folder name with a space or a non-ASCII letter is percent-encoded in a URL.
 const root = fileURLToPath(new URL('../src', import.meta.url));
 const files = [];
 
-/** A file or folder that cannot be read stops the check with a sentence, never with a stack trace nobody can act on. */
+/** Stops with a plain sentence instead of a stack trace when a file can't be read. */
 function unreadable(path, error) {
     console.error(`Tidak bisa membaca ${relative(process.cwd(), path)} (${error.code ?? error.message}). Periksa izin dan isi folder src, lalu ulangi.`);
     process.exit(1);
@@ -53,9 +53,7 @@ const sources = new Map(
     }),
 );
 
-/** Test files and test setup may use literal colours and localStorage (test data, cleanup). */
-
-/** Test files and test setup may use literal colours and localStorage (test data, cleanup). */
+/** Tests and test setup may use literal colours and localStorage. */
 const isTest = (file) => /\.test\.tsx?$|\/src\/test\//.test(file);
 
 const rules = [
@@ -72,7 +70,7 @@ const rules = [
     {
         name: 'Baris judul + aksi memakai items-center, bukan items-start justify-between',
         test: (line) => /items-start justify-between/.test(line),
-        skip: (file) => file.endsWith('components/ui/combobox.tsx'),
+        skip: (file) => file.endsWith('components/ui/option-panel.tsx'),
     },
     { name: 'console.log/debugger tertinggal', test: (line) => /\bconsole\.log\(|\bdebugger\b/.test(line), skip: () => false },
     {
@@ -112,6 +110,12 @@ const rules = [
             return label !== undefined && (label.length > 15 || label.includes('/') || label.trim().split(/\s+/).length > 2);
         },
         skip: (file) => !file.endsWith('layouts/menu.ts'),
+    },
+    {
+        name: 'Tanda — dan → dilarang di komentar: pakai tanda baca biasa',
+        test: (line) => /^\s*(\/\/|\/\*|\*)/.test(line) && /[—→]/.test(line),
+        skip: () => false,
+        inComments: true,
     },
     { name: 'Tipe any dilarang', test: (line) => /:\s*any\b|\bas any\b|<any>/.test(line), skip: () => false },
     { name: '@ts-ignore/@ts-nocheck dilarang: perbaiki tipenya', test: (line) => /@ts-(ignore|nocheck)/.test(line), skip: () => false, inComments: true },
@@ -193,6 +197,26 @@ for (const file of files) {
             `${relative(process.cwd(), file)}  PageHeader: actions berisi tombolnya langsung (fragment), tanpa div pembungkus, supaya tombolnya sama lebar`,
         );
     }
+}
+
+// Multi-line rule: comments stay short. More than 8 lines in a row is documentation, and documentation lives in docs/.
+for (const file of files) {
+    let run = 0;
+    let start = 0;
+
+    [...sources.get(file).split('\n'), ''].forEach((line, index) => {
+        if (/^\s*(\/\/|\/\*|\*)/.test(line)) {
+            run++;
+            start = run === 1 ? index + 1 : start;
+        } else {
+            if (run > 8 && !isTest(file)) {
+                failures++;
+                console.error(`${relative(process.cwd(), file)}:${start}  Komentar ${run} baris berturut-turut: ringkas (maksimal 8) atau pindahkan ke docs/`);
+            }
+
+            run = 0;
+        }
+    });
 }
 
 if (failures > 0) {

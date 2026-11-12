@@ -1,10 +1,9 @@
 import type { ReactNode } from 'react';
 
 /**
- * The illustrations of the sign-in and error screens: flat shapes in the theme's own colours, drawn once and used both by the app and by the
- * static error pages (`npm run error-pages` renders these same components). Colours are CSS variables of the tokens in `src/index.css`
- * (`var(--color-primary)`, ...), so a rebrand recolours them. They are decorative: the text beside them says everything, so they are hidden
- * from screen readers. No imports besides React, so a script can render them.
+ * Illustrations for the sign-in and error screens: flat shapes in theme colours. Used by the app and by the static error pages
+ * (npm run error-pages renders these same components), so this file imports nothing but React.
+ * Colours are the CSS variables from index.css, so a rebrand recolours them. They are decorative and hidden from screen readers.
  */
 const C = {
     primary: 'var(--color-primary)',
@@ -21,7 +20,7 @@ const C = {
     dangerSoft: 'var(--color-danger-soft)',
 } as const;
 
-/** The same backdrop for all of them: a soft disc, a ground shadow, and a few quiet marks. */
+/** Shared backdrop: a soft disc, a ground shadow and a few small marks. */
 function Stage({ children, tint = C.soft }: { children: ReactNode; tint?: string }) {
     return (
         <>
@@ -258,7 +257,7 @@ export const ILLUSTRATIONS = {
 
 export type IllustrationName = keyof typeof ILLUSTRATIONS;
 
-/** One illustration by name, 240 by 180, scaling to the width it is given. Decorative (hidden from screen readers). */
+/** One illustration by name, 240x180, scaling to the width it's given. Decorative. */
 export function Illustration({ name, className }: { name: IllustrationName; className?: string }) {
     const Drawing = ILLUSTRATIONS[name];
 

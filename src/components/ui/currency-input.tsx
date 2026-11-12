@@ -7,19 +7,16 @@ import { caretAfter, dataBefore } from '@/lib/mask';
 const isDigit = (char: string) => /\d/.test(char);
 
 type Props = Omit<React.ComponentProps<typeof Input>, 'value' | 'onChange' | 'defaultValue' | 'prefix'> & {
-    /** The amount as a number (whole units), or null when empty. */
+    /** Amount as a number in whole units, null when empty. */
     value: number | null;
     onValueChange: (value: number | null) => void;
-    /** Label in front of the amount; `null` for a plain number with thousands separators. */
+    /** Text before the amount. null for a plain number with separators. */
     prefix?: string | null;
-    /** Most digits allowed (default 15, which Number holds exactly). */
+    /** Most digits allowed, default 15 (exact in a JS number). */
     maxDigits?: number;
 };
 
-/**
- * Money input: it is a text field, accepts only digits, and formats as you type (1000000 becomes 1.000.000).
- * The value stays a plain number, so the screen sends `1000000` to the API, never the formatted text.
- */
+/** Money field: digits only, formatted while typing (1000000 becomes 1.000.000). The value stays a number. */
 export function CurrencyInput({ value, onValueChange, prefix = 'Rp', maxDigits = 15, className, ...props }: Props) {
     const ref = useRef<HTMLInputElement>(null);
     const caret = useRef<number | null>(null);
@@ -50,7 +47,7 @@ export function CurrencyInput({ value, onValueChange, prefix = 'Rp', maxDigits =
                     let before = dataBefore(typed, position, isDigit);
                     let digits = typed.replace(/\D/g, '');
 
-                    // Backspace over a separator ("1.|000"): nothing changes, so remove the digit before it.
+                    // Backspace on a separator changes nothing, so remove the digit before it.
                     if (native.inputType === 'deleteContentBackward' && digits === (value === null ? '' : String(value)) && before > 0) {
                         digits = digits.slice(0, before - 1) + digits.slice(before);
                         before -= 1;

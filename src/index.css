@@ -36,9 +36,9 @@
     --color-info-line: oklch(0.88 0.06 250);
     --color-info-ink: oklch(0.42 0.12 250);
 
-    /*
-     * Chart series colours: five hues of about equal weight, each at least 3:1 against the surface (a test checks it), so a slice or a bar
-     * is seen without relying on its neighbour. They carry no status meaning; the number beside each part always says what it is.
+    /**
+     * Chart series colours: five hues of about equal weight, each at least 3:1 against the surface (a test checks it).
+     * They carry no status meaning; the number beside each part says what it is.
      */
     --color-chart-1: oklch(0.45 0.16 265);
     --color-chart-2: oklch(0.58 0.1 195);
@@ -51,10 +51,10 @@
     --text-sm: 0.8125rem;
 }
 
-/*
- * Motion: soft and short. Things fade and rise a few pixels, overlays pop from their anchor, panels slide in; nothing bounces.
- * One easing and three durations for the whole app. Screens never write their own keyframes: they use the `motion-*` classes below.
- * With `prefers-reduced-motion` all of them are switched off (loaders keep spinning: that is state, not decoration).
+/**
+ * Motion: soft and short. Things fade and rise a few pixels, overlays pop from their anchor, panels slide in, nothing bounces.
+ * One easing and three durations. Screens use the motion-* classes below instead of their own keyframes.
+ * With prefers-reduced-motion they are all off (spinners keep turning, since that is state, not decoration).
  */
 :root {
     --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
@@ -139,14 +139,14 @@
     }
 }
 
-/* The dim layer behind dialogs and panels. */
+/** Dim layer behind dialogs and panels. */
 .overlay-fade[data-state='open'] {
     animation: fade-in var(--motion-base) var(--ease-soft);
 }
 .overlay-fade[data-state='closed'] {
     animation: fade-out var(--motion-fast) ease-in forwards;
 }
-/* Dialog, popover, dropdown, tooltip: fade and grow from 97% out of the point they are anchored to. */
+/** Dialog, popover, dropdown, tooltip: fade in and grow from 97% at the anchor point. */
 .motion-pop {
     transform-origin: var(--radix-popper-transform-origin, center);
 }
@@ -158,7 +158,7 @@
 .motion-pop[data-state='closed'] {
     animation: pop-out var(--motion-fast) ease-in forwards;
 }
-/* Side panels (Drawer, mobile menu). */
+/** Side panels (Drawer, mobile menu). */
 .motion-slide-right[data-state='open'] {
     animation: slide-in-right var(--motion-slow) var(--ease-soft);
 }
@@ -177,11 +177,11 @@
 .motion-accordion[data-state='closed'] {
     animation: accordion-up var(--motion-base) var(--ease-soft);
 }
-/* A screen, an empty state, or a block that appears: fade and rise a few pixels. */
+/** Screens, empty states and blocks that appear: fade in and rise a few pixels. */
 .motion-page {
     animation: rise-in var(--motion-slow) var(--ease-soft) backwards;
 }
-/* Items of a list or grid appear one after another: set `--i` (the index, at most about 12) on each. */
+/** List and grid items appear one after another: set --i (the index, 12 at most) on each. */
 .motion-item {
     animation: rise-in var(--motion-slow) var(--ease-soft) backwards;
     animation-delay: calc(var(--i, 0) * 30ms);
@@ -189,7 +189,7 @@
 .motion-row {
     animation: fade-in var(--motion-base) ease-out backwards;
 }
-/* Bars of charts and progress fill from their base. */
+/** Chart bars grow from their base. */
 .motion-grow-x {
     transform-origin: left;
     animation: grow-x 600ms var(--ease-soft) backwards;
@@ -216,10 +216,10 @@
     }
 }
 
-/*
- * Illustrations (sign-in and error screens): slow, quiet loops. The whole picture floats a few pixels over its ground shadow, small
- * marks twinkle, and each drawing has one gentle accent (a clock hand, a gear, a needle, a blinking light). The static error pages
- * take this block as it is (between the markers; `scripts/error-pages.ts`), so keep it free of anything the app alone defines.
+/**
+ * Illustrations (sign-in and error screens): slow loops. The picture floats a few pixels over its shadow, small marks twinkle, and each drawing
+ * has one accent (clock hand, gear, needle, blinking light). The static error pages copy the block between the markers
+ * (scripts/error-pages.ts), so keep it free of anything only the app defines.
  */
 /* illustrations:start */
 @keyframes ill-float {
@@ -346,7 +346,7 @@
 }
 /* illustrations:end */
 
-/* Toasts (sonner richColors) take the status ladder above, so they match Badge and Alert. */
+/** Toasts (sonner richColors) use the status ladder above, like Badge and Alert. */
 html [data-sonner-toaster][data-sonner-theme] {
     --success-bg: var(--color-success-soft);
     --success-border: var(--color-success-line);
@@ -362,7 +362,7 @@ html [data-sonner-toaster][data-sonner-theme] {
     --info-text: var(--color-info-ink);
 }
 
-/* Compact calendar (react-day-picker v9): 28px cells, small caption and navigation. */
+/** Compact calendar (react-day-picker): 28px cells, small caption and navigation. */
 .rdp-root.compact-calendar {
     --rdp-accent-color: var(--color-primary);
     --rdp-day-height: 28px;
@@ -407,7 +407,7 @@ html [data-sonner-toaster][data-sonner-theme] {
     background: var(--color-primary);
     color: var(--color-surface);
 }
-/* DateRangePicker: days between the start and the pointer, shaded before the end day is clicked. */
+/** DateRangePicker: days between the start and the pointer are shaded before the end day is clicked. */
 .compact-calendar .rdp-preview:not(.rdp-selected),
 .compact-calendar .rdp-preview-end:not(.rdp-selected) {
     background: var(--color-primary-soft);

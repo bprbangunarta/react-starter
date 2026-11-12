@@ -4,8 +4,8 @@ import { ErrorPage } from '@/components/error-page';
 import { MAINTENANCE_EVENT } from '@/lib/http';
 
 /**
- * Shows the full-screen maintenance page when the server says it is in maintenance (`503`, see `lib/http.ts`), instead of a toast on every
- * screen. "Coba lagi" reloads the page, which is the whole app again once the server is back.
+ * Shows the maintenance page when the server answers 503 (lib/http.ts), instead of a toast on every screen.
+ * "Coba lagi" reloads the page.
  */
 export function MaintenanceGate({ children }: { children: ReactNode }) {
     const [down, setDown] = useState(false);

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { http, HttpError } from '@/lib/http';
 import type { Params } from '@/lib/http';
 
-/** Load a resource with `GET url?params`, reloading whenever the params change. */
+/** Loads GET url?params and reloads when params change. */
 export function useResource<T>(url: string, params?: Params) {
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState(true);

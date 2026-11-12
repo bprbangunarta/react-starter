@@ -7,8 +7,8 @@ export type Step = {
 };
 
 /**
- * Steps of a process (wizard, application status). `current` is the index of the step in progress: earlier steps show a check,
- * later ones are dimmed. Vertical on phones, horizontal from the `sm` width.
+ * Process steps. current is the active index: earlier steps get a check, later ones are dimmed.
+ * Vertical on phones, horizontal from sm.
  */
 export function Stepper({ steps, current, 'aria-label': ariaLabel = 'Langkah' }: { steps: Step[]; current: number; 'aria-label'?: string }) {
     return (

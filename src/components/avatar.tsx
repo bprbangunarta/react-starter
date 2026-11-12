@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 /**
- * A round profile photo, or the first letter of the name when there is none (or the photo cannot be loaded). The image is decorative:
- * the name is always next to it, so its alternative text is empty.
+ * Round profile photo, or the first letter of the name when there is none or it fails to load.
+ * Empty alt text: the name is always next to it.
  */
 export function Avatar({ name, src, className }: { name: string; src: string | null; className?: string }) {
     const [failed, setFailed] = useState<string | null>(null);

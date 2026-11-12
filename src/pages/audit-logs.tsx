@@ -48,7 +48,7 @@ type Filters = {
     from: string | null;
     to: string | null;
     per_page: number;
-    /** Every column with data sorts (the keys are the server's whitelist, see docs/API.md). */
+    /** Every data column sorts (keys are the server whitelist, see docs/API.md). */
     sort: SortKey;
     direction: 'asc' | 'desc';
 };
@@ -112,7 +112,7 @@ export default function AuditLogsIndex() {
     const logs = { data: data?.data ?? [], ...(data?.meta ?? { current_page: 1, last_page: 1, from: 0, to: 0, total: 0 }) };
     const modules = data?.modules ?? [];
 
-    // Typing in the search box searches a moment after the last key.
+    // Search runs a moment after the last keystroke.
     useEffect(() => {
         const timer = setTimeout(() => setFilters((f) => (f.search === search ? f : { ...f, search, page: 1 })), 300);
 
@@ -123,7 +123,7 @@ export default function AuditLogsIndex() {
     const onSearch = setSearch;
     const clear = (changes: Partial<Filters>) => {
         setSearch('');
-        // "Atur ulang" also returns to the default order (by time, newest first).
+        // Reset also returns to the default order (time, newest first).
         setFilters((f) => ({ ...f, search: '', sort: 'time', direction: 'desc', ...changes, page: 1 }));
     };
 

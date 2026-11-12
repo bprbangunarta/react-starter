@@ -4,10 +4,9 @@ import { Illustration } from '../src/components/illustrations';
 import { ERROR_PAGES } from '../src/lib/error-pages';
 
 /**
- * The static error pages (`error-pages/*.html`): self-contained HTML for a web server or a framework to serve when the app itself
- * cannot (maintenance, 5xx, 401/403/404/419/429). Words and pictures are the app's own (`src/lib/error-pages.ts` and
- * `src/components/illustrations.tsx`), and every colour is a token of `src/index.css`, so a rebrand recolours them. No script, no asset,
- * and no `javascript:` link (a strict Content-Security-Policy blocks it): "Coba lagi" is a link to the same address.
+ * Static error pages (error-pages/*.html): self-contained HTML for a web server to serve when the app itself cannot (maintenance, 5xx, 401/403/404/419/429).
+ * Words and pictures come from the app (src/lib/error-pages.ts, src/components/illustrations.tsx) and colours from src/index.css, so a rebrand recolours them.
+ * No script, no asset, no javascript: link (a strict CSP blocks it): "Coba lagi" links to the same address.
  */
 const escapeHtml = (text: string): string =>
     text.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] ?? char);

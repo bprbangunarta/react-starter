@@ -1,7 +1,7 @@
 /**
- * The one-time-code email (sign-in with two-factor, or turning two-factor on). Pure functions with no dependencies, so
- * they run in any Node backend or in the browser (the style guide previews it). The HTML uses tables and inline styles on
- * purpose: that is what mail apps render reliably. `email/blade/` holds the same template for Laravel.
+ * One-time-code email (two-factor sign-in, or turning two-factor on). Pure functions with no dependencies, so they run in any
+ * Node backend or in the browser (the UI Guideline previews it). Tables and inline styles on purpose: mail apps render those reliably.
+ * email/blade/ has the same template for Laravel.
  *
  * Usage: const { subject, html, text } = renderLoginCodeEmail({ appName: 'Starter Kit', code: '482915', minutes: 10, name: 'Rina' });
  */

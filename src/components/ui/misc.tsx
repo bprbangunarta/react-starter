@@ -7,10 +7,7 @@ export function Card({ className, ...props }: React.ComponentProps<'div'>) {
     return <div className={cn('rounded-lg border border-line bg-surface', className)} {...props} />;
 }
 
-/**
- * A card is built like a dialog: `CardHeader` (title, optional description and actions, bottom line), `CardBody` (content),
- * and `CardFooter` (top line) only when the card has buttons to submit or cancel. A card without buttons has no footer.
- */
+/** Card parts: CardHeader, CardBody, and CardFooter only when the card has buttons. */
 export function CardHeader({ title, description, actions }: { title: string; description?: string; actions?: ReactNode }) {
     return (
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-3 py-2">
@@ -27,7 +24,7 @@ export function CardBody({ className, ...props }: React.ComponentProps<'div'>) {
     return <div className={cn('p-3', className)} {...props} />;
 }
 
-/** Buttons of a card form: the dismissing one first (left), the confirming one last (right); a hint may take the left. Text only on form buttons, like DialogFooter. */
+/** Card buttons: dismiss first, confirm last, text only. A hint can sit on the left. */
 export function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {
     return <div className={cn('flex items-center justify-between gap-2 border-t border-line px-3 py-2', className)} {...props} />;
 }
@@ -80,7 +77,7 @@ export function PageHeader({ title, description, actions }: { title: string; des
     );
 }
 
-/** Status tones: soft surface, line, and ink from the shared ladder in src/index.css. Badge, Alert, and toasts use the same family. */
+/** Status tones use the shared ladder in index.css (Badge, Alert, toasts). */
 const badgeTones = {
     neutral: 'bg-canvas text-muted ring-line',
     info: 'bg-info-soft text-info-ink ring-info-line',
@@ -99,7 +96,7 @@ const alertTones = {
 
 export type BadgeTone = keyof typeof badgeTones;
 
-/** An inline message (result of an action, notice). Icon optional; `danger` is announced as an alert, the rest as status. */
+/** Inline message. danger is announced as an alert, the rest as status. */
 export function Alert({ tone = 'info', icon, className, children, ...props }: React.ComponentProps<'div'> & { tone?: BadgeTone; icon?: ReactNode }) {
     return (
         <div

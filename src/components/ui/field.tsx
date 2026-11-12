@@ -6,8 +6,8 @@ import { Tip, TooltipProvider } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
 /**
- * A label, its control, and the error. A description for the field is the `hint`: it is shown as a tooltip on an info icon beside the
- * label, never as text under the control (only the error shows there). Screen readers still get the hint as the control's description.
+ * Label, control and error. The hint is a tooltip next to the label and is read as the control's description.
+ * Only the error appears under the control.
  */
 export function Field({
     label,
@@ -28,7 +28,7 @@ export function Field({
     const errorId = error ? `${id}-error` : undefined;
     const hintId = hint ? `${id}-hint` : undefined;
     const note = [errorId, hintId].filter(Boolean).join(' ') || undefined;
-    // Connect the label, hint, and error to the control: the label's `for`, plus aria-describedby and aria-invalid.
+    // Wire label, hint and error to the control: for, aria-describedby, aria-invalid.
     const control = isValidElement<{ id?: string; 'aria-describedby'?: string; 'aria-invalid'?: boolean }>(children)
         ? cloneElement(children as ReactElement<{ id?: string; 'aria-describedby'?: string; 'aria-invalid'?: boolean }>, {
               id: children.props.id ?? id,
@@ -36,7 +36,7 @@ export function Field({
               'aria-invalid': children.props['aria-invalid'] ?? (error ? true : undefined),
           })
         : children;
-    // A `Textarea` with `maxLength` and a controlled value gets its counter on the label row (not under the control).
+    // A Textarea with maxLength and a controlled value shows its counter on the label row.
     const counter =
         isValidElement<{ value?: unknown; maxLength?: number }>(children) &&
         children.type === Textarea &&

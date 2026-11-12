@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/dialog';
 import { http, HttpError } from '@/lib/http';
 
-/** The same limit the server enforces (it checks again). */
+/** Same limit as the server (which checks again). */
 const MAX_BYTES = 2 * 1024 * 1024;
 const ACCEPT = 'image/jpeg,image/png,image/webp';
 
-/** The photo row on the profile page: shows the current photo and lets the person replace or remove it. */
+/** Photo row on the profile page: shows the current photo and lets the user replace or remove it. */
 export function AvatarEditor({ name, src, onChanged }: { name: string; src: string | null; onChanged: () => void }) {
     const input = useRef<HTMLInputElement>(null);
     const [busy, setBusy] = useState(false);

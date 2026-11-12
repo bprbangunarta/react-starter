@@ -12,8 +12,8 @@ export function SearchInput({ value, onChange, placeholder, label }: { value: st
 }
 
 /**
- * Toolbar of every list: the search box stays alone at the left, the filters (and the reset button)
- * sit together at the right. On small screens the search box takes the full width and the filters sit below it in two even columns (a last, odd one spans both).
+ * Toolbar of every list: search on the left, filters on the right. On phones search is full width and the filters
+ * sit below it in two columns (an odd last one spans both).
  */
 export function FilterBar({ search, children }: { search: ReactNode; children?: ReactNode }) {
     return (

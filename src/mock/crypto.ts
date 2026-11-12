@@ -1,4 +1,4 @@
-/** SHA-256 as hex (the audit chain) and TOTP (RFC 6238), both with the browser's own crypto. */
+/** SHA-256 as hex (audit chain) and TOTP (RFC 6238), using the browser's crypto. */
 const encoder = new TextEncoder();
 
 export async function sha256(text: string): Promise<string> {
@@ -41,7 +41,7 @@ async function hotp(secret: string, counter: number): Promise<string> {
     return String(code % 1_000_000).padStart(6, '0');
 }
 
-/** True when `code` is the current 6-digit code of the secret, give or take one 30-second step. */
+/** True when code matches the secret's current 6-digit code, one 30-second step either way. */
 export async function verifyTotp(secret: string, code: string): Promise<boolean> {
     const step = Math.floor(Date.now() / 30000);
 

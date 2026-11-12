@@ -3,8 +3,8 @@ import { useNetworkStatus } from '@/hooks/use-network-status';
 import { cn } from '@/lib/utils';
 
 /**
- * A small pill at the bottom of the screen: shown while the connection is lost (stays until it is back) and for a
- * moment after it returns. It never blocks the page, and it is silent while everything is fine.
+ * Small pill at the bottom of the screen while the connection is lost, and briefly after it returns.
+ * It never blocks the page and stays hidden otherwise.
  */
 export function NetworkStatus() {
     const status = useNetworkStatus();

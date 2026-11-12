@@ -1,25 +1,21 @@
 /**
- * The only place the screens talk to a server. Everything goes through `http.get/post/put/delete(url, data)` with
- * JSON in and out, in the shape of a Laravel-style API:
- *
- *  - success: any JSON body; an optional `message` is shown as a toast;
- *  - validation failure: status 422 with `{ message, errors: { field: ['text'] } }`;
- *  - other failure: status 4xx/5xx with `{ message }`.
- *
- * Right now the requests are answered by `src/mock/server.ts` (no network). To use a real backend, set `USE_MOCK` to
- * false and every call becomes a `fetch` to `API_BASE + url` with cookies/session; nothing else needs to change.
- * See docs/API.md for the endpoints.
+ * The only place screens talk to a server: http.get/post/put/delete(url, data), JSON in and out, Laravel-style:
+ *  - success: any JSON body, with an optional message shown as a toast
+ *  - validation failure: 422 with { message, errors: { field: ['text'] } }
+ *  - other failure: 4xx/5xx with { message }
+ * Requests are answered by src/mock/server.ts for now. To use a real backend set USE_MOCK to false and every call becomes a
+ * fetch to API_BASE + url with cookies. See docs/API.md.
  */
 import { toast } from 'sonner';
 import { handleMock } from '@/mock/server';
 
-/** On by default. Set `VITE_USE_MOCK=false` (env or .env) to send the same calls to a real backend without touching the code. */
+/** On by default. Set VITE_USE_MOCK=false (env or .env) to use a real backend without touching code. */
 export const USE_MOCK = import.meta.env.VITE_USE_MOCK !== 'false';
 
-/** Fired when the server asks for a fresh password confirmation (403 `reauth_required`). */
+/** Fired when the server asks for a fresh password confirmation (403 reauth_required). */
 export const REAUTH_EVENT = 'app:reauth-required';
 
-/** Fired when the server answers 503 (maintenance): `MaintenanceGate` then shows the full-screen maintenance page. */
+/** Fired on 503 (maintenance); MaintenanceGate then shows the maintenance page. */
 export const MAINTENANCE_EVENT = 'app:maintenance';
 export const API_BASE = '/api';
 
@@ -45,9 +41,9 @@ function query(params?: Params): string {
 
 type ErrorBody = { message?: string; errors?: Record<string, string[]>; code?: string };
 
-/** Turns an error response into the app-wide reactions (toast, maintenance, re-authentication) and an `HttpError`. */
+/** Turns an error response into the app-wide reactions (toast, maintenance, re-auth) and an HttpError. */
 function raise(status: number, body: ErrorBody): never {
-    // The session was ended on purpose (signed in elsewhere, credentials changed): say why before the sign-in page appears.
+    // The session was ended on purpose (signed in elsewhere, password changed): say why before the sign-in page shows.
     if (status === 401 && body.code === 'session_ended' && body.message) {
         toast.info(body.message);
     }
@@ -68,7 +64,7 @@ async function send<T>(method: Method, url: string, data?: unknown, params?: Par
         return (await handleMock(method, url, data, params ?? {})) as T;
     }
 
-    // A FormData body (file upload) keeps its own multipart type, which the browser sets together with the boundary.
+    // A FormData body (file upload) keeps its multipart type; the browser sets it together with the boundary.
     const multipart = data instanceof FormData;
     let response: Response;
 
@@ -93,19 +89,19 @@ async function send<T>(method: Method, url: string, data?: unknown, params?: Par
 }
 
 export type UploadOptions = {
-    /** Name of the multipart field the file goes in (default `file`). */
+    /** Multipart field name for the file, default "file". */
     field?: string;
     /** Extra text fields sent with the file. */
     data?: Record<string, string>;
-    /** Called with 0–100 while the file goes up. */
+    /** Called with 0-100 while uploading. */
     onProgress?: (percent: number) => void;
-    /** Aborting rejects with an `AbortError`. */
+    /** Aborting rejects with an AbortError. */
     signal?: AbortSignal;
 };
 
 const abortError = () => new DOMException('Unggahan dibatalkan.', 'AbortError');
 
-/** The mock has no endpoint to receive files: it only plays the progress (a bigger file takes a bit longer) so screens can be built and tried. */
+/** The mock has no upload endpoint; it just plays progress (bigger files take a bit longer) so screens can be built. */
 function simulateUpload(file: File, { onProgress, signal }: UploadOptions): Promise<unknown> {
     const steps = 10;
     const duration = Math.min(2400, 700 + (file.size / (1024 * 1024)) * 500);
@@ -136,8 +132,8 @@ function simulateUpload(file: File, { onProgress, signal }: UploadOptions): Prom
 }
 
 /**
- * Sends one file as `multipart/form-data` and reports progress (`fetch` cannot, so this is the one place that uses `XMLHttpRequest`).
- * Errors come out the same as for every other call: `HttpError` with the server's message and, for 422, the messages per field.
+ * Sends one file as multipart/form-data with progress. fetch can't report upload progress, so this is the only place using XMLHttpRequest.
+ * Errors match every other call: HttpError with the server's message and, for 422, messages per field.
  */
 function upload<T = unknown>(url: string, file: File, options: UploadOptions = {}): Promise<T> {
     if (USE_MOCK) {

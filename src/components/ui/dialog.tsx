@@ -6,14 +6,13 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 /**
- * Dialogs here are opened by state, not by a Radix `Trigger`, so Radix has nothing to give focus back to when they close and
- * keyboard users would land at the top of the page. This remembers the element that had focus when the dialog opened and
- * returns focus to it on close. Spread the result on the dialog content.
+ * Dialogs opened from state have no Radix Trigger to give focus back to, so keyboard users would land at the top of the page.
+ * This remembers the focused element on open and refocuses it on close. Spread the result on the dialog content.
  */
 export function useRestoreFocus(open: boolean) {
     const opener = useRef<HTMLElement | null>(null);
 
-    // A layout effect runs before Radix moves focus into the dialog, so `activeElement` is still the opener.
+    // A layout effect runs before Radix moves focus, so activeElement is still the opener.
     useLayoutEffect(() => {
         if (open) {
             opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -28,7 +27,7 @@ export function useRestoreFocus(open: boolean) {
 }
 
 export const overlayClass = 'overlay-fade fixed inset-0 z-50 bg-ink/40';
-// A dialog taller than the screen scrolls as a whole (small phones, landscape) instead of being cut off.
+// A dialog taller than the screen scrolls as a whole.
 const content =
     'motion-pop fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain rounded-lg border border-line bg-surface shadow-xl focus:outline-none';
 
@@ -41,9 +40,9 @@ export function Modal({
     wide,
     persistent,
 }: {
-    /** `true` is a wide dialog for a form; `'xl'` is for a form with several sections side by side. */
+    /** true is a wide form dialog, 'xl' fits several sections side by side. */
     wide?: boolean | 'xl';
-    /** For dialogs with fields: a click outside does not close it (Esc and the close button still do), so typed input is not lost by accident. */
+    /** For dialogs with fields: clicking outside doesn't close it, so typed input isn't lost. Esc and the close button still work. */
     persistent?: boolean;
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -124,19 +123,12 @@ export function ConfirmDialog({
     );
 }
 
-/**
- * Every dialog has three parts: a header (title, and for form dialogs a short subtitle), a body (the content: form fields,
- * or the message of a confirmation), and a footer with the buttons. `Modal` and `ConfirmDialog` draw the header; screens
- * supply `DialogBody` and `DialogFooter`.
- */
+/** Dialog parts: the header (drawn by Modal and ConfirmDialog), DialogBody and DialogFooter. */
 export function DialogBody({ className, ...props }: React.ComponentProps<'div'>) {
     return <div className={cn('p-4', className)} {...props} />;
 }
 
-/**
- * Footer of every dialog: the dismissing button (Batal / Back) is the first child and sits at the left,
- * the confirming button (Save / Create / Delete) is the last child and sits at the right.
- */
+/** Dialog footer: the dismiss button comes first (left), the confirm button last (right). */
 export function DialogFooter({ children }: { children: ReactNode }) {
     return <div className="flex items-center justify-between gap-2 border-t border-line px-4 py-3">{children}</div>;
 }

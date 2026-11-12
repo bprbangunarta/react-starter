@@ -9,17 +9,17 @@ const tones = {
 } as const;
 
 type Props = {
-    /** 0 to `max`; leave out when the length of the task is unknown. */
+    /** 0 to max. Leave out when the length is unknown. */
     value?: number;
     max?: number;
     tone?: keyof typeof tones;
-    /** Text above the bar; the percentage is shown beside it. */
+    /** Text above the bar, with the percentage beside it. */
     label?: string;
     'aria-label'?: string;
     className?: string;
 };
 
-/** Progress of a task or a share of a quota. Without `value` it shows a moving bar (indeterminate). */
+/** Task progress or quota share. Without value it shows a moving bar. */
 export function Progress({ value, max = 100, tone = 'primary', label, 'aria-label': ariaLabel, className }: Props) {
     const percent = value === undefined ? null : Math.round((Math.min(Math.max(value, 0), max) / max) * 100);
 

@@ -18,21 +18,18 @@ type Props = {
     invalid?: boolean;
     id?: string;
     placeholder?: string;
-    /** Accessible name when there is no visible `Field` label (e.g. a toolbar filter). */
+    /** For controls without a visible label. */
     'aria-label'?: string;
 };
 
-/**
- * The month the calendar opens on when nothing is chosen: the current month, or the nearest month of the allowed range
- * when today falls outside it. (Opening on the range's last month made a wide range open far in the future.)
- */
+/** Month to open on when nothing is chosen: this month, or the closest month inside min/max. */
 function openingMonth(min: Date, max: Date): Date {
     const today = new Date();
 
     return today < min ? min : today > max ? max : today;
 }
 
-/** Value is an ISO `YYYY-MM-DD` string, matching what the backend stores. */
+/** The value is an ISO date (YYYY-MM-DD). */
 export function DatePicker({
     value,
     onChange,

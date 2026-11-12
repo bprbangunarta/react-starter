@@ -1,4 +1,4 @@
-// Rebrands the starter in one command: app name, logo letter, primary colour, favicon, email, and static error pages.
+// Rebrands the starter: app name, logo letter, primary colour, favicon, email and static error pages.
 //   npm run rebrand -- --name "Nama Aplikasi" --color "#0f766e" [--initial N]
 // Either --name or --color may be given alone. See README, "Rebranding".
 import { execFileSync } from 'node:child_process';

@@ -1,7 +1,7 @@
 import { sha256 } from '@/mock/crypto';
 import type { AuditEntry, Db } from '@/mock/db';
 
-/** The fields an entry's hash covers, in a fixed order. The hash also covers the hash of the entry before it: a chain. */
+/** Fields covered by an entry's hash, in a fixed order. The hash also covers the previous entry's hash, which makes the chain. */
 function payload(e: Omit<AuditEntry, 'hash'>): string {
     return JSON.stringify([
         e.id,
@@ -42,7 +42,7 @@ export type NewEntry = {
     url?: string;
 };
 
-/** Append an entry to the chain (the log is append-only: nothing in the app edits or deletes an entry). */
+/** Append an entry. The log is append-only: nothing edits or deletes entries. */
 export async function record(db: Db, entry: NewEntry): Promise<AuditEntry> {
     const last = db.audit[db.audit.length - 1];
     const base: Omit<AuditEntry, 'hash'> = {
@@ -73,7 +73,7 @@ export async function record(db: Db, entry: NewEntry): Promise<AuditEntry> {
     return stored;
 }
 
-/** Re-computes the whole chain; the first entry that does not match is where it was altered. */
+/** Recomputes the whole chain. The first entry that doesn't match is where it was altered. */
 export async function verify(db: Db): Promise<{ ok: boolean; checked: number; broken_at: number | null; reason: string | null }> {
     let previous = GENESIS;
     let checked = 0;
@@ -101,7 +101,7 @@ export async function verify(db: Db): Promise<{ ok: boolean; checked: number; br
     return { ok: true, checked, broken_at: null, reason: null };
 }
 
-/** A believable history for the demo: a month of sign-ins, edits and a few refusals by four people. */
+/** Believable demo history: a month of sign-ins, edits and a few refusals by four people. */
 export async function seed(db: Db): Promise<void> {
     let n = 7;
     const rand = () => {

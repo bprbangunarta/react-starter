@@ -9,14 +9,13 @@ type Options<R> = {
     onError?: (errors: Record<string, string>) => void;
     onFinish?: () => void;
     preserveScroll?: boolean;
-    /** Show the `message` of the response as a toast (default true). */
+    /** Show the response message as a toast (default true). */
     toast?: boolean;
 };
 
 /**
- * A form bound to the API: `data`, `setData`, `errors` (first message per field), `processing`, `isDirty`, and
- * `post/put/delete(url)` which send the data as JSON and fill `errors` from a 422 response. Screens use it for every form, so
- * validation errors and loading states behave the same everywhere.
+ * Form bound to the API: data, setData, errors (first message per field), processing, isDirty and post/put/delete(url),
+ * which send the data as JSON and fill errors from a 422. Every form uses it so validation and loading behave the same.
  */
 export function useForm<T extends FormData>(initial: T) {
     const [defaults, setDefaultsState] = useState<T>(initial);

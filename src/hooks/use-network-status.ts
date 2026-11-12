@@ -6,7 +6,7 @@ const PING_TIMEOUT_MS = 5000;
 const RETRY_EVERY_MS = 5000;
 const RESTORED_SHOWN_MS = 3000;
 
-/** True when the app's own host answers (any HTTP status counts: the network itself works). */
+/** True when the app's own host answers. Any HTTP status counts, since the network works. */
 async function reachable(): Promise<boolean> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), PING_TIMEOUT_MS);
@@ -23,9 +23,9 @@ async function reachable(): Promise<boolean> {
 }
 
 /**
- * Detects a lost connection and its return. The browser's offline event is taken at its word, but coming back is
- * confirmed by reaching the host (`navigator.onLine` alone says "online" on a Wi-Fi without internet). While offline the
- * host is retried every few seconds; `restored` lasts a moment after the connection returns so the UI can say so.
+ * Detects a lost connection and its return. The browser offline event is trusted, but coming back is confirmed by reaching the host
+ * (navigator.onLine says "online" on Wi-Fi without internet). While offline it retries every few seconds.
+ * restored stays true briefly after reconnecting so the UI can say so.
  */
 export function useNetworkStatus(): NetworkStatus {
     const [status, setStatus] = useState<NetworkStatus>('online');

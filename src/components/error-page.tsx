@@ -7,8 +7,8 @@ import { useTitle } from '@/lib/title';
 import { cn } from '@/lib/utils';
 
 /**
- * A full-screen error page, outside the app shell (no sidebar, no header): an illustration, what happened in words, and a way out.
- * It uses plain links and `location`, never the router, because it also shows when the router itself failed (ErrorBoundary).
+ * Full-screen error page outside the app shell: illustration, what happened, a way out.
+ * Uses plain links and location instead of the router, because it also shows when the router itself failed.
  */
 export function ErrorPage({ status, back = false }: { status: number; back?: boolean }) {
     const spec = errorPage(status);

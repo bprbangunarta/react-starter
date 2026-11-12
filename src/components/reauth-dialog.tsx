@@ -7,8 +7,8 @@ import { PasswordInput } from '@/components/ui/password-input';
 import { HttpError, REAUTH_EVENT, http } from '@/lib/http';
 
 /**
- * Sensitive actions (users, API keys) need a recent password confirmation. When the server asks for it
- * (403 `reauth_required`), this dialog opens, confirms the password, and the person repeats the action.
+ * Sensitive actions need a recent password confirmation. When the server asks (403 reauth_required) this dialog opens,
+ * confirms the password, and the user repeats the action.
  */
 export function ReauthDialog() {
     const [open, setOpen] = useState(false);
@@ -17,7 +17,7 @@ export function ReauthDialog() {
     const [busy, setBusy] = useState(false);
 
     useEffect(() => {
-        // The dialog may open on top of another dialog; Radix focuses its first button, so move focus to the field.
+        // May open over another dialog; Radix focuses the first button, so focus the field instead.
         const show = () => {
             setOpen(true);
             setTimeout(() => document.getElementById('reauth-password')?.focus(), 80);

@@ -5,15 +5,15 @@ import { controlClass } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 type Props = {
-    /** `HH:mm` (24 hours), or empty when not chosen. */
+    /** HH:mm, 24 hours. Empty when not set. */
     value: string;
     onChange: (value: string) => void;
-    /** Distance between the minutes offered (default 5). */
+    /** Step between minutes, default 5. */
     minuteStep?: number;
     invalid?: boolean;
     id?: string;
     placeholder?: string;
-    /** Accessible name when there is no visible `Field` label (e.g. a toolbar filter). */
+    /** For controls without a visible label. */
     'aria-label'?: string;
 };
 
@@ -41,7 +41,7 @@ function Column({ label, items, current, onPick }: { label: string; items: numbe
     );
 }
 
-/** Time of day: pick the hour and the minute. The value is `HH:mm`, as the backend stores it. */
+/** Hour and minute picker. The value is HH:mm. */
 export function TimePicker({ value, onChange, minuteStep = 5, invalid, id, placeholder = 'Pilih jam', 'aria-label': ariaLabel }: Props) {
     const [open, setOpen] = useState(false);
     const match = /^(\d{2}):(\d{2})$/.exec(value);
@@ -67,7 +67,7 @@ export function TimePicker({ value, onChange, minuteStep = 5, invalid, id, place
             <PopoverContent
                 aria-label={ariaLabel ?? placeholder}
                 className="w-fit p-1.5"
-                // Inside a dialog the page scroll lock swallows wheel/touch scrolling of portaled content; keep it for the lists.
+                // Inside a dialog the scroll lock blocks wheel/touch on portaled content.
                 onWheel={(e) => e.stopPropagation()}
                 onTouchMove={(e) => e.stopPropagation()}
             >

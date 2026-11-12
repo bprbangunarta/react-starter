@@ -2,7 +2,7 @@ import { LayoutDashboard } from 'lucide-react';
 import { Card, EmptyState, PageHeader } from '@/components/ui/misc';
 import { useTitle } from '@/lib/title';
 
-/** The home page. Replace the card with the first real content of the product. */
+/** Home page. Replace the card with the first real content. */
 export default function Dashboard() {
     useTitle('Dashboard');
 

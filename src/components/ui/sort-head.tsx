@@ -1,7 +1,7 @@
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-/** Sortable table header cell. `sort`/`direction` describe the current ordering. */
+/** Sortable header cell. */
 export function SortHead({
     column,
     sort,
@@ -34,4 +34,4 @@ export function SortHead({
     );
 }
 
-/** Toggle helper for list pages: clicking the active column flips the direction. */
+/** Next sort state: the active column flips direction. */

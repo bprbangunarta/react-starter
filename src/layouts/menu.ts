@@ -4,22 +4,21 @@ import type { LucideIcon } from 'lucide-react';
 export type MenuLinkItem = {
     label: string;
     to: string;
-    /** Submenu entries have no icon: they get a plain dot. */
+    /** Submenu entries have no icon; they get a dot. */
     icon?: LucideIcon;
     end?: boolean;
 };
 
-/** A menu entry is a link, or a parent with submenu links (opened and closed by a button). */
+/** A link, or a parent with submenu links. */
 export type MenuItem = MenuLinkItem | { label: string; icon: LucideIcon; children: MenuLinkItem[] };
 
 /**
- * The sidebar. Add an entry here for every page the product gets, and follow these rules (`layouts/menu-names.test.ts` and
- * `npm run standards` hold them):
- * - One feature has one name from the label to the code: the address is the English form of the label (`/audit-logs` for "Audit Logs"),
- *   and the page file `pages/audit-logs.tsx`, its route in `App.tsx`, and its test use the same word.
- * - A label is one word, two at most, and at most 15 characters, with no slashes; the longer name belongs in the page title.
- * - The order follows the order work is done in: what other data depends on comes first. Related pages under one parent become a submenu
- *   (`{ label, icon, children: [...] }`): closed until opened, and open by itself while one of its pages is shown.
+ * The sidebar. Add an entry for every page. layouts/menu-names.test.ts and npm run standards check these rules:
+ * - One name per feature: the address is the English form of the label (/audit-logs for "Audit Logs"), and the page file,
+ *   route in App.tsx and test use the same word.
+ * - Labels are one or two words, 15 characters at most, no slashes. The longer name goes in the page title.
+ * - Order follows the order work is done in: what other data depends on comes first. Related pages share a parent
+ *   ({ label, icon, children }), closed until opened and open while one of its pages is shown.
  */
 export const MENU: { label?: string; items: MenuItem[] }[] = [
     { items: [{ label: 'Dashboard', to: '/', icon: LayoutDashboard, end: true }] },

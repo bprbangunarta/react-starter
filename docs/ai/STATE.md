@@ -2,7 +2,7 @@
 
 Diperbarui setiap selesai satu unit pekerjaan. Pegangan untuk melanjutkan di sesi baru; keputusan jangka panjang ada di [MEMORY](MEMORY.md), pekerjaan tertunda di [BACKLOG](BACKLOG.md).
 
-**Diperbarui:** 2026-10-19 · **Cabang:** `main` · **Verifikasi terakhir:** `npm run check` lolos (tsc, ESLint, Prettier, pemeriksa standar, 205 tes Vitest), `npm run build` lolos, CI GitHub Actions hijau, 0 kerentanan `npm audit`. Audit dialog dan lapisan mengambang (dialog, laci, popover, dropdown, tooltip: peran, nama, Esc, fokus kembali, klik luar, layar pendek, urutan lapisan) lolos. Audit penutup sebelumnya: 5 rute × 3 lebar layar (375/768/822) tanpa luapan, tanpa kontrol tanpa nama, tanpa id ganda; langkah di README (melepas mock, rebrand) disimulasikan di salinan dan lolos.
+**Diperbarui:** 2026-11-13 · **Cabang:** `main` · **Verifikasi terakhir:** `npm run check` lolos (tsc, ESLint, Prettier, pemeriksa standar, 205 tes Vitest), `npm run build` lolos, CI GitHub Actions hijau, 0 kerentanan `npm audit`. Audit dialog dan lapisan mengambang (dialog, laci, popover, dropdown, tooltip: peran, nama, Esc, fokus kembali, klik luar, layar pendek, urutan lapisan) lolos. Audit penutup sebelumnya: 5 rute × 3 lebar layar (375/768/822) tanpa luapan, tanpa kontrol tanpa nama, tanpa id ganda; langkah di README (melepas mock, rebrand) disimulasikan di salinan dan lolos.
 
 ## Yang sudah ada
 
@@ -16,6 +16,11 @@ Diperbarui setiap selesai satu unit pekerjaan. Pegangan untuk melanjutkan di ses
 - **Produksi:** halaman dimuat per rute (bundel awal ±130 kB gzip), Docker multi-tahap + nginx (gzip, CSP, header keamanan), CI GitHub Actions.
 - **Server tiruan** `src/mock/` lengkap sesuai `docs/API.md`; akun demo `admin` dan `kadaluarsa` (password `password`).
 - **Dokumen:** `README.md`, `AGENTS.md`, `CLAUDE.md`, `docs/STANDARDS.md`, `docs/API.md`, `docs/ai/*`.
+
+## Audit gaya kode (2026-11-13)
+
+Komentar di seluruh `src`, `scripts`, dan `email` ditulis ulang ringkas (alasan, bukan apa yang sudah terbaca dari kode); aturan komentar di STANDARDS bagian 1 dijaga pemeriksa (tanpa — dan →, blok maksimal 8 baris).
+`ui-guideline.tsx` dipecah ke `src/pages/ui-guideline/` (`inputs`, `table`, `parts`); `Combobox` dan `MultiCombobox` berbagi `option-panel.tsx` dan `ClearButton`. Konvensi `onValueChange` vs `onChange` ditulis di STANDARDS.
 
 ## Sedang berjalan
 
