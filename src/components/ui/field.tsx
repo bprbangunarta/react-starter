@@ -1,6 +1,7 @@
 import { Info } from 'lucide-react';
 import { cloneElement, isValidElement, useId } from 'react';
 import type { ReactElement, ReactNode } from 'react';
+import { Textarea } from '@/components/ui/textarea';
 import { Tip, TooltipProvider } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
@@ -35,6 +36,14 @@ export function Field({
               'aria-invalid': children.props['aria-invalid'] ?? (error ? true : undefined),
           })
         : children;
+    // A `Textarea` with `maxLength` and a controlled value gets its counter on the label row (not under the control).
+    const counter =
+        isValidElement<{ value?: unknown; maxLength?: number }>(children) &&
+        children.type === Textarea &&
+        children.props.maxLength !== undefined &&
+        typeof children.props.value === 'string'
+            ? `${children.props.value.length}/${children.props.maxLength}`
+            : null;
     const target = isValidElement<{ id?: string }>(children) ? (children.props.id ?? id) : undefined;
 
     return (
@@ -56,6 +65,11 @@ export function Field({
                             </button>
                         </Tip>
                     </TooltipProvider>
+                )}
+                {counter && (
+                    <span className="ml-auto text-xs text-muted tabular-nums" aria-hidden="true">
+                        {counter}
+                    </span>
                 )}
             </div>
             {control}

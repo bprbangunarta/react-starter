@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { Field } from '@/components/ui/field';
 import { Input, InputGroup } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 describe('Field', () => {
     it('connects the label to the control', () => {
@@ -90,5 +91,18 @@ describe('Field with an InputGroup', () => {
         expect(input).toHaveAttribute('aria-invalid', 'true');
         expect(input).toHaveAccessibleDescription('Wajib diisi.');
         expect(screen.getByRole('button', { name: 'Buat' })).toBeInTheDocument();
+    });
+});
+
+describe('Field counter', () => {
+    it('shows the Textarea character count beside the label, not under the control', () => {
+        render(
+            <Field label="Catatan">
+                <Textarea value="abc" maxLength={200} onChange={() => undefined} />
+            </Field>,
+        );
+
+        const counter = screen.getByText('3/200');
+        expect(counter.parentElement).toContainElement(screen.getByText('Catatan'));
     });
 });
