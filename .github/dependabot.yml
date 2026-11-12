@@ -8,6 +8,10 @@ updates:
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+    # Major versions are upgraded by hand, one at a time (see docs/ai/BACKLOG.md): ESLint 10 waits for jsx-a11y, TypeScript 7 for typescript-eslint.
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -16,3 +20,7 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    # Node stays on the LTS line of .nvmrc.
+    ignore:
+      - dependency-name: node
+        update-types: ['version-update:semver-major']
