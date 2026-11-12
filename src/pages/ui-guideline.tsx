@@ -13,6 +13,7 @@ import { BarChart, ColumnChart, DonutChart } from '@/components/ui/chart';
 import { Checkbox, RadioGroup, Switch } from '@/components/ui/choice';
 import { ColorInput } from '@/components/ui/color-input';
 import { Combobox } from '@/components/ui/combobox';
+import { MultiCombobox } from '@/components/ui/multi-combobox';
 import { CurrencyInput } from '@/components/ui/currency-input';
 import { DataTable } from '@/components/ui/data-table';
 import type { Column } from '@/components/ui/data-table';
@@ -156,6 +157,7 @@ function SubTitle({ children }: { children: ReactNode }) {
 /** Every kind of input the app uses, each with its own state. Money, phone, and other formatted fields send the raw value to the API. */
 function InputExamples() {
     const [select, setSelect] = useState<string | null>('b');
+    const [multi, setMulti] = useState<string[]>(['a', 'c']);
     const [date, setDate] = useState('');
     const [code, setCode] = useState('');
     const [amount, setAmount] = useState<number | null>(1_500_000);
@@ -287,6 +289,19 @@ function InputExamples() {
                         ]}
                         value={select}
                         onChange={setSelect}
+                        clearable
+                    />
+                </Field>
+                <Field label="Pilihan ganda (MultiCombobox)">
+                    <MultiCombobox
+                        options={[
+                            { value: 'a', label: 'Opsi A' },
+                            { value: 'b', label: 'Opsi B', description: 'Pembeda pilihan yang mirip' },
+                            { value: 'c', label: 'Opsi C' },
+                            { value: 'd', label: 'Opsi D' },
+                        ]}
+                        value={multi}
+                        onChange={setMulti}
                         clearable
                     />
                 </Field>

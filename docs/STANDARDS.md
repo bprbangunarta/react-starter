@@ -62,7 +62,7 @@ konfigurasi di `eslint.config.js`), dan pemeriksa aturan rumah `npm run standard
 Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acuan hidupnya adalah halaman `/ui-guideline`
 (sidebar → UI Guideline): tampilan baru harus terlihat sama. Perubahan pola memperbaiki komponen bersama dan diterapkan ke semua halaman.
 
-- **Pakai ulang** `src/components/ui` (Button, Input, Field, Combobox, DatePicker, Modal/ConfirmDialog, Dropdown, Tabs, Tip, Card, Alert, Badge,
+- **Pakai ulang** `src/components/ui` (Button, Input, Field, Combobox, MultiCombobox, DatePicker, Modal/ConfirmDialog, Dropdown, Tabs, Tip, Card, Alert, Badge,
   EmptyState, ErrorState, Skeleton, PageHeader, DataTable, BarChart, ColumnChart, DonutChart, dan isian khusus). Ubah komponen dengan memperbaiki komponen
   bersama di `components/ui`, bukan dengan gaya satu kali di halaman. Jangan pakai kontrol native atau berukuran lain.
 - **Layout:** sidebar `w-60` (laci ponsel `w-64`), header `h-12`, konten `p-3 sm:p-5`, jarak antar seksi `gap-3`. `PageHeader`: judul
@@ -113,7 +113,7 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
     (`Field` menyambungkan label, hint, dan galat ke isian lewat `id`, `aria-describedby`, `aria-invalid`).
 - **Layar menegakkan apa yang ditegakkan server.** Aturan server tentang *apa yang boleh diketik* (hanya angka, nama tanpa angka, panjang, rentang) ditegakkan juga oleh
   isian, sehingga kolom yang tidak bisa memuat suatu karakter tidak pernah menampilkannya; server tetap yang berwenang dan memeriksa lagi. Pilih kontrol menurut aturannya:
-  `MaskedInput` untuk format angka (`'9'.repeat(n)` untuk angka polos), `FilteredInput` untuk huruf atau huruf dan angka, `DatePicker` untuk tanggal, `Combobox` untuk pilihan, dan
+  `MaskedInput` untuk format angka (`'9'.repeat(n)` untuk angka polos), `FilteredInput` untuk huruf atau huruf dan angka, `DatePicker` untuk tanggal, `Combobox` untuk pilihan (`MultiCombobox` bila boleh lebih dari satu), dan
   **`maxLength` pada setiap isian teks bebas** (kata sandi 128, nama 100, dst.). `type="number"` dan `type="tel"` **dilarang** **[mesin]** (menerima `e`, tanda, dan huruf). Kirim nilai
   tanpa format. Bila satu aturan berubah di satu sisi, ubah sisi lainnya di commit yang sama dan simpan tes yang mengetik karakter salah ke isian.
 - **Tanggal, waktu, dan angka untuk orang** ditulis di satu tempat, `lib/format.ts` (`formatDate`, `formatDateTime`, `formatRelative`, `formatNumber`, `rupiah`; `CurrencyInput` untuk mengetik uang);
