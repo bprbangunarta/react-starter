@@ -21,7 +21,7 @@ function sources(dir: string): string[] {
 
 describe('motion', () => {
     it('defines every motion-* class the screens use', () => {
-        const used = new Set(sources(root).flatMap((text) => [...text.matchAll(/\bmotion-[a-z-]+\b/g)].map((m) => m[0])));
+        const used = new Set(sources(root).flatMap((text) => [...text.matchAll(/\b(?:motion|ill)-[a-z-]+\b/g)].map((m) => m[0])));
 
         expect(used.size).toBeGreaterThan(5);
 
@@ -39,5 +39,13 @@ describe('motion', () => {
         for (const name of defined) {
             expect(reduced, `.${name} is not disabled under prefers-reduced-motion`).toContain(`.${name}`);
         }
+    });
+
+    it('keeps the illustration loops in one marked block that reduced motion switches off', () => {
+        const block = /\/\* illustrations:start \*\/([\s\S]*?)\/\* illustrations:end \*\//.exec(css)?.[1] ?? '';
+
+        expect(block).toContain('.ill-float');
+        expect(block).toContain('prefers-reduced-motion');
+        expect(block).toContain("[class*='ill-']");
     });
 });

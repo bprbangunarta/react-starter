@@ -21,6 +21,9 @@ export function buildErrorPages({ brand, theme, appName }: Source): { file: stri
     // Every colour token of the theme becomes a variable of the page, under the same name the illustrations use.
     const tokens = [...theme.matchAll(/--color-([a-z0-9-]+): ([^;]+);/g)].map((match) => `--color-${match[1]}:${match[2]}`).join(';');
 
+    // The illustrations' own motion (between markers in index.css), squeezed onto fewer lines.
+    const motion = (/\/\* illustrations:start \*\/([\s\S]*?)\/\* illustrations:end \*\//.exec(theme)?.[1] ?? '').replace(/\s+/g, ' ').trim();
+
     const css = `
 :root{${tokens}}
 *{box-sizing:border-box}
@@ -40,6 +43,7 @@ p.d{margin:.5rem 0 0;max-width:24rem;font-size:.8125rem;line-height:1.6;color:va
 a.b{display:inline-flex;height:2rem;align-items:center;justify-content:center;margin-top:1.5rem;padding:0 1rem;border-radius:.375rem;background:var(--color-primary);color:#fff;font-size:.8125rem;font-weight:500;text-decoration:none}
 a.b:hover{background:var(--color-primary-hover)}
 @media(max-width:639px){a.b{width:100%}}
+${motion}
 `;
 
     return ERROR_PAGES.map((spec) => {
