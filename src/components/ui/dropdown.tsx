@@ -36,4 +36,7 @@ export function DropdownItem({ className, danger, icon, children, ...props }: Re
 }
 
 export const DropdownSeparator = () => <M.Separator className="my-1 h-px bg-line" />;
-export const DropdownLabel = M.Label;
+/** Small caption inside the menu (whose menu it is, e.g. the signed-in email); not clickable. */
+export function DropdownLabel({ className, ...props }: React.ComponentProps<typeof M.Label>) {
+    return <M.Label className={cn('truncate px-2 py-1 text-xs font-medium text-muted', className)} {...props} />;
+}

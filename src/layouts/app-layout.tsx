@@ -175,7 +175,7 @@ export default function AppLayout() {
                                     </button>
                                 </DropdownTrigger>
                                 <DropdownContent>
-                                    <DropdownLabel className="px-2 py-1.5 text-xs text-muted">{me.user.email}</DropdownLabel>
+                                    <DropdownLabel>{me.user.email}</DropdownLabel>
                                     <DropdownSeparator />
                                     <DropdownItem icon={<UserRound />} onSelect={() => navigate('/profile')}>
                                         Profil

@@ -716,6 +716,7 @@ export default function UiGuideline() {
                             </DropdownTrigger>
                             <DropdownContent>
                                 <DropdownLabel>Proyek Alfa</DropdownLabel>
+                                <DropdownSeparator />
                                 <DropdownItem icon={<Pencil />} onSelect={() => toast.info('Ubah')}>
                                     Ubah
                                 </DropdownItem>
