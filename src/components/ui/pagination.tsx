@@ -42,7 +42,6 @@ export function Pagination({
     return (
         <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-3 py-2 text-xs text-muted">
             <div className="flex items-center gap-2">
-                <span>{meta.total === 0 ? '0 hasil' : `${meta.from}–${meta.to} dari ${meta.total}`}</span>
                 <Combobox
                     className="w-32"
                     aria-label="Baris per halaman"
@@ -51,6 +50,7 @@ export function Pagination({
                     value={perPage}
                     onChange={(v) => onPerPage(Number(v))}
                 />
+                <span className="hidden sm:inline">{meta.total === 0 ? '0 hasil' : `${meta.from}–${meta.to} dari ${meta.total}`}</span>
             </div>
             {meta.last_page > 1 && (
                 <nav className="flex items-center gap-1" aria-label="Halaman">
