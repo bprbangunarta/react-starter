@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { DatePicker } from '@/components/ui/date-picker';
-import { DialogBody, DialogFooter, Modal } from '@/components/ui/dialog';
+import { DialogBody, Modal } from '@/components/ui/dialog';
 import { FilterBar, SearchInput } from '@/components/ui/filter-bar';
 import { DataTable } from '@/components/ui/data-table';
 import type { Column } from '@/components/ui/data-table';
@@ -377,11 +377,6 @@ export default function AuditLogsIndex() {
                                 </pre>
                             )}
                         </DialogBody>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setSelected(null)}>
-                                Tutup
-                            </Button>
-                        </DialogFooter>
                     </>
                 )}
             </Modal>
