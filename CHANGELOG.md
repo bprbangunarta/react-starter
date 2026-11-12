@@ -2,7 +2,7 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/), versi mengikuti [SemVer](https://semver.org/lang/id/).
 
-## [Belum dirilis]
+## [1.0.1] - 2026-11-13
 
 ### Diperbaiki
 

@@ -1,7 +1,7 @@
 {
   "name": "starterkit",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Admin UI starter: React, TypeScript, Vite and Tailwind with sign-in, two-factor, audit log and a mock API.",
   "license": "MIT",
   "repository": {
