@@ -32,6 +32,7 @@ import { DropdownContent, DropdownItem, DropdownLabel, DropdownMenu, DropdownSep
 import { ConfirmDialog, DialogBody, DialogFooter, Modal } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import { FileInput } from '@/components/ui/file-input';
+import { FileUploader } from '@/components/ui/file-uploader';
 import { FilterBar, SearchInput } from '@/components/ui/filter-bar';
 import { CODE_CHARACTER, FilteredInput, NAME_CHARACTER } from '@/components/ui/filtered-input';
 import { Input, InputGroup } from '@/components/ui/input';
@@ -44,6 +45,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tip } from '@/components/ui/tooltip';
 import { APP_NAME } from '@/lib/brand';
 import { rupiah } from '@/lib/format';
+import { http } from '@/lib/http';
 import { MASKS } from '@/lib/mask';
 import { generatePassword } from '@/lib/password';
 import { useTitle } from '@/lib/title';
@@ -378,6 +380,27 @@ function InputExamples() {
             <SubTitle>Berkas</SubTitle>
             <Field label="Lampiran" hint="PDF atau gambar, maksimal 2 MB" className="max-w-md">
                 <FileInput value={files} onValueChange={setFiles} multiple accept=".pdf,image/*" maxBytes={2 * 1024 * 1024} onReject={(m) => toast.error(m)} />
+            </Field>
+
+            <SubTitle>Unggah banyak berkas (dropzone, antrean, progres)</SubTitle>
+            <Field
+                label="Dokumen"
+                hint="Berkas langsung diunggah, dua sekaligus; yang lain menunggu giliran. Nama berkas yang memuat kata gagal sengaja ditolak untuk mencoba tombol coba lagi."
+                className="max-w-xl"
+            >
+                <FileUploader
+                    accept=".pdf,image/*"
+                    description="PDF atau gambar · maksimal 5 MB per berkas · sampai 8 berkas"
+                    maxBytes={5 * 1024 * 1024}
+                    maxFiles={8}
+                    upload={(file, context) =>
+                        file.name.toLowerCase().includes('gagal')
+                            ? new Promise((_, reject) => window.setTimeout(() => reject(new Error('Server menolak berkas ini (contoh galat).')), 900))
+                            : http.upload('/files', file, context)
+                    }
+                    onUploaded={(file) => toast.success(`${file.name} terunggah`)}
+                    onReject={(m) => toast.error(m)}
+                />
             </Field>
         </Section>
     );

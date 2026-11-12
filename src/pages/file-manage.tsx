@@ -25,13 +25,14 @@ import { ConfirmDialog, DialogBody, DialogFooter, Modal } from '@/components/ui/
 import { Drawer, DrawerBody } from '@/components/ui/drawer';
 import { DropdownContent, DropdownItem, DropdownMenu, DropdownSeparator, DropdownTrigger } from '@/components/ui/dropdown';
 import { Field } from '@/components/ui/field';
-import { FileInput } from '@/components/ui/file-input';
+import { FileUploader } from '@/components/ui/file-uploader';
 import { FilterBar, SearchInput } from '@/components/ui/filter-bar';
 import { Input } from '@/components/ui/input';
 import { Card, CardBody, EmptyState, PageHeader } from '@/components/ui/misc';
 import { Progress } from '@/components/ui/progress';
 import { Tip } from '@/components/ui/tooltip';
 import { formatBytes, formatDate } from '@/lib/format';
+import { http } from '@/lib/http';
 import { useTitle } from '@/lib/title';
 import { cn } from '@/lib/utils';
 
@@ -118,7 +119,6 @@ export default function FileManage() {
     const [name, setName] = useState('');
     const [nameError, setNameError] = useState<string | undefined>();
     const [uploading, setUploading] = useState(false);
-    const [chosen, setChosen] = useState<File[]>([]);
     const [removing, setRemoving] = useState<Item | null>(null);
     const [detail, setDetail] = useState<Item | null>(null);
     const counter = useRef(100);
@@ -208,26 +208,24 @@ export default function FileManage() {
         }
     };
 
-    const closeUpload = () => {
-        setUploading(false);
-        setChosen([]);
-    };
-
-    const upload = () => {
-        const taken = items.filter((i) => i.parent === currentId).map((i) => i.name);
-        const now = new Date().toISOString();
-        const added: Item[] = chosen.map((file) => {
+    // Each file joins the folder the moment the server has it, so the list fills while others are still going up.
+    const addUploaded = (file: File) => {
+        setItems((all) => {
+            const taken = all.filter((i) => i.parent === currentId).map((i) => i.name);
             counter.current += 1;
-            const unique = uniqueName(file.name, taken);
 
-            taken.push(unique);
-
-            return { id: `n${counter.current}`, parent: currentId, type: 'file', name: unique, size: file.size, modified: now };
+            return [
+                ...all,
+                {
+                    id: `n${counter.current}`,
+                    parent: currentId,
+                    type: 'file',
+                    name: uniqueName(file.name, taken),
+                    size: file.size,
+                    modified: new Date().toISOString(),
+                },
+            ];
         });
-
-        setItems((all) => [...all, ...added]);
-        toast.success(added.length === 1 ? 'Berkas diunggah' : `${added.length} berkas diunggah`);
-        closeUpload();
     };
 
     const remove = () => {
@@ -439,18 +437,18 @@ export default function FileManage() {
                 </form>
             </Modal>
 
-            <Modal persistent open={uploading} onOpenChange={(next) => !next && closeUpload()} title="Unggah berkas" description="Maksimal 5 MB per berkas.">
+            {/* No footer: files go up as soon as they are chosen, and the X in the header closes the dialog (what is still going up is cancelled). */}
+            <Modal open={uploading} onOpenChange={setUploading} title="Unggah berkas" description="Berkas langsung diunggah setelah dipilih.">
                 <DialogBody>
-                    <FileInput multiple value={chosen} onValueChange={setChosen} maxBytes={5 * MB} onReject={(message) => toast.error(message)} />
+                    <FileUploader
+                        accept=".pdf,.doc,.docx,.xls,.xlsx,.zip,image/*"
+                        description="PDF, dokumen, spreadsheet, arsip, atau gambar · maksimal 5 MB per berkas"
+                        maxBytes={5 * MB}
+                        upload={(file, context) => http.upload('/files', file, context)}
+                        onUploaded={addUploaded}
+                        onReject={(message) => toast.error(message)}
+                    />
                 </DialogBody>
-                <DialogFooter>
-                    <Button variant="outline" onClick={closeUpload}>
-                        Batal
-                    </Button>
-                    <Button disabled={chosen.length === 0} onClick={upload}>
-                        Unggah
-                    </Button>
-                </DialogFooter>
             </Modal>
 
             <ConfirmDialog

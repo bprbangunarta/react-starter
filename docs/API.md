@@ -60,6 +60,7 @@ Kejadian audit: `auth.password_expired`, `auth.password_expired_changed`, `auth.
 | GET | `/profile` | `{ account: {name,username,email}, twoFactor: {method, emailAvailable, recoveryRemaining} }` |
 | POST | `/profile/avatar` | `multipart/form-data` berisi `avatar` (JPG, PNG, atau WebP, maksimal 2 MB) → `{ message }`. 422 `errors.avatar` bila tipe atau ukuran salah. Pembatasan yang sama ditegakkan layar, tetapi server memeriksa lagi |
 | DELETE | `/profile/avatar` | → `{ message }`; foto diganti huruf pertama nama |
+| POST | `/files` | *Contoh untuk `FileUploader` (UI Guideline, File Manage); ganti dengan endpoint unggah produk Anda.* `multipart/form-data` berisi `file` → `{ message }`; 422 `errors.file` bila ditolak. Dikirim lewat `http.upload` (XHR, melaporkan progres dan bisa dibatalkan); mock hanya memutar progresnya |
 | PUT | `/profile/password` | `{ current_password, password, password_confirmation }`. 422 per kolom |
 | POST | `/profile/two-factor/totp/start` | `{ secret, uri }` (`uri` = `otpauth://totp/...`, dibuat jadi QR di layar) |
 | POST | `/profile/two-factor/totp` | `{ code }` → `{ message, recovery_codes: string[] }` |

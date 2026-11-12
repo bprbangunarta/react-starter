@@ -109,6 +109,9 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
     (banyak opsi) atau `RadioGroup` (sampai sekitar 5 opsi yang perlu terlihat); **teks panjang:** `Textarea` (beri `maxLength` untuk penghitung).
   - **Centang vs sakelar:** `Checkbox` untuk pilihan yang menunggu tombol Simpan; `Switch` untuk pengaturan yang berlaku seketika.
   - **Berkas:** `FileInput` (klik atau seret; batasi `accept` dan `maxBytes`; ukuran dan tipe tetap divalidasi ulang di backend).
+    Berkas yang **langsung dikirim** (beberapa sekaligus, dengan progres): `FileUploader`: dropzone + antrean, dua unggahan serentak, bilah progres per berkas, batalkan, coba lagi, dan
+    pesan penolakan. Layar hanya memberi fungsi `upload`, yaitu `http.upload(url, file, context)` (XHR, satu-satunya tempat selain `fetch` yang bicara ke server; galatnya sama dengan panggilan lain).
+    `FileInput` dipakai bila berkas dikirim nanti bersama formulir.
   - Isian berformat tetap teks bagi pembaca layar: jangan ganti `inputMode`/`autoComplete` yang sudah ada, dan bungkus semuanya dengan `Field`
     (`Field` menyambungkan label, hint, dan galat ke isian lewat `id`, `aria-describedby`, `aria-invalid`).
 - **Layar menegakkan apa yang ditegakkan server.** Aturan server tentang *apa yang boleh diketik* (hanya angka, nama tanpa angka, panjang, rentang) ditegakkan juga oleh

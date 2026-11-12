@@ -117,3 +117,39 @@ describe('http maintenance', () => {
         window.removeEventListener('app:maintenance', seen);
     });
 });
+
+describe('http.upload (mock)', () => {
+    // The tests above leave the mock switched off in the module cache; this suite wants it on.
+    beforeEach(() => {
+        vi.resetModules();
+        vi.stubEnv('VITE_USE_MOCK', 'true');
+    });
+
+    afterEach(() => {
+        vi.unstubAllEnvs();
+    });
+
+    it('plays progress up to 100 and resolves', async () => {
+        vi.useFakeTimers();
+        const { http } = await import('@/lib/http');
+        const seen: number[] = [];
+        const done = http.upload('/files', new File(['x'], 'a.txt'), { onProgress: (p) => seen.push(p) });
+
+        await vi.advanceTimersByTimeAsync(3000);
+        await expect(done).resolves.toBeDefined();
+        expect(seen.at(-1)).toBe(100);
+        expect(seen).toEqual([...seen].sort((a, b) => a - b));
+        vi.useRealTimers();
+    });
+
+    it('rejects with an AbortError when aborted', async () => {
+        vi.useFakeTimers();
+        const { http } = await import('@/lib/http');
+        const controller = new AbortController();
+        const pending = http.upload('/files', new File(['x'], 'a.txt'), { signal: controller.signal });
+
+        controller.abort();
+        await expect(pending).rejects.toMatchObject({ name: 'AbortError' });
+        vi.useRealTimers();
+    });
+});
