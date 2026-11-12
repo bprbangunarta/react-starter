@@ -143,7 +143,7 @@ export function DataTable<T>({
                         : rows.map((row, index) => (
                               <tr
                                   key={rowKey(row)}
-                                  className={cn('hover:bg-canvas/60', onRowClick && 'cursor-pointer', rowClassName?.(row))}
+                                  className={cn('motion-row transition-colors hover:bg-canvas/60', onRowClick && 'cursor-pointer', rowClassName?.(row))}
                                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                               >
                                   {columns.map((c) => (

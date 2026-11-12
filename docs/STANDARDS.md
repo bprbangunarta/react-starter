@@ -189,6 +189,26 @@ Email (`email/login-code.ts`) dan halaman error (`error-pages/*.html`) tidak bis
 (merek email `#33479f`, parameter `brandColor`).
 
 <a id="data"></a>
+### Gerak (animasi)
+
+Halus dan singkat; tidak ada yang memantul. Satu easing (`--ease-soft`) dan tiga durasi (`--motion-fast` 140 ms, `--motion-base` 220 ms, `--motion-slow` 320 ms) di `src/index.css`.
+Layar tidak menulis keyframe sendiri: pakai kelas `motion-*` **[tes]**.
+
+| Kelas | Dipakai untuk |
+|---|---|
+| `motion-page` | halaman yang baru tampil (dibungkus layout per rute), keadaan kosong/galat, blok yang muncul: memudar dan naik 6px |
+| `motion-pop` | dialog, popover, dropdown, tooltip: memudar dan membesar dari 97% di titik jangkarnya |
+| `motion-slide-right` / `motion-slide-left` | laci (`Drawer`) dan menu ponsel |
+| `motion-accordion` | buka-tutup `Accordion` |
+| `motion-item` + `--i` | item daftar/kotak muncul bergantian (`style={{ '--i': Math.min(index, 12) }}`) |
+| `motion-row` | baris `DataTable` |
+| `motion-grow-x` / `motion-grow-y` | batang grafik dan bilah yang tumbuh dari dasarnya |
+
+Tombol menyusut 2% saat ditekan; isian, centang, sakelar, dan tab berpindah warna 150–200 ms. Gerak yang menyampaikan keadaan (spinner, `animate-pulse` Skeleton) tidak ikut dimatikan.
+Dengan `prefers-reduced-motion` semua kelas `motion-*` dimatikan dan transisi hampir seketika; tes menjaga setiap kelas `motion-*` terdaftar di blok itu.
+Animasi penutupan memakai `data-state="closed"` Radix: elemen baru dilepas setelah animasinya selesai, jadi pasangan buka/tutup harus ada bersama. Di panel browser bawaan yang tersembunyi
+animasi tidak berjalan (timeline berhenti) sampai ada tangkapan layar; itu bukan galat aplikasi.
+
 ## 5. Data, formulir, dan keamanan
 
 - Validasi sebenarnya di backend; batasan UI (`maxLength`, `min`, `max`) **berpasangan** dengan aturan backend.

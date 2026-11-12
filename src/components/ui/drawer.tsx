@@ -32,8 +32,8 @@ export function Drawer({
                 <D.Overlay className={overlayClass} />
                 <D.Content
                     className={cn(
-                        'overlay-fade fixed inset-y-0 z-50 flex w-full max-w-md flex-col border-line bg-surface shadow-xl focus:outline-none',
-                        side === 'right' ? 'right-0 border-l' : 'left-0 border-r',
+                        'fixed inset-y-0 z-50 flex w-full max-w-md flex-col border-line bg-surface shadow-xl focus:outline-none',
+                        side === 'right' ? 'motion-slide-right right-0 border-l' : 'motion-slide-left left-0 border-r',
                     )}
                     {...restoreFocus}
                 >

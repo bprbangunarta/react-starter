@@ -28,7 +28,7 @@ export function AccordionTrigger({ className, children, ...props }: React.Compon
 
 export function AccordionContent({ className, children, ...props }: React.ComponentProps<typeof A.Content>) {
     return (
-        <A.Content className="overflow-hidden text-sm" {...props}>
+        <A.Content className="motion-accordion overflow-hidden text-sm" {...props}>
             <div className={cn('pb-3 text-muted', className)}>{children}</div>
         </A.Content>
     );

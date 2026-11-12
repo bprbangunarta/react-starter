@@ -56,7 +56,7 @@ export function BarChart({ label, items, className }: { label: string; items: Ch
                         </span>
                     </div>
                     <div aria-hidden="true" className="mt-1 h-1.5 overflow-hidden rounded-full bg-line">
-                        <div className="h-full rounded-full bg-chart-1" style={{ width: `${share(item.count, total)}%` }} />
+                        <div className="motion-grow-x h-full rounded-full bg-chart-1" style={{ width: `${share(item.count, total)}%` }} />
                     </div>
                 </li>
             ))}
@@ -83,7 +83,10 @@ export function ColumnChart({ label, items }: { label: string; items: ChartItem[
                     <Tip label={`${item.label}: ${reading(item, total)}`}>
                         <div className="flex h-32 w-full flex-col items-center justify-end gap-1">
                             <span className="text-xs font-medium tabular-nums">{formatNumber(item.count)}</span>
-                            <div className="w-full max-w-12 rounded-t-sm bg-chart-1" style={{ height: `${(item.count / tallest) * COLUMN_MAX_REM}rem` }} />
+                            <div
+                                className="motion-grow-y w-full max-w-12 rounded-t-sm bg-chart-1"
+                                style={{ height: `${(item.count / tallest) * COLUMN_MAX_REM}rem` }}
+                            />
                         </div>
                     </Tip>
                     <span className="mt-1 w-full border-t border-line pt-1 text-2xs break-words text-muted">{item.label}</span>

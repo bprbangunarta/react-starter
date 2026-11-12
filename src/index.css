@@ -51,18 +51,168 @@
     --text-sm: 0.8125rem;
 }
 
-/* Overlays (dialog, drawer, popover) fade in; nothing moves, and nothing animates for people who ask for reduced motion. */
-@keyframes overlay-in {
+/*
+ * Motion: soft and short. Things fade and rise a few pixels, overlays pop from their anchor, panels slide in; nothing bounces.
+ * One easing and three durations for the whole app. Screens never write their own keyframes: they use the `motion-*` classes below.
+ * With `prefers-reduced-motion` all of them are switched off (loaders keep spinning: that is state, not decoration).
+ */
+:root {
+    --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+    --motion-fast: 140ms;
+    --motion-base: 220ms;
+    --motion-slow: 320ms;
+}
+@keyframes fade-in {
     from {
         opacity: 0;
     }
 }
+@keyframes fade-out {
+    to {
+        opacity: 0;
+    }
+}
+@keyframes rise-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+@keyframes pop-in {
+    from {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+}
+@keyframes pop-out {
+    to {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+}
+@keyframes slide-in-right {
+    from {
+        transform: translateX(100%);
+    }
+}
+@keyframes slide-out-right {
+    to {
+        transform: translateX(100%);
+    }
+}
+@keyframes slide-in-left {
+    from {
+        transform: translateX(-100%);
+    }
+}
+@keyframes slide-out-left {
+    to {
+        transform: translateX(-100%);
+    }
+}
+@keyframes accordion-down {
+    from {
+        height: 0;
+        opacity: 0;
+    }
+    to {
+        height: var(--radix-accordion-content-height);
+    }
+}
+@keyframes accordion-up {
+    from {
+        height: var(--radix-accordion-content-height);
+    }
+    to {
+        height: 0;
+        opacity: 0;
+    }
+}
+@keyframes grow-x {
+    from {
+        transform: scaleX(0);
+    }
+}
+@keyframes grow-y {
+    from {
+        transform: scaleY(0);
+    }
+}
+
+/* The dim layer behind dialogs and panels. */
 .overlay-fade[data-state='open'] {
-    animation: overlay-in 120ms ease-out;
+    animation: fade-in var(--motion-base) var(--ease-soft);
+}
+.overlay-fade[data-state='closed'] {
+    animation: fade-out var(--motion-fast) ease-in forwards;
+}
+/* Dialog, popover, dropdown, tooltip: fade and grow from 97% out of the point they are anchored to. */
+.motion-pop {
+    transform-origin: var(--radix-popper-transform-origin, center);
+}
+.motion-pop[data-state='open'],
+.motion-pop[data-state='delayed-open'],
+.motion-pop[data-state='instant-open'] {
+    animation: pop-in var(--motion-base) var(--ease-soft);
+}
+.motion-pop[data-state='closed'] {
+    animation: pop-out var(--motion-fast) ease-in forwards;
+}
+/* Side panels (Drawer, mobile menu). */
+.motion-slide-right[data-state='open'] {
+    animation: slide-in-right var(--motion-slow) var(--ease-soft);
+}
+.motion-slide-right[data-state='closed'] {
+    animation: slide-out-right var(--motion-base) ease-in forwards;
+}
+.motion-slide-left[data-state='open'] {
+    animation: slide-in-left var(--motion-slow) var(--ease-soft);
+}
+.motion-slide-left[data-state='closed'] {
+    animation: slide-out-left var(--motion-base) ease-in forwards;
+}
+.motion-accordion[data-state='open'] {
+    animation: accordion-down var(--motion-base) var(--ease-soft);
+}
+.motion-accordion[data-state='closed'] {
+    animation: accordion-up var(--motion-base) var(--ease-soft);
+}
+/* A screen, an empty state, or a block that appears: fade and rise a few pixels. */
+.motion-page {
+    animation: rise-in var(--motion-slow) var(--ease-soft) backwards;
+}
+/* Items of a list or grid appear one after another: set `--i` (the index, at most about 12) on each. */
+.motion-item {
+    animation: rise-in var(--motion-slow) var(--ease-soft) backwards;
+    animation-delay: calc(var(--i, 0) * 30ms);
+}
+.motion-row {
+    animation: fade-in var(--motion-base) ease-out backwards;
+}
+/* Bars of charts and progress fill from their base. */
+.motion-grow-x {
+    transform-origin: left;
+    animation: grow-x 600ms var(--ease-soft) backwards;
+}
+.motion-grow-y {
+    transform-origin: bottom;
+    animation: grow-y 600ms var(--ease-soft) backwards;
 }
 @media (prefers-reduced-motion: reduce) {
-    .overlay-fade[data-state='open'] {
-        animation: none;
+    .overlay-fade,
+    .motion-pop,
+    .motion-slide-right,
+    .motion-slide-left,
+    .motion-accordion,
+    .motion-page,
+    .motion-item,
+    .motion-row,
+    .motion-grow-x,
+    .motion-grow-y {
+        animation: none !important;
+    }
+    * {
+        transition-duration: 0.01ms !important;
     }
 }
 

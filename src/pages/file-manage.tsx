@@ -378,13 +378,14 @@ export default function FileManage() {
                         <EmptyState icon={empty.icon} title={empty.title} description={empty.description} />
                     ) : (
                         <ul className="grid grid-cols-2 gap-2 p-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                            {visible.map((item) => {
+                            {visible.map((item, index) => {
                                 const { icon: Icon, label } = kindOf(item);
 
                                 return (
                                     <li
                                         key={item.id}
-                                        className="relative flex flex-col rounded-lg border border-line bg-surface p-3 transition-colors hover:bg-canvas"
+                                        className="motion-item relative flex flex-col rounded-lg border border-line bg-surface p-3 transition-[background-color,transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:bg-canvas hover:shadow-sm"
+                                        style={{ '--i': Math.min(index, 12) } as React.CSSProperties}
                                     >
                                         <div className="absolute top-1 right-1">{actions(item)}</div>
                                         <button

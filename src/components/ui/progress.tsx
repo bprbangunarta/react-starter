@@ -33,7 +33,7 @@ export function Progress({ value, max = 100, tone = 'primary', label, 'aria-labe
             )}
             <P.Root value={value ?? null} max={max} aria-label={ariaLabel ?? label} className="relative h-2 w-full overflow-hidden rounded-full bg-canvas">
                 <P.Indicator
-                    className={cn('h-full rounded-full transition-[width] duration-300', tones[tone], percent === null && 'w-1/3 animate-pulse')}
+                    className={cn('h-full rounded-full transition-[width] duration-500 ease-out', tones[tone], percent === null && 'w-1/3 animate-pulse')}
                     style={percent === null ? undefined : { width: `${percent}%` }}
                 />
             </P.Root>

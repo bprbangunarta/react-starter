@@ -69,7 +69,7 @@ export function SubMenu({ label, icon: Icon, children, onNavigate }: { label: st
                 <ChevronDown className={cn('ml-auto transition-transform', open && 'rotate-180')} />
             </button>
             {open && (
-                <div id={id} className="ml-[1.125rem] flex flex-col gap-0.5 border-l border-line">
+                <div id={id} className="motion-page ml-[1.125rem] flex flex-col gap-0.5 border-l border-line">
                     {children.map((child) => (
                         <MenuLink key={child.to} item={child} onNavigate={onNavigate} />
                     ))}
@@ -104,6 +104,7 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
 export default function AppLayout() {
     const { me, signOut } = useSession();
     const navigate = useNavigate();
+    const { pathname } = useLocation();
     const [mobileOpen, setMobileOpen] = useState(false);
     const restoreFocus = useRestoreFocus(mobileOpen);
 
@@ -142,7 +143,7 @@ export default function AppLayout() {
                         <Dialog.Content
                             aria-describedby={undefined}
                             {...restoreFocus}
-                            className="overlay-fade fixed inset-y-0 left-0 z-40 w-64 bg-surface shadow-xl focus:outline-none lg:hidden"
+                            className="motion-slide-left fixed inset-y-0 left-0 z-40 w-64 bg-surface shadow-xl focus:outline-none lg:hidden"
                         >
                             <div className="flex h-12 items-center justify-between border-b border-line px-4">
                                 <Dialog.Title className="sr-only">Menu navigasi</Dialog.Title>
@@ -202,7 +203,10 @@ export default function AppLayout() {
                     )}
                     <main id="content" tabIndex={-1} className="flex-1 p-3 outline-none sm:p-5">
                         <Suspense fallback={<Skeleton className="h-24 w-full" />}>
-                            <Outlet />
+                            {/* Keyed by the page, so each page fades in when you move to it. */}
+                            <div key={pathname} className="motion-page">
+                                <Outlet />
+                            </div>
                         </Suspense>
                     </main>
                 </div>

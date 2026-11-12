@@ -30,7 +30,7 @@ export function useRestoreFocus(open: boolean) {
 export const overlayClass = 'overlay-fade fixed inset-0 z-50 bg-ink/40';
 // A dialog taller than the screen scrolls as a whole (small phones, landscape) instead of being cut off.
 const content =
-    'overlay-fade fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain rounded-lg border border-line bg-surface shadow-xl focus:outline-none';
+    'motion-pop fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain rounded-lg border border-line bg-surface shadow-xl focus:outline-none';
 
 export function Modal({
     open,

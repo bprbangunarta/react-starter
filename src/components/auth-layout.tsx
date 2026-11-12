@@ -37,7 +37,7 @@ export function AuthLayout({
                 <p className="hidden max-w-sm text-center text-sm text-muted lg:block">Dasbor admin internal. Semua aktivitas tercatat di audit log.</p>
             </aside>
             <main className="relative -mt-5 flex flex-1 flex-col items-center rounded-t-3xl bg-canvas px-4 pt-7 pb-8 lg:mt-0 lg:justify-center lg:rounded-none lg:px-12">
-                <div className="w-full max-w-sm">
+                <div className="motion-page w-full max-w-sm">
                     <h1 className="text-lg font-semibold">{title}</h1>
                     <p className="mt-1 mb-5 text-sm text-muted">{description}</p>
                     {children}
