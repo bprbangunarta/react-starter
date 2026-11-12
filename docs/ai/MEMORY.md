@@ -40,6 +40,7 @@ pekerjaan tertunda di [BACKLOG](BACKLOG.md), kondisi terkini di [STATE](STATE.md
 
 ## Keputusan teknis yang tidak terlihat dari kode
 
+- **`overrides` minimatch:** `package.json` memaksa `minimatch ^11.0.8` hanya untuk `@typescript-eslint/typescript-estree` (peringatan `npm audit` moderat); jangan dijadikan override global, ESLint sendiri butuh minimatch lama. Hapus setelah `typescript-eslint` merilis versi yang memperbaikinya.
 - **ESLint 9, bukan 10:** `eslint-plugin-jsx-a11y` belum mendukung ESLint 10. Naikkan hanya bila plugin itu sudah mendukung.
 - Aturan ESLint `react-hooks/set-state-in-effect` dan `jsx-a11y/no-autofocus` sengaja dimatikan (alasan ada di `eslint.config.js`); jangan diaktifkan ulang tanpa alasan.
 - Info (biru, hue 250) sengaja terpisah dari warna utama supaya tidak bentrok setelah rebranding.

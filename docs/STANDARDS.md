@@ -254,6 +254,9 @@ Vitest + Testing Library (jsdom); berkas tes `*.test.ts(x)` diletakkan di sebela
 - **Cara mengetes komponen:** lewat perilaku yang terlihat pengguna (`userEvent.type`, `getByLabelText`, `toHaveValue`), bukan detail implementasi (state, nama kelas).
 - **UI Guideline harus lengkap:** tes `pages/ui-guideline.test.ts` gagal bila ada token warna di `src/index.css` yang tidak ada di daftar token UI Guideline. Tes yang sama juga gagal bila ada komponen di `components/ui` yang
   tidak punya contoh di `/ui-guideline` (kecuali blok bangunan internal yang tercantum di tes).
+- **Aksesibilitas:** `src/a11y.test.tsx` menjalankan axe pada halaman masuk, 404, File Manage, dan UI Guideline (tanpa kontras: jsdom tidak punya warna, kontras dijaga `index.contrast.test.ts`). Halaman baru yang berarti ditambahkan ke sana.
+  Combobox tanpa `Field` wajib punya `aria-label` (atau placeholder sebagai cadangan): nama combobox tidak diambil dari teksnya.
+- **Ujung ke ujung:** `e2e/*.e2e.ts` (Playwright) berjalan terhadap hasil build dengan server tiruan: `npm run test:e2e`. Tambahkan skenario bila alur utama baru muncul. Tidak ikut `npm run check` (butuh peramban), tetapi jalan di CI.
 - Jangan membuat tes yang bergantung pada waktu nyata atau jaringan; tes menyentuh `localStorage` hanya lewat server tiruan (dibersihkan otomatis tiap tes).
 
 <a id="selesai"></a>

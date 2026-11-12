@@ -2,7 +2,7 @@
 
 Diperbarui setiap selesai satu unit pekerjaan. Pegangan untuk melanjutkan di sesi baru; keputusan jangka panjang ada di [MEMORY](MEMORY.md), pekerjaan tertunda di [BACKLOG](BACKLOG.md).
 
-**Diperbarui:** 2026-11-13 · **Cabang:** `main` · **Verifikasi terakhir:** `npm run check` lolos (tsc, ESLint, Prettier, pemeriksa standar, 205 tes Vitest), `npm run build` lolos, CI GitHub Actions hijau, 0 kerentanan `npm audit`. Audit dialog dan lapisan mengambang (dialog, laci, popover, dropdown, tooltip: peran, nama, Esc, fokus kembali, klik luar, layar pendek, urutan lapisan) lolos. Audit penutup sebelumnya: 5 rute × 3 lebar layar (375/768/822) tanpa luapan, tanpa kontrol tanpa nama, tanpa id ganda; langkah di README (melepas mock, rebrand) disimulasikan di salinan dan lolos.
+**Diperbarui:** 2026-11-13 (rilis v1.0.0) · **Cabang:** `main` · **Verifikasi terakhir:** `npm run check` lolos (tsc, ESLint, Prettier, pemeriksa standar, 218 tes Vitest), `npm run build` lolos, CI GitHub Actions hijau, 0 kerentanan `npm audit`. Audit dialog dan lapisan mengambang (dialog, laci, popover, dropdown, tooltip: peran, nama, Esc, fokus kembali, klik luar, layar pendek, urutan lapisan) lolos. Audit penutup sebelumnya: 5 rute × 3 lebar layar (375/768/822) tanpa luapan, tanpa kontrol tanpa nama, tanpa id ganda; langkah di README (melepas mock, rebrand) disimulasikan di salinan dan lolos.
 
 ## Yang sudah ada
 
@@ -16,6 +16,12 @@ Diperbarui setiap selesai satu unit pekerjaan. Pegangan untuk melanjutkan di ses
 - **Produksi:** halaman dimuat per rute (bundel awal ±130 kB gzip), Docker multi-tahap + nginx (gzip, CSP, header keamanan), CI GitHub Actions.
 - **Server tiruan** `src/mock/` lengkap sesuai `docs/API.md`; akun demo `admin` dan `kadaluarsa` (password `password`).
 - **Dokumen:** `README.md`, `AGENTS.md`, `CLAUDE.md`, `docs/STANDARDS.md`, `docs/API.md`, `docs/ai/*`.
+
+## Rilis v1.0.0 (2026-11-13)
+
+Disiapkan untuk rilis: tes aksesibilitas axe (`src/a11y.test.tsx`; menemukan combobox tanpa nama, sudah diperbaiki), tes ujung ke ujung Playwright (`e2e/`, job `e2e` di CI), anggaran bundel 150 kB gzip (`scripts/check-bundle.mjs`, bagian dari `npm run build`),
+hook pra-commit (`.githooks/`, dipasang oleh `prepare`), Dependabot, `npm audit` di CI, `reportError`/`setErrorReporter` dan muat ulang otomatis bila potongan kode lama hilang (`src/lib/report.ts`), nginx `client_max_body_size 8m` (unggahan 2 MB/5 MB tadinya ditolak 413) dan `HEALTHCHECK` Docker,
+`CHANGELOG.md`, bagian "Merilis versi" di README. 0 kerentanan (`overrides` minimatch, lihat MEMORY).
 
 ## Audit gaya kode (2026-11-13)
 

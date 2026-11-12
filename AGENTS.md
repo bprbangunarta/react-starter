@@ -13,6 +13,7 @@ Starter Kit: antarmuka React + TypeScript + Vite + Tailwind (tampilan Compact UI
 | [docs/ai/STATE.md](docs/ai/STATE.md) | kondisi terkini: yang sudah ada, hasil verifikasi terakhir | **awal setiap sesi**; perbarui setelah tiap unit pekerjaan |
 | [docs/ai/BACKLOG.md](docs/ai/BACKLOG.md) | pekerjaan yang belum dikerjakan, alasan, usulan, prioritas | pemilik meminta merencanakan pekerjaan berikutnya |
 | [docs/API.md](docs/API.md) | kontrak endpoint, galat 422, rantai hash audit log | mengubah akses server atau menambah endpoint |
+| [CHANGELOG.md](CHANGELOG.md) | riwayat versi dan cara merilis (README, "Merilis versi") | merilis versi baru |
 
 Acuan lain: `/ui-guideline` (jalankan `npm run dev`, sidebar → UI Guideline; semua komponen dan contoh CRUD), `src/index.css` (token tema),
 `email/` (template OTP: TypeScript dan Blade), `error-pages/` (halaman error statis), `scripts/check-standards.mjs` (pemeriksa aturan).
@@ -24,7 +25,8 @@ npm install
 npm run dev        # server pengembangan
 npm run check      # tsc + ESLint + Prettier + pemeriksa standar + tes (wajib lolos sebelum selesai)
 npm run format     # rapikan kode (Prettier); npm run format:check, npm run typecheck, npm run test untuk satu per satu
-npm run build      # check + build produksi
+npm run build      # check + build produksi + anggaran ukuran bundel
+npm run test:e2e   # tes ujung ke ujung (Playwright), terhadap hasil build
 npm run rebrand -- --name "Nama" --color "#0f766e"   # nama, warna utama, favicon, email, halaman error
 ```
 

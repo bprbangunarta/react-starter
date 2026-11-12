@@ -4,7 +4,11 @@ import { Toaster } from 'sonner';
 import App from '@/App';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { MaintenanceGate } from '@/components/maintenance-gate';
+import { listenForErrors, reloadOnStaleChunk } from '@/lib/report';
 import '@/index.css';
+
+listenForErrors();
+reloadOnStaleChunk();
 
 createRoot(document.getElementById('root') as HTMLElement).render(
     <StrictMode>

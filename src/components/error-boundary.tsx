@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
 import { ErrorPage } from '@/components/error-page';
+import { reportError } from '@/lib/report';
 
 type Props = { children: ReactNode };
 type State = { failed: boolean };
@@ -14,7 +15,7 @@ export class ErrorBoundary extends Component<Props, State> {
     }
 
     componentDidCatch(error: Error, info: ErrorInfo) {
-        console.error(error, info.componentStack);
+        reportError(error, info.componentStack ?? 'render error');
     }
 
     render() {

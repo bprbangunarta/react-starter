@@ -66,7 +66,8 @@ export function MultiCombobox({
                         role="combobox"
                         aria-expanded={open}
                         aria-controls={listId}
-                        aria-label={ariaLabel}
+                        // a combobox takes its name from a label or aria-label, not from its text; fall back to the placeholder
+                        aria-label={ariaLabel ?? (id ? undefined : placeholder)}
                         aria-invalid={invalid || undefined}
                         title={selected.map((o) => o.label).join(', ') || undefined}
                         className={cn(controlClass, 'flex items-center justify-between gap-1 text-left', clearable && selected.length > 0 && 'pr-12')}

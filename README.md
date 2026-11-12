@@ -16,8 +16,9 @@ npm run check        # tsc + ESLint + Prettier + pemeriksa standar + tes (wajib 
 npm run typecheck    # hanya tsc; npm run format:check untuk memeriksa format tanpa mengubah
 npm run test         # hanya tes (Vitest); npm run test:watch untuk mode pantau
 npm run format       # merapikan kode dengan Prettier
-npm run build        # check + vite build ke dist/
+npm run build        # check + vite build ke dist/ + anggaran ukuran bundel
 npm run preview      # menjalankan hasil build
+npm run test:e2e     # tes ujung ke ujung (Playwright) terhadap hasil build; sekali: npx playwright install chromium
 ```
 
 Masuk dengan **`admin` / `password`**. Untuk mencoba kata sandi kedaluwarsa, masuk dengan **`kadaluarsa` / `password`** (kata sandinya dibuat 45 hari lalu; batasnya 30 hari). Data tiruan (pengguna, audit log, notifikasi, sesi) disimpan di `localStorage` pada kunci
@@ -31,15 +32,18 @@ Masuk dengan **`admin` / `password`**. Untuk mencoba kata sandi kedaluwarsa, mas
 | **Autentikasi** | Login (email atau username), keluar, penjaga halaman, sesi, halaman error layar penuh, penanda koneksi putus/pulih |
 | **MFA** | Aplikasi authenticator (TOTP **sungguhan**: kunci dibuat acak, QR dipindai Google Authenticator, kode divalidasi dengan toleransi ±30 detik), OTP email (kodenya tampil di toast karena tidak ada email), 8 kode pemulihan sekali pakai, batas 5 kode salah, jeda kirim ulang, pengaturan dan pemutusan di Profil, pengingat bila belum aktif |
 | **Audit Logs** | Daftar terbaru dulu (semua kolom berisi data bisa diurutkan) dengan pencarian, filter tanggal/modul/hasil, paginasi, detail sebelum/sesudah, **ekspor CSV**, dan **verifikasi integritas rantai hash** (SHA-256) yang sungguhan. Coba ubah satu entri di `localStorage` lalu tekan "Periksa integritas": rantai terputus dan entri yang diubah terdeteksi |
-| **Isian** | `CurrencyInput` (Rp, format ribuan), `MaskedInput` (telepon, NIK, NPWP), `FilteredInput` (huruf dan karakter terbatas), `InputGroup` (isian + tombol di sampingnya), `ColorInput`, `Textarea`, `Checkbox`, `Switch`, `RadioGroup`, `FileInput`; contoh hidup di `/ui-guideline` |
+| **Isian** | `CurrencyInput` (Rp, format ribuan), `MaskedInput` (telepon, NIK, NPWP), `FilteredInput` (huruf dan karakter terbatas), `InputGroup` (isian + tombol di sampingnya), `ColorInput`, `Textarea` (penghitung di label), `Checkbox`, `Switch`, `RadioGroup`, `Combobox`, `MultiCombobox`, `DatePicker`, `DateRangePicker`, `TimePicker`, `TagInput`, `Slider`, `FileInput`; contoh hidup di `/ui-guideline` |
+| **Unggah berkas** | `FileUploader`: dropzone dengan antrean, dua unggahan serentak, progres per berkas, batalkan, coba lagi; `http.upload` (XHR, progres dan pembatalan) |
+| **Navigasi dan umpan balik** | `Breadcrumb`, `Stepper`, `Progress`, `Accordion`, `Drawer`, `Tabs`, `Dropdown`, `Tooltip`, toast; gerak halus yang mati bila `prefers-reduced-motion` |
+| **File Manage** | Halaman contoh pengelola berkas (`/file-manage`): folder, tampilan kotak atau daftar, unggah, ubah nama, hapus, rincian di laci (data demo di memori) |
 | **Kata sandi kedaluwarsa** | Setelah masuk dengan benar, bila kata sandi lebih tua dari 30 hari, layar `/password-expired` meminta kata sandi baru (3 kolom yang sama dengan Profil). Kata sandi baru tidak boleh sama dengan yang sekarang atau 5 sebelumnya; lalu lanjut ke verifikasi dua langkah atau langsung masuk |
 | **Profil** | Data akun, foto profil (unggah, ganti, hapus), ganti kata sandi (validasi, batas percobaan, tercatat di audit log), pengaturan MFA |
 | **Sesi tak aktif** | `IdleTimeout`: peringatan satu menit sebelum batas diam server habis (tetap masuk atau keluar), lalu keluar otomatis. Batasnya dari `/me` (`session.idle_minutes`, 30 menit di server tiruan) |
 | **Grafik** | `DonutChart`, `ColumnChart`, `BarChart` dengan angka tertulis di samping tiap bagian dan warna seri bertoken (`chart-1` sampai `chart-5`) |
-| **Kerangka** | Sidebar: Dashboard (placeholder) dan bagian Sistem (Audit Logs, UI Guideline), bel notifikasi (tandai dibaca), menu akun (Profil, Keluar) |
+| **Kerangka** | Sidebar: Dashboard (placeholder) dan bagian Sistem (Audit Logs, UI Guideline, File Manage), bel notifikasi (tandai dibaca), menu akun (Profil, Keluar) |
 | **Referensi** | Halaman `/ui-guideline` (semua komponen dan token), template email OTP, halaman error statis, aturan tampilan dan kode |
 
-Tidak ada peran/izin dan tidak ada manajemen pengguna (sengaja dikeluarkan). Sidebar berisi Dashboard, Audit Logs, dan UI Guideline; Profil dan Keluar ada di menu akun.
+Tidak ada peran/izin dan tidak ada manajemen pengguna (sengaja dikeluarkan). Sidebar berisi Dashboard, Audit Logs, UI Guideline, dan File Manage; Profil dan Keluar ada di menu akun.
 
 ## Struktur proyek
 
@@ -131,12 +135,13 @@ Walau hanya frontend statis, dasar-dasar produksinya sudah ada. Yang **sengaja b
 
 | Bidang | Sudah | Keterangan |
 |---|---|---|
-| Kinerja | pemecahan kode per halaman (`React.lazy`), aset ber-hash dengan cache setahun, gzip di nginx, font dilayani sendiri | bundel awal sekitar 130 kB gzip |
+| Kinerja | pemecahan kode per halaman (`React.lazy`), aset ber-hash dengan cache setahun, gzip di nginx, font dilayani sendiri | bundel awal sekitar 115 kB gzip; `scripts/check-bundle.mjs` menggagalkan build bila melewati 150 kB |
 | Keamanan | CSP, `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, COOP di `security-headers.conf`; tanpa skrip pihak ketiga; tanpa `dangerouslySetInnerHTML`; rahasia tidak di klien | HSTS tersedia (dikomentari), aktifkan bila nginx melayani HTTPS |
-| Aksesibilitas | label terhubung ke isian (`Field`), ESLint `jsx-a11y`, skip link, fokus dialog lewat Radix, kontras warna dihitung (teks AA, ikon 3:1), `lang="id"` | |
-| Kualitas | `strict` TypeScript, ESLint (hooks, promise, a11y), Prettier, pemeriksa aturan rumah, Vitest, CI GitHub Actions (`.github/workflows/ci.yml`) | `npm run check` menjalankan semuanya |
-| Ketahanan | `ErrorBoundary`, keadaan memuat/kosong/galat di tiap daftar, penanda koneksi putus, galat 422 per kolom | |
-| Operasional | Docker multi-tahap, `engines` dan `.nvmrc`, `.editorconfig`, 0 kerentanan `npm audit` saat ini | jalankan `npm audit` berkala |
+| Aksesibilitas | label terhubung ke isian (`Field`), ESLint `jsx-a11y`, tes axe pada halaman utama (`src/a11y.test.tsx`), skip link, fokus dialog lewat Radix, kontras warna dihitung (teks AA, ikon 3:1), `lang="id"` | |
+| Kualitas | `strict` TypeScript, ESLint (hooks, promise, a11y), Prettier, pemeriksa aturan rumah, Vitest, tes ujung ke ujung Playwright (`e2e/`), hook pra-commit (`.githooks/`), CI GitHub Actions (`.github/workflows/ci.yml`) | `npm run check` menjalankan semuanya kecuali tes ujung ke ujung |
+| Ketahanan | `ErrorBoundary`, keadaan memuat/kosong/galat di tiap daftar, penanda koneksi putus, galat 422 per kolom, muat ulang otomatis sekali bila potongan kode lama hilang setelah deploy | |
+| Pemantauan galat | satu pintu keluar, `reportError` di `src/lib/report.ts` (ErrorBoundary, galat yang lolos, janji tertolak) | pasang Sentry atau sejenisnya lewat `setErrorReporter` sebelum aplikasi dirender; jangan kirim rahasia |
+| Operasional | Docker multi-tahap dengan `HEALTHCHECK`, `engines` dan `.nvmrc`, `.editorconfig`, Dependabot mingguan, `npm audit` di CI, 0 kerentanan saat ini | `overrides` untuk `minimatch` di `typescript-estree` (lihat MEMORY) |
 
 Yang belum ada (beserta alasan dan prioritasnya) dicatat di [docs/ai/BACKLOG.md](docs/ai/BACKLOG.md).
 
@@ -238,6 +243,20 @@ pengiriman email) sepenuhnya urusan mereka. Dari sisi frontend, serah terima sel
 - [ ] server tiruan sudah dilepas (langkah di atas) dan `npm run check` lolos;
 - [ ] proxy `/api` (`vite.config.ts`, `nginx.conf`) menunjuk ke backend yang benar;
 - [ ] akses mesin pencarian sesuai kebutuhan (lihat [Akses mesin pencarian](#indexing)).
+
+## Merilis versi
+
+Versi mengikuti [SemVer](https://semver.org); riwayatnya di [CHANGELOG.md](CHANGELOG.md).
+
+```bash
+npm run check && npm run test:e2e        # semua hijau
+# ubah "version" di package.json dan tambahkan bagian baru di CHANGELOG.md
+git commit -am "chore: release vX.Y.Z"
+git tag -a vX.Y.Z -m "vX.Y.Z" && git push && git push --tags
+gh release create vX.Y.Z --title "vX.Y.Z" --notes-file <(sed -n '/^## \[X.Y.Z\]/,/^## \[/p' CHANGELOG.md | sed '$d')
+```
+
+Proyek ini `private` dan berlisensi `UNLICENSED` (internal); ubah `license` di `package.json` bila akan dibuka.
 
 ## Pemecahan masalah
 
