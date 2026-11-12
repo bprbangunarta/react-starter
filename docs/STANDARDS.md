@@ -87,7 +87,7 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
   Urutan footer: batal paling kiri, konfirmasi paling kanan. Satu tempat tidak boleh bercampur: bila satu footer atau satu toolbar sudah memakai ikon,
   semua tombolnya memakai ikon (kecuali tabel di atas).
 - **Dialog** punya tiga bagian, seperti kartu: **header** (judul; subjudul satu baris hanya untuk dialog form), **body** (`DialogBody`: isi formulir, atau **pesan konfirmasi**),
-  dan **footer** (`DialogFooter`, tombol teks saja). Pesan di `ConfirmDialog` ada di body, bukan di header; jangan menaruh teks panjang di `description` `Modal`.
+  dan **footer** (`DialogFooter`, tombol teks saja). Pesan di `ConfirmDialog` ada di body, bukan di header; jangan menaruh teks panjang di `description` `Modal`. Dialog baca-saja (detail) tidak punya footer: tombol X di header sudah menutupnya, jadi tombol "Tutup" tidak diulang.
   Dialog yang memakai `Modal` wajib memakai `DialogBody` **[mesin]**. Tambah/ubah data: modal kecil (`max-w-sm`) atau form satu halaman; `ConfirmDialog` sebelum menghapus.
 - **Kartu (header, body, footer)** disusun seperti dialog: `CardHeader` (judul `text-sm font-semibold`, keterangan opsional, aksi/badge di kanan,
   garis bawah), `CardBody` (isi, `p-3`), dan `CardFooter` (garis atas) **hanya bila kartu punya tombol** kirim/batal. Kartu tanpa tombol tidak punya footer.
@@ -96,7 +96,7 @@ Semua UI baru mengikuti pola yang ada; jangan membuat gaya baru per halaman. Acu
 - **Form:** grid 2–4 kolom dalam `Card` per seksi (judul `text-sm font-semibold`), `Field` dengan label `text-xs`, tanda `*` merah untuk wajib.
 - **Tanpa keterangan di bawah isian:** di bawah isian hanya galat validasi yang tampil. Keterangan isian diberikan sebagai `hint` `Field`: tampil sebagai tooltip pada
   ikon info di samping label dan dibaca pembaca layar sebagai deskripsi isian. Hint pendek: untuk satu hal yang tidak terlihat dari label (format, batas, akibat
-  pilihan); yang lebih panjang masuk ke deskripsi kartu atau halaman. `Textarea` tidak punya hint sendiri (penghitung huruf satu-satunya di bawahnya); baris sakelar dan
+  pilihan); yang lebih panjang masuk ke deskripsi kartu atau halaman. `Textarea` tidak punya hint sendiri dan tidak ada apa pun di bawahnya: penghitung huruf (`0/200`) tampil `Field` di kanan label, supaya jarak ke komponen di bawahnya tetap; baris sakelar dan
   centang memegang baris keterangannya sendiri karena itu bagian dari pilihannya. Isian dengan tombol di sampingnya memakai `InputGroup` di dalam `Field`.
 - **Jenis isian** (semua ada contohnya di `/ui-guideline`, bagian Isian):
   - **Uang dan angka besar:** `CurrencyInput` (teks, hanya angka, format `1.000.000` otomatis, awalan `Rp`; `prefix={null}` untuk angka biasa).

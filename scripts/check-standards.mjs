@@ -93,7 +93,11 @@ const rules = [
     {
         name: 'Tanggal, waktu, dan angka untuk orang diformat di lib/format.ts saja (formatDate, formatDateTime, formatRelative, formatNumber, rupiah)',
         test: (line) => /from 'date-fns\/locale'|\bIntl\.(NumberFormat|DateTimeFormat)\b|\.toLocale(Date|Time)?String\(/.test(line),
-        skip: (file) => isTest(file) || file.endsWith('lib/format.ts') || file.endsWith('components/ui/date-picker.tsx'),
+        skip: (file) =>
+            isTest(file) ||
+            file.endsWith('lib/format.ts') ||
+            file.endsWith('components/ui/date-picker.tsx') ||
+            file.endsWith('components/ui/date-range-picker.tsx'),
     },
     {
         name: 'type="number"/type="tel" dilarang: kolom angka memakai MaskedInput (components/ui/masked-input.tsx), karena type="number" menerima huruf e dan tanda, dan type="tel" menerima huruf',

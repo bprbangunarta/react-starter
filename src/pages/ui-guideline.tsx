@@ -12,7 +12,17 @@ import { ERROR_PAGES as ERROR_SCREENS } from '@/lib/error-pages';
 import { BarChart, ColumnChart, DonutChart } from '@/components/ui/chart';
 import { Checkbox, RadioGroup, Switch } from '@/components/ui/choice';
 import { ColorInput } from '@/components/ui/color-input';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Breadcrumb } from '@/components/ui/breadcrumb';
 import { Combobox } from '@/components/ui/combobox';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
+import type { DateSpan } from '@/components/ui/date-range-picker';
+import { Drawer, DrawerBody } from '@/components/ui/drawer';
+import { Progress } from '@/components/ui/progress';
+import { Slider } from '@/components/ui/slider';
+import { Stepper } from '@/components/ui/stepper';
+import { TagInput } from '@/components/ui/tag-input';
+import { TimePicker } from '@/components/ui/time-picker';
 import { MultiCombobox } from '@/components/ui/multi-combobox';
 import { CurrencyInput } from '@/components/ui/currency-input';
 import { DataTable } from '@/components/ui/data-table';
@@ -159,6 +169,11 @@ function InputExamples() {
     const [select, setSelect] = useState<string | null>('b');
     const [multi, setMulti] = useState<string[]>(['a', 'c']);
     const [date, setDate] = useState('');
+    const [period, setPeriod] = useState<DateSpan>({ from: '', to: '' });
+    const [time, setTime] = useState('');
+    const [tags, setTags] = useState<string[]>(['laporan', 'bulanan']);
+    const [level, setLevel] = useState([40]);
+    const [band, setBand] = useState([20, 70]);
     const [code, setCode] = useState('');
     const [amount, setAmount] = useState<number | null>(1_500_000);
     const [quantity, setQuantity] = useState<number | null>(12_500);
@@ -313,9 +328,28 @@ function InputExamples() {
                 </Field>
             </div>
 
+            <SubTitle>Rentang tanggal, jam, tag, dan slider</SubTitle>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <Field label="Rentang tanggal (DateRangePicker)">
+                    <DateRangePicker value={period} onChange={setPeriod} clearable />
+                </Field>
+                <Field label="Jam (TimePicker)">
+                    <TimePicker value={time} onChange={setTime} />
+                </Field>
+                <Field label="Tag (TagInput)" hint="Enter atau koma menambah; Backspace menghapus yang terakhir" className="sm:col-span-2">
+                    <TagInput value={tags} onChange={setTags} maxTags={6} />
+                </Field>
+                <Field label={`Slider: ${level[0] ?? 0}%`}>
+                    <Slider aria-label="Tingkat" value={level} onValueChange={setLevel} />
+                </Field>
+                <Field label={`Slider rentang: ${band[0] ?? 0}–${band[1] ?? 0}`}>
+                    <Slider labels={['Dari', 'Sampai']} value={band} onValueChange={setBand} />
+                </Field>
+            </div>
+
             <SubTitle>Teks panjang, centang, sakelar, dan radio</SubTitle>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <Field label="Catatan" hint="Penghitung muncul bila ada maxLength" className="sm:col-span-2">
+                <Field label="Catatan" hint="Penghitung muncul di kanan label bila ada maxLength" className="sm:col-span-2">
                     <Textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={200} placeholder="Tulis catatan…" />
                 </Field>
                 <div className="flex flex-col gap-3">
@@ -354,6 +388,8 @@ export default function UiGuideline() {
     useTitle('UI Guideline');
     const [modal, setModal] = useState(false);
     const [confirm, setConfirm] = useState(false);
+    const [drawer, setDrawer] = useState(false);
+    const [step, setStep] = useState(1);
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState<string | null>(null);
     const [rows, setRows] = useState<Row[]>(INITIAL_ROWS);
@@ -726,7 +762,49 @@ export default function UiGuideline() {
                         <Button variant="outline" onClick={() => setConfirm(true)}>
                             Buka konfirmasi
                         </Button>
+                        <Button variant="outline" onClick={() => setDrawer(true)}>
+                            Buka laci (Drawer)
+                        </Button>
                     </div>
+                </Section>
+
+                <Section
+                    title="Navigasi, langkah, dan progres"
+                    description="Breadcrumb di atas PageHeader (induk berupa tautan, halaman ini teks). Stepper untuk proses bertahap; vertikal di ponsel. Progress untuk kuota atau tugas; tanpa nilai berarti durasi tidak diketahui. Accordion melipat bagian yang jarang dibuka."
+                >
+                    <Breadcrumb items={[{ label: 'Beranda', to: '/' }, { label: 'UI Guideline', to: '/ui-guideline' }, { label: 'Komponen' }]} />
+                    <Stepper
+                        steps={[
+                            { label: 'Data diri', description: 'Nama dan kontak' },
+                            { label: 'Dokumen', description: 'Unggah berkas' },
+                            { label: 'Konfirmasi' },
+                        ]}
+                        current={step}
+                    />
+                    <div className="flex gap-2">
+                        <Button variant="outline" disabled={step === 0} onClick={() => setStep((n) => Math.max(0, n - 1))}>
+                            Sebelumnya
+                        </Button>
+                        <Button variant="outline" disabled={step === 3} onClick={() => setStep((n) => Math.min(3, n + 1))}>
+                            Berikutnya
+                        </Button>
+                    </div>
+                    <div className="grid gap-3 md:grid-cols-2">
+                        <Progress label="Kuota penyimpanan" value={72} />
+                        <Progress label="Batas hampir habis" value={92} tone="danger" />
+                        <Progress label="Selesai" value={100} tone="success" />
+                        <Progress aria-label="Memproses" />
+                    </div>
+                    <Accordion type="single" collapsible defaultValue="a" className="rounded-md border border-line px-3">
+                        <AccordionItem value="a">
+                            <AccordionTrigger>Apa itu starter ini?</AccordionTrigger>
+                            <AccordionContent>Kerangka antarmuka dengan autentikasi, MFA, dan audit log.</AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="b">
+                            <AccordionTrigger>Bagaimana menyambung backend?</AccordionTrigger>
+                            <AccordionContent>Ikuti kontrak di docs/API.md, lalu hapus src/mock.</AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
                 </Section>
 
                 <Section
@@ -870,6 +948,24 @@ export default function UiGuideline() {
                     </Button>
                 </DialogFooter>
             </Modal>
+            <Drawer open={drawer} onOpenChange={setDrawer} title="Contoh laci" description="Panel dari samping untuk rincian atau form panjang.">
+                <DrawerBody>
+                    <p className="text-sm">Isi laci menggulir sendiri; header tetap di atas.</p>
+                </DrawerBody>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => setDrawer(false)}>
+                        Batal
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            setDrawer(false);
+                            toast.success('Tersimpan');
+                        }}
+                    >
+                        Simpan
+                    </Button>
+                </DialogFooter>
+            </Drawer>
             <ConfirmDialog
                 open={confirm}
                 onOpenChange={setConfirm}
